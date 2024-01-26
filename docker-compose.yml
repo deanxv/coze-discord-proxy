@@ -1,0 +1,17 @@
+version: '3.4'
+
+services:
+  code-discord-proxy:
+    image: deanxv/code-discord-proxy:latest
+    container_name: code-discord-proxy
+    restart: always
+    ports:
+      - "7077:7077"
+    volumes:
+      - ./data/code-discord-proxy:/data
+    environment:
+      - BOT_TOKEN=MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w  # 必须修改为我们主动发送消息的Bot-Token
+      - GUILD_ID=1199225704202653796  # 必须修改为两个机器人所在的服务器ID
+      - COZE_BOT_ID=1199225896645697647  # 必须修改为由coze托管的机器人ID
+      - PROXY_SECRET=123456  # 修改此行为请求头校验的值（前后端统一）
+      - TZ=Asia/Shanghai
