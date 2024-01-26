@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	Port         = flag.Int("port", 3000, "the listening port")
+	Port         = flag.Int("port", 7077, "the listening port")
 	PrintVersion = flag.Bool("version", false, "print version and exit")
 	PrintHelp    = flag.Bool("help", false, "print help and exit")
 	LogDir       = flag.String("log-dir", "", "specify the log directory")
@@ -19,10 +19,10 @@ var (
 var UploadPath = "upload"
 
 func printHelp() {
-	fmt.Println("Gin Template " + Version + " - Your next project starts from here.")
-	fmt.Println("Copyright (C) 2023 JustSong. All rights reserved.")
-	fmt.Println("GitHub: https://github.com/songquanpeng/gin-template")
-	fmt.Println("Usage: gin-template [--port <port>] [--log-dir <log directory>] [--version] [--help]")
+	fmt.Println("Coze Discord Proxy" + Version + "")
+	fmt.Println("Copyright (C) 2024 Dean. All rights reserved.")
+	fmt.Println("GitHub: ")
+	fmt.Println("Usage: coze-discord-proxy [--port <port>] [--log-dir <log directory>] [--version] [--help]")
 }
 
 func init() {
@@ -38,12 +38,6 @@ func init() {
 		os.Exit(0)
 	}
 
-	if os.Getenv("SESSION_SECRET") != "" {
-		SessionSecret = os.Getenv("SESSION_SECRET")
-	}
-	if os.Getenv("SQLITE_PATH") != "" {
-		SQLitePath = os.Getenv("SQLITE_PATH")
-	}
 	if os.Getenv("UPLOAD_PATH") != "" {
 		UploadPath = os.Getenv("UPLOAD_PATH")
 	}
@@ -59,8 +53,5 @@ func init() {
 				log.Fatal(err)
 			}
 		}
-	}
-	if _, err := os.Stat(UploadPath); os.IsNotExist(err) {
-		_ = os.Mkdir(UploadPath, 0777)
 	}
 }

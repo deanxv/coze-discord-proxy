@@ -33,21 +33,21 @@ jobs:
       - name: Build Backend (amd64)
         run: |
           go mod download
-          go build -ldflags "-s -w -X 'gin-template/common.Version=$(git describe --tags)' -extldflags '-static'" -o gin-template
+          go build -ldflags "-s -w -X 'coze-discord-proxy/common.Version=$(git describe --tags)' -extldflags '-static'" -o coze-discord-proxy
 
       - name: Build Backend (arm64)
         run: |
           sudo apt-get update
           sudo apt-get install gcc-aarch64-linux-gnu
-          CC=aarch64-linux-gnu-gcc CGO_ENABLED=1 GOOS=linux GOARCH=arm64 go build -ldflags "-s -w -X 'gin-template/common.Version=$(git describe --tags)' -extldflags '-static'" -o gin-template-arm64
+          CC=aarch64-linux-gnu-gcc CGO_ENABLED=1 GOOS=linux GOARCH=arm64 go build -ldflags "-s -w -X 'coze-discord-proxy/common.Version=$(git describe --tags)' -extldflags '-static'" -o coze-discord-proxy-arm64
 
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            gin-template
-            gin-template-arm64
+            coze-discord-proxy
+            coze-discord-proxy-arm64
           draft: false
           generate_release_notes: true
         env:

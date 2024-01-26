@@ -1,75 +1,71 @@
 package main
 
 import (
-	"embed"
-	"gin-template/common"
-	"gin-template/middleware"
-	"gin-template/model"
-	"gin-template/router"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
-	"github.com/gin-contrib/sessions/redis"
+	"context"
+	"coze-discord-proxy/common"
+	"coze-discord-proxy/discord"
+	"coze-discord-proxy/middleware"
+	"coze-discord-proxy/router"
 	"github.com/gin-gonic/gin"
-	"log"
+	"net/http"
 	"os"
+	"os/signal"
 	"strconv"
+	"syscall"
+	"time"
 )
 
-//go:embed web/build
-var buildFS embed.FS
-
-//go:embed web/build/index.html
-var indexPage []byte
-
 func main() {
-	common.SetupGinLog()
-	common.SysLog("Gin Template " + common.Version + " started")
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	go discord.StartBot(ctx, os.Getenv("BOT_TOKEN"))
+
+	common.SetupLogger()
+	common.SysLog("COZE-DISCORD_PROXY " + common.Version + " started")
 	if os.Getenv("GIN_MODE") != "debug" {
 		gin.SetMode(gin.ReleaseMode)
 	}
-	// Initialize SQL Database
-	err := model.InitDB()
-	if err != nil {
-		common.FatalLog(err)
+	if common.DebugEnabled {
+		common.SysLog("running in debug mode")
 	}
-	defer func() {
-		err := model.CloseDB()
-		if err != nil {
-			common.FatalLog(err)
-		}
-	}()
-
-	// Initialize Redis
-	err = common.InitRedisClient()
-	if err != nil {
-		common.FatalLog(err)
-	}
-
-	// Initialize options
-	model.InitOptionMap()
 
 	// Initialize HTTP server
-	server := gin.Default()
-	//server.Use(gzip.Gzip(gzip.DefaultCompression))
-	server.Use(middleware.CORS())
+	server := gin.New()
+	server.Use(gin.Recovery())
+	server.Use(middleware.RequestId())
+	middleware.SetUpLogger(server)
+	router.SetApiRouter(server)
 
-	// Initialize session store
-	if common.RedisEnabled {
-		opt := common.ParseRedisOption()
-		store, _ := redis.NewStore(opt.MinIdleConns, opt.Network, opt.Addr, opt.Password, []byte(common.SessionSecret))
-		server.Use(sessions.Sessions("session", store))
-	} else {
-		store := cookie.NewStore([]byte(common.SessionSecret))
-		server.Use(sessions.Sessions("session", store))
-	}
-
-	router.SetRouter(server, buildFS, indexPage)
 	var port = os.Getenv("PORT")
 	if port == "" {
 		port = strconv.Itoa(*common.Port)
 	}
-	err = server.Run(":" + port)
-	if err != nil {
-		log.Println(err)
+
+	srv := &http.Server{
+		Addr:    ":" + port,
+		Handler: server,
+	}
+
+	go func() {
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			common.FatalLog("failed to start HTTP server: " + err.Error())
+		}
+	}()
+
+	// 等待中断信号
+	sc := make(chan os.Signal, 1)
+	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
+	<-sc
+
+	// 收到信号后取消 context
+	cancel()
+
+	// 给 HTTP 服务器一些时间来关闭
+	ctxShutDown, cancelShutDown := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancelShutDown()
+
+	if err := srv.Shutdown(ctxShutDown); err != nil {
+		common.FatalLog("HTTP server Shutdown failed:" + err.Error())
 	}
 }

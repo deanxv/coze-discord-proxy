@@ -5,11 +5,13 @@ import (
 	"github.com/google/uuid"
 	"html/template"
 	"log"
+	"math/rand"
 	"net"
 	"os/exec"
 	"runtime"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func OpenBrowser(url string) {
@@ -138,4 +140,24 @@ func Max(a int, b int) int {
 	} else {
 		return b
 	}
+}
+
+func GetRandomString(length int) string {
+	rand.Seed(time.Now().UnixNano())
+	key := make([]byte, length)
+	for i := 0; i < length; i++ {
+		key[i] = keyChars[rand.Intn(len(keyChars))]
+	}
+	return string(key)
+}
+
+const keyChars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+func GetTimestamp() int64 {
+	return time.Now().Unix()
+}
+
+func GetTimeString() string {
+	now := time.Now()
+	return fmt.Sprintf("%s%d", now.Format("20060102150405"), now.UnixNano()%1e9)
 }

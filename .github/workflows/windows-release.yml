@@ -36,12 +36,12 @@ jobs:
       - name: Build Backend
         run: |
           go mod download
-          go build -ldflags "-s -w -X 'gin-template/common.Version=$(git describe --tags)'" -o gin-template.exe
+          go build -ldflags "-s -w -X 'coze-discord-proxy/common.Version=$(git describe --tags)'" -o coze-discord-proxy.exe
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: gin-template.exe
+          files: coze-discord-proxy.exe
           draft: false
           generate_release_notes: true
         env:

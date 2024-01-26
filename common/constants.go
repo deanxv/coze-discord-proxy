@@ -1,66 +1,20 @@
 package common
 
 import (
-	"github.com/google/uuid"
-	"sync"
+	"os"
 	"time"
 )
 
-var StartTime = time.Now().Unix() // unit: second
-var Version = "v0.0.0"            // this hard coding will be replaced automatically when building, no need to manually change
-var SystemName = "项目模板"
-var ServerAddress = "http://localhost:3000"
-var Footer = ""
-var HomePageLink = ""
+var ProxySecret = os.Getenv("PROXY_SECRET")
 
-// Any options with "Secret", "Token" in its key won't be return by GetOptions
+var DebugEnabled = os.Getenv("DEBUG") == "true"
 
-var SessionSecret = uuid.New().String()
-var SQLitePath = "gin-template.db"
-
-var OptionMap map[string]string
-var OptionMapRWMutex sync.RWMutex
-
-var ItemsPerPage = 10
-
-var PasswordLoginEnabled = true
-var PasswordRegisterEnabled = true
-var EmailVerificationEnabled = false
-var GitHubOAuthEnabled = false
-var WeChatAuthEnabled = false
-var TurnstileCheckEnabled = false
-var RegisterEnabled = true
-
-var SMTPServer = ""
-var SMTPPort = 587
-var SMTPAccount = ""
-var SMTPToken = ""
-
-var GitHubClientId = ""
-var GitHubClientSecret = ""
-
-var WeChatServerAddress = ""
-var WeChatServerToken = ""
-var WeChatAccountQRCodeImageURL = ""
-
-var TurnstileSiteKey = ""
-var TurnstileSecretKey = ""
+var Version = "v1.0.0" // this hard coding will be replaced automatically when building, no need to manually change
 
 const (
-	RoleGuestUser  = 0
-	RoleCommonUser = 1
-	RoleAdminUser  = 10
-	RoleRootUser   = 100
+	RequestIdKey = "X-Request-Id"
 )
 
-var (
-	FileUploadPermission    = RoleGuestUser
-	FileDownloadPermission  = RoleGuestUser
-	ImageUploadPermission   = RoleGuestUser
-	ImageDownloadPermission = RoleGuestUser
-)
-
-// All duration's unit is seconds
 // Shouldn't larger then RateLimitKeyExpirationDuration
 var (
 	GlobalApiRateLimitNum            = 60
@@ -80,8 +34,3 @@ var (
 )
 
 var RateLimitKeyExpirationDuration = 20 * time.Minute
-
-const (
-	UserStatusEnabled  = 1 // don't use 0, 0 is the default value!
-	UserStatusDisabled = 2 // also don't use 0
-)
