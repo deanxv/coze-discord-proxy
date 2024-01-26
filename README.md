@@ -24,7 +24,7 @@ _觉得有点意思的话 别忘了点个🌟_
 1. 打开 [discord开发者平台](https://discord.com/developers/applications) 。
 2. 创建bot-A,并记录bot专属的`token`和`id(COZE_BOT_ID)`,此bot为被coze托管的bot。
 3. 创建bot-B,并记录bot专属的`token(BOT_TOKEN)`,此bot为我们与discord交互的bot。
-4. 两个bot开通权限对应权限并邀请进服务器指定服务器,记录服务器ID(`GUILD_ID`) (过程不在此赘述)。
+4. 两个bot开通对应权限(`Send Messages`,`Read Message History`等)并邀请进服务器,记录服务器ID(`GUILD_ID`) (过程不在此赘述)。
 5. 打开 [coze官网](https://www.coze.com) 创建自己bot。
 6. 创建好后推送，配置discord-bot的`token`,即bot-A的`token`,点击完成后在discord的服务器中可看到bot-A在线并可以@使用。
 7. 配置环境变量，并启动本项目。
