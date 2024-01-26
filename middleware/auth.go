@@ -8,7 +8,7 @@ import (
 
 func authHelper(c *gin.Context) {
 	secret := c.Request.Header.Get("proxy-secret")
-	if secret != common.ProxySecret {
+	if common.ProxySecret != "" && secret != common.ProxySecret {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"success": false,
 			"message": "无权进行此操作，未提供正确的 proxy-secret",
@@ -17,6 +17,7 @@ func authHelper(c *gin.Context) {
 		return
 	}
 	c.Next()
+	return
 }
 
 func Auth() func(c *gin.Context) {

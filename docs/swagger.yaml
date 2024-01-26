@@ -1,0 +1,100 @@
+basePath: /api
+definitions:
+  model.ChannelReq:
+    properties:
+      name:
+        type: string
+    type: object
+  model.ChannelResp:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  model.ChatReq:
+    properties:
+      channelID:
+        type: string
+      content:
+        type: string
+      stream:
+        type: boolean
+    type: object
+  model.ReplyResp:
+    properties:
+      content:
+        type: string
+    type: object
+info:
+  contact: { }
+  description: COZE-DISCORD-PROXY 代理服务
+  title: COZE-DISCORD-PROXY
+  version: 1.0.0
+paths:
+  /channel/create:
+    post:
+      consumes:
+        - application/json
+      description: 创建频道
+      parameters:
+        - description: channelModel
+          in: body
+          name: channelModel
+          required: true
+          schema:
+            $ref: '#/definitions/model.ChannelReq'
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/model.ChannelResp'
+      summary: 创建频道
+      tags:
+        - channel
+  /channel/del/{id}:
+    get:
+      consumes:
+        - application/json
+      description: 删除频道
+      parameters:
+        - description: id
+          in: path
+          name: id
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            type: string
+      summary: 删除频道
+      tags:
+        - channel
+  /chat:
+    post:
+      consumes:
+        - application/json
+      description: 发送消息
+      parameters:
+        - description: chatModel
+          in: body
+          name: chatModel
+          required: true
+          schema:
+            $ref: '#/definitions/model.ChatReq'
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/model.ReplyResp'
+      summary: 发送消息
+      tags:
+        - chat
+swagger: "2.0"

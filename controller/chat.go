@@ -9,9 +9,18 @@ import (
 	"net/http"
 )
 
+// Chat 发送消息
+// @Summary 发送消息
+// @Description 发送消息
+// @Tags chat
+// @Accept json
+// @Produce json
+// @Param chatModel body model.ChatReq true "chatModel"
+// @Success 200 {object} model.ReplyResp "Successful response"
+// @Router /chat [post]
 func Chat(c *gin.Context) {
 
-	var chatModel model.Chat
+	var chatModel model.ChatReq
 	err := json.NewDecoder(c.Request.Body).Decode(&chatModel)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
@@ -48,7 +57,7 @@ func Chat(c *gin.Context) {
 			}
 		})
 	} else {
-		var replyResp model.Reply
+		var replyResp model.ReplyResp
 		for {
 			select {
 			case reply := <-replyChan:

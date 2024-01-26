@@ -1,3 +1,7 @@
+// @title COZE-DISCORD-PROXY
+// @version 1.0.0
+// @description COZE-DISCORD-PROXY 代理服务
+// @BasePath /api
 package main
 
 import (
@@ -22,7 +26,7 @@ func main() {
 	go discord.StartBot(ctx, os.Getenv("BOT_TOKEN"))
 
 	common.SetupLogger()
-	common.SysLog("COZE-DISCORD_PROXY " + common.Version + " started")
+	common.SysLog("COZE-DISCORD-PROXY " + common.Version + " started")
 	if os.Getenv("GIN_MODE") != "debug" {
 		gin.SetMode(gin.ReleaseMode)
 	}
@@ -32,6 +36,7 @@ func main() {
 
 	// Initialize HTTP server
 	server := gin.New()
+
 	server.Use(gin.Recovery())
 	server.Use(middleware.RequestId())
 	middleware.SetUpLogger(server)

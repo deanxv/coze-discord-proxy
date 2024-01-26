@@ -1,5 +1,5 @@
 package model
 
-type Reply struct {
-	Content string `json:"content"`
+type ReplyResp struct {
+	Content string `json:"content" swaggertype:"string" description:"回复内容"`
 }

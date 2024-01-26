@@ -21,7 +21,7 @@ var UploadPath = "upload"
 func printHelp() {
 	fmt.Println("Coze Discord Proxy" + Version + "")
 	fmt.Println("Copyright (C) 2024 Dean. All rights reserved.")
-	fmt.Println("GitHub: ")
+	fmt.Println("GitHub: https://github.com/deanxv/coze-discord-proxy ")
 	fmt.Println("Usage: coze-discord-proxy [--port <port>] [--log-dir <log directory>] [--version] [--help]")
 }
 

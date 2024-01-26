@@ -88,7 +88,7 @@ func ChannelCreate(guildID, channelName string) (string, error) {
 	// 创建新的频道
 	st, err := Session.GuildChannelCreate(guildID, channelName, discordgo.ChannelTypeGuildText)
 	if err != nil {
-		fmt.Println("创建频道时出错:", err)
+		common.LogError(context.Background(), fmt.Sprintf("创建频道时异常 %s", err.Error()))
 		return "", err
 	}
 	fmt.Println("频道创建成功")
@@ -99,7 +99,7 @@ func ChannelDel(channelId string) (string, error) {
 	// 创建新的频道
 	st, err := Session.ChannelDelete(channelId)
 	if err != nil {
-		fmt.Println("删除频道时出错:", err)
+		common.LogError(context.Background(), fmt.Sprintf("删除频道时异常 %s", err.Error()))
 		return "", err
 	}
 	fmt.Println("删除成功")

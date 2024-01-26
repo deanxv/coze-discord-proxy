@@ -2,11 +2,17 @@ package router
 
 import (
 	"coze-discord-proxy/controller"
+	_ "coze-discord-proxy/docs"
 	"coze-discord-proxy/middleware"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func SetApiRouter(router *gin.Engine) {
+
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	router.Use(middleware.Auth())
 	apiRouter := router.Group("/api")
 	{
@@ -14,8 +20,8 @@ func SetApiRouter(router *gin.Engine) {
 		chatRoute.POST("/", controller.Chat)
 
 		channelRoute := apiRouter.Group("/channel")
-		channelRoute.POST("/add", controller.ChannelCreate)
-		channelRoute.GET("/del/:Id", controller.ChannelDel)
+		channelRoute.POST("/create", controller.ChannelCreate)
+		channelRoute.GET("/del/:id", controller.ChannelDel)
 	}
 
 }
