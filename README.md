@@ -9,9 +9,15 @@ _觉得有点意思的话 别忘了点个🌟_
 
 ## 功能
 
-接口文档: `http://<ip>:<port>/swagger/index.html`
+### 接口文档: 
 
-<span><img src="docs/img.png" width="500"/></span>
+`http://<ip>:<port>/swagger/index.html`
+
+<span><img src="docs/img.png" width="800"/></span>
+
+### 示例: 
+
+<span><img src="docs/img2.png" width="800"/></span>
 
 ## 如何使用
 
@@ -58,7 +64,7 @@ services:
 
 ```shell
 docker run --name code-discord-proxy -d --restart always \
--p 7078:7077 \
+-p 7077:7077 \
 -e BOT_TOKEN="MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w" \
 -e GUILD_ID="119xxxxxxxx796" \
 -e COZE_BOT_ID="119xxxxxxxx7" \
