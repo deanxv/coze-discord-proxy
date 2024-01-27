@@ -61,14 +61,12 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 	// 尝试获取 stopChan
 	stopChan, exists := ReplyStopChans[m.ReferencedMessage.ID]
 	if !exists {
-		fmt.Println("不存在的 stopChan")
 		return
 	}
 
 	// 如果作者为 nil 或消息来自 bot 本身，则发送停止信号
 	if m.Author == nil || m.Author.ID == s.State.User.ID {
 		stopChan <- m.ReferencedMessage.ID
-		fmt.Println("作者为 nil 或消息来自 bot 本身")
 		return
 	}
 
@@ -77,7 +75,6 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 		if mention.ID == s.State.User.ID {
 			replyChan, exists := RepliesChans[m.ReferencedMessage.ID]
 			if !exists {
-				fmt.Println("不存在的 replyChan")
 				return
 			}
 
@@ -129,7 +126,6 @@ func ChannelCreate(guildID, channelName string) (string, error) {
 		common.LogError(context.Background(), fmt.Sprintf("创建频道时异常 %s", err.Error()))
 		return "", err
 	}
-	fmt.Println("频道创建成功")
 	return st.ID, nil
 }
 
@@ -140,6 +136,5 @@ func ChannelDel(channelId string) (string, error) {
 		common.LogError(context.Background(), fmt.Sprintf("删除频道时异常 %s", err.Error()))
 		return "", err
 	}
-	fmt.Println("删除成功")
 	return st.ID, nil
 }
