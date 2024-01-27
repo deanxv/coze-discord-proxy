@@ -81,7 +81,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/chat": {
+        "/chat/": {
             "post": {
                 "description": "发送消息",
                 "consumes": [
@@ -148,6 +148,40 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/v1/chat/completions/": {
+            "post": {
+                "description": "发送消息-openai",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chat -openai"
+                ],
+                "summary": "发送消息-openai",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.OpenAIChatCompletionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/model.OpenAIChatCompletionResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -184,6 +218,102 @@ const docTemplate = `{
                 },
                 "stream": {
                     "type": "boolean"
+                }
+            }
+        },
+        "model.OpenAIChatCompletionRequest": {
+            "type": "object",
+            "properties": {
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.OpenAIChatMessage"
+                    }
+                },
+                "stream": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "model.OpenAIChatCompletionResponse": {
+            "type": "object",
+            "properties": {
+                "choices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.OpenAIChoice"
+                    }
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "system_fingerprint": {
+                    "type": "string"
+                },
+                "usage": {
+                    "$ref": "#/definitions/model.OpenAIUsage"
+                }
+            }
+        },
+        "model.OpenAIChatMessage": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.OpenAIChoice": {
+            "type": "object",
+            "properties": {
+                "finish_reason": {
+                    "type": "string"
+                },
+                "index": {
+                    "type": "integer"
+                },
+                "logprobs": {
+                    "type": "string"
+                },
+                "message": {
+                    "$ref": "#/definitions/model.OpenAIMessage"
+                }
+            }
+        },
+        "model.OpenAIMessage": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.OpenAIUsage": {
+            "type": "object",
+            "properties": {
+                "completion_tokens": {
+                    "type": "integer"
+                },
+                "prompt_tokens": {
+                    "type": "integer"
+                },
+                "total_tokens": {
+                    "type": "integer"
                 }
             }
         },

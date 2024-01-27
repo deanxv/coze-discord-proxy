@@ -55,7 +55,6 @@ version: '3.4'
 
 services:
   code-discord-proxy:
-    image: deanxv/code-discord-proxy:latest
     container_name: code-discord-proxy
     restart: always
     ports:
@@ -79,6 +78,7 @@ docker run --name code-discord-proxy -d --restart always \
 -e GUILD_ID="119xxxxxxxx796" \
 -e COZE_BOT_ID="119xxxxxxxx7" \
 -e PROXY_SECRET="123456" \
+-e CHANNEL_ID="1199623573082484756" \
 deanxv/code-discord-proxy
 ```
 

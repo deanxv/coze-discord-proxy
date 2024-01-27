@@ -13,11 +13,11 @@ func SetApiRouter(router *gin.Engine) {
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	router.Use(middleware.Auth())
 	apiRouter := router.Group("/api")
+	apiRouter.Use(middleware.Auth())
 	{
 		chatRoute := apiRouter.Group("/chat")
-		chatRoute.POST("/", controller.Chat)
+		chatRoute.POST("", controller.Chat)
 
 		channelRoute := apiRouter.Group("/channel")
 		channelRoute.POST("/create", controller.ChannelCreate)
@@ -25,7 +25,9 @@ func SetApiRouter(router *gin.Engine) {
 
 		threadRoute := apiRouter.Group("/thread")
 		threadRoute.POST("/create", controller.ThreadCreate)
-		//threadRoute.GET("/del/:id", controller.ChannelDel)
 	}
 
+	v1Router := router.Group("/v1/chat/completions")
+	v1Router.Use(middleware.OpenAIAuth())
+	v1Router.POST("", controller.ChatForOpenAI)
 }

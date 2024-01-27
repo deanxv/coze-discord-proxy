@@ -13,8 +13,11 @@ import (
 
 var cozeBotId = os.Getenv("COZE_BOT_ID")
 var GuildId = os.Getenv("GUILD_ID")
+var ChannelId = os.Getenv("CHANNEL_ID")
 
 var RepliesChans = make(map[string]chan model.ReplyResp)
+var RepliesOpenAIChans = make(map[string]chan model.OpenAIChatCompletionResponse)
+
 var ReplyStopChans = make(map[string]chan string)
 var Session *discordgo.Session
 
@@ -74,12 +77,18 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 	for _, mention := range m.Mentions {
 		if mention.ID == s.State.User.ID {
 			replyChan, exists := RepliesChans[m.ReferencedMessage.ID]
-			if !exists {
-				return
+			if exists {
+				reply := processMessage(m)
+				replyChan <- reply
+			} else {
+				replyOpenAIChan, exists := RepliesOpenAIChans[m.ReferencedMessage.ID]
+				if exists {
+					reply := processMessageForOpenAI(m)
+					replyOpenAIChan <- reply
+				} else {
+					return
+				}
 			}
-
-			reply := processMessage(m)
-			replyChan <- reply
 
 			// 如果消息包含组件或嵌入，则发送停止信号
 			if len(m.Embeds) > 0 || len(m.Message.Components) > 0 {
@@ -103,6 +112,39 @@ func processMessage(m *discordgo.MessageUpdate) model.ReplyResp {
 	return model.ReplyResp{
 		Content:   m.Content,
 		EmbedUrls: embedUrls,
+	}
+}
+
+func processMessageForOpenAI(m *discordgo.MessageUpdate) model.OpenAIChatCompletionResponse {
+	var embedUrls []string
+	for _, embed := range m.Embeds {
+		if embed.Image != nil {
+			embedUrls = append(embedUrls, embed.Image.URL)
+		}
+	}
+
+	promptTokens := common.CountTokens(m.ReferencedMessage.Content)
+	completionTokens := common.CountTokens(m.Content)
+
+	return model.OpenAIChatCompletionResponse{
+		ID:     m.ID,
+		Object: "chat.completion",
+		Model:  "COZE",
+		Choices: []model.OpenAIChoice{
+			{
+				Index: 0,
+				Message: model.OpenAIMessage{
+					Role:    "assistant",
+					Content: m.Content,
+				},
+				FinishReason: "stop",
+			},
+		},
+		Usage: model.OpenAIUsage{
+			PromptTokens:     promptTokens,
+			CompletionTokens: completionTokens,
+			TotalTokens:      promptTokens + completionTokens,
+		},
 	}
 }
 
