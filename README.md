@@ -42,7 +42,13 @@ _觉得有点意思的话 别忘了点个🌟_
 
 ## 如何集成one-api
 
+填 `BaseURL` 及 密钥(`proxy-secret`)，其它的随便填随便选。
 
+<span><img src="docs/img3.png" width="800"/></span>
+
+## 如何集成NextChat
+
+略
 
 ## 部署
 
