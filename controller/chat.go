@@ -132,12 +132,13 @@ func ChatForOpenAI(c *gin.Context) {
 			select {
 			case reply := <-replyChan:
 				newContent := strings.Replace(reply.Choices[0].Message.Content, strLen, "", 1)
-				reply.Choices[0].Message.Content = newContent
+				reply.Choices[0].Delta.Content = newContent
 				strLen += newContent
-				jsonData, _ := json.Marshal(reply)
-				c.SSEvent("", string(jsonData))
+				reply.Object = "chat.completion.chunk"
+				c.SSEvent("", reply)
 				return true // 继续保持流式连接
 			case <-stopChan:
+				c.SSEvent("", "[DONE]")
 				return false // 关闭流式连接
 			}
 		})

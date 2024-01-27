@@ -35,7 +35,8 @@ type OpenAIChoice struct {
 	Index        int           `json:"index"`
 	Message      OpenAIMessage `json:"message"`
 	LogProbs     *string       `json:"logprobs"`
-	FinishReason string        `json:"finish_reason"`
+	FinishReason *string       `json:"finish_reason"`
+	Delta        OpenAIDelta   `json:"delta"`
 }
 
 type OpenAIMessage struct {
@@ -47,4 +48,8 @@ type OpenAIUsage struct {
 	PromptTokens     int `json:"prompt_tokens"`
 	CompletionTokens int `json:"completion_tokens"`
 	TotalTokens      int `json:"total_tokens"`
+}
+
+type OpenAIDelta struct {
+	Content string `json:"content"`
 }

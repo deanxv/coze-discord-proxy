@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 )
 
 var cozeBotId = os.Getenv("COZE_BOT_ID")
@@ -89,9 +90,18 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 					return
 				}
 			}
+			// data: {"id":"chatcmpl-8lho2xvdDFyBdFkRwWAcMpWWAgymJ","object":"chat.completion.chunk","created":1706380498,"model":"gpt-3.5-turbo-0613","system_fingerprint":null,"choices":[{"index":0,"delta":{"content":"？"},"logprobs":null,"finish_reason":null}]}
+			// data :{"id":"1200873365351698694","object":"chat.completion.chunk","created":1706380922,"model":"COZE","choices":[{"index":0,"message":{"role":"assistant","content":"你好！有什么我可以帮您的吗？如果有任"},"logprobs":null,"finish_reason":"","delta":{"content":"吗？如果有任"}}],"usage":{"prompt_tokens":13,"completion_tokens":19,"total_tokens":32},"system_fingerprint":null}
 
 			// 如果消息包含组件或嵌入，则发送停止信号
 			if len(m.Embeds) > 0 || len(m.Message.Components) > 0 {
+				replyOpenAIChan, exists := RepliesOpenAIChans[m.ReferencedMessage.ID]
+				if exists {
+					reply := processMessageForOpenAI(m)
+					stopStr := "stop"
+					reply.Choices[0].FinishReason = &stopStr
+					replyOpenAIChan <- reply
+				}
 				stopChan <- m.ReferencedMessage.ID
 			}
 
@@ -127,9 +137,10 @@ func processMessageForOpenAI(m *discordgo.MessageUpdate) model.OpenAIChatComplet
 	completionTokens := common.CountTokens(m.Content)
 
 	return model.OpenAIChatCompletionResponse{
-		ID:     m.ID,
-		Object: "chat.completion",
-		Model:  "COZE",
+		ID:      m.ID,
+		Object:  "chat.completion",
+		Created: time.Now().Unix(),
+		Model:   "COZE",
 		Choices: []model.OpenAIChoice{
 			{
 				Index: 0,
@@ -137,7 +148,6 @@ func processMessageForOpenAI(m *discordgo.MessageUpdate) model.OpenAIChatComplet
 					Role:    "assistant",
 					Content: m.Content,
 				},
-				FinishReason: "stop",
 			},
 		},
 		Usage: model.OpenAIUsage{
