@@ -5,6 +5,9 @@
 _coze+discord 代理服务—通过接口调用被`coze`托管的`discord-bot`_
 
 _觉得有点意思的话 别忘了点个🌟_
+
+🐞<a href="https://t.me/+LGKwlC_xa-E5ZDk9" style="font-size: 15px;">COZE-DISCORD-PROXY交流群</a>
+
 </div>
 
 ## 功能
@@ -85,9 +88,15 @@ deanxv/code-discord-proxy
 4. `PROXY_SECRET`:`123456` [可选]请求头校验的值（前后端统一）,配置此参数后，每次发起请求时请求头加上`proxy-secret`
    参数，即`header`中添加 `proxy-secret：123456`
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=deanxv/coze-discord-proxy&type=Date)](https://star-history.com/#deanxv/coze-discord-proxy&Date)
+
 ## 其他
 
 Coze 官网 : https://www.coze.com
 
 Discord 开发地址 : https://discord.com/developers/applications
+
+
 
