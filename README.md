@@ -54,13 +54,13 @@ docker-compose pull && docker-compose up -d
 version: '3.4'
 
 services:
-  code-discord-proxy:
-    container_name: code-discord-proxy
+  coze-discord-proxy:
+    container_name: coze-discord-proxy
     restart: always
     ports:
       - "7077:7077"
     volumes:
-      - ./data/code-discord-proxy:/data
+      - ./data/coze-discord-proxy:/data
     environment:
       - BOT_TOKEN=MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w  # 必须修改为我们主动发送消息的Bot-Token
       - GUILD_ID=119xxxxxxxx796  # 必须修改为两个机器人所在的服务器ID
@@ -73,7 +73,7 @@ services:
 ### 基于 Docker 进行部署
 
 ```shell
-docker run --name code-discord-proxy -d --restart always \
+docker run --name coze-discord-proxy -d --restart always \
 -p 7077:7077 \
 -e BOT_TOKEN="MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w" \
 -e GUILD_ID="119xxxxxxxx796" \
@@ -81,7 +81,7 @@ docker run --name code-discord-proxy -d --restart always \
 -e PROXY_SECRET="123456" \
 -e CHANNEL_ID="119xxxxxx24" \
 -e TZ=Asia/Shanghai \
-deanxv/code-discord-proxy
+deanxv/coze-discord-proxy
 ```
 
 其中，`BOT_TOKEN`,`GUILD_ID`,`COZE_BOT_ID`,`PROXY_SECRET`,`CHANNEL_ID`修改为自己的。

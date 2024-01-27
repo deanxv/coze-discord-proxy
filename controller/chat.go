@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"coze-discord-proxy/common"
 	"coze-discord-proxy/discord"
 	"coze-discord-proxy/model"
 	"encoding/json"
@@ -132,13 +133,17 @@ func ChatForOpenAI(c *gin.Context) {
 			select {
 			case reply := <-replyChan:
 				newContent := strings.Replace(reply.Choices[0].Message.Content, strLen, "", 1)
+				if newContent == "" {
+					return true
+				}
 				reply.Choices[0].Delta.Content = newContent
 				strLen += newContent
 				reply.Object = "chat.completion.chunk"
-				c.SSEvent("", reply)
+				bytes, _ := common.Obj2Bytes(reply)
+				c.SSEvent("", " "+string(bytes))
 				return true // 继续保持流式连接
 			case <-stopChan:
-				c.SSEvent("", "[DONE]")
+				c.SSEvent("", " [DONE]")
 				return false // 关闭流式连接
 			}
 		})

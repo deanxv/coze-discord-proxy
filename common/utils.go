@@ -3,6 +3,7 @@ package common
 import (
 	"fmt"
 	"github.com/google/uuid"
+	jsoniter "github.com/json-iterator/go"
 	"html/template"
 	"log"
 	"math/rand"
@@ -160,4 +161,15 @@ func GetTimestamp() int64 {
 func GetTimeString() string {
 	now := time.Now()
 	return fmt.Sprintf("%s%d", now.Format("20060102150405"), now.UnixNano()%1e9)
+}
+
+func Obj2Bytes(obj interface{}) ([]byte, error) {
+	// 创建一个jsonIter的Encoder
+	configCompatibleWithStandardLibrary := jsoniter.ConfigCompatibleWithStandardLibrary
+	// 将结构体转换为JSON文本并保持顺序
+	bytes, err := configCompatibleWithStandardLibrary.Marshal(obj)
+	if err != nil {
+		return nil, err
+	}
+	return bytes, nil
 }

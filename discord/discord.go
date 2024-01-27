@@ -140,7 +140,7 @@ func processMessageForOpenAI(m *discordgo.MessageUpdate) model.OpenAIChatComplet
 		ID:      m.ID,
 		Object:  "chat.completion",
 		Created: time.Now().Unix(),
-		Model:   "COZE",
+		Model:   "gpt-3.5-turbo",
 		Choices: []model.OpenAIChoice{
 			{
 				Index: 0,

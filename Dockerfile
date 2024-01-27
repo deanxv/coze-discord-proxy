@@ -16,7 +16,7 @@ RUN go mod download
 
 # 复制整个项目并构建可执行文件
 COPY . .
-RUN go build -o /code-discord-proxy
+RUN go build -o /coze-discord-proxy
 
 # 使用 Alpine 镜像作为最终镜像
 FROM alpine
@@ -25,11 +25,11 @@ FROM alpine
 RUN apk --no-cache add ca-certificates tzdata
 
 # 从构建阶段复制可执行文件
-COPY --from=builder /code-discord-proxy .
+COPY --from=builder /coze-discord-proxy .
 
 # 暴露端口
 EXPOSE 7077
 # 工作目录
 WORKDIR /data
 # 设置入口命令
-ENTRYPOINT ["/code-discord-proxy"]
+ENTRYPOINT ["/coze-discord-proxy"]

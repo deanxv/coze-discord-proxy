@@ -1,7 +1,7 @@
 // @title COZE-DISCORD-PROXY
 // @version 1.0.0
 // @description COZE-DISCORD-PROXY 代理服务
-// @BasePath /api
+// @BasePath
 package main
 
 import (
