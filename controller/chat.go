@@ -38,7 +38,7 @@ func Chat(c *gin.Context) {
 		})
 	}
 
-	replyChan := make(chan string)
+	replyChan := make(chan model.ReplyResp)
 	discord.RepliesChans[sentMsg.ID] = replyChan
 	defer delete(discord.RepliesChans, sentMsg.ID)
 
@@ -50,7 +50,13 @@ func Chat(c *gin.Context) {
 		c.Stream(func(w io.Writer) bool {
 			select {
 			case reply := <-replyChan:
-				c.SSEvent("message", reply)
+				urls := ""
+				if len(reply.EmbedUrls) > 0 {
+					for _, url := range reply.EmbedUrls {
+						urls += "\n" + url
+					}
+				}
+				c.SSEvent("message", reply.Content+urls)
 				return true // 继续保持流式连接
 			case <-stopChan:
 				return false // 关闭流式连接
@@ -61,7 +67,8 @@ func Chat(c *gin.Context) {
 		for {
 			select {
 			case reply := <-replyChan:
-				replyResp.Content = reply
+				replyResp.Content = reply.Content
+				replyResp.EmbedUrls = reply.EmbedUrls
 			case <-stopChan:
 				c.JSON(http.StatusOK, gin.H{
 					"success": true,

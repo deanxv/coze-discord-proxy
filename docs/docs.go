@@ -155,6 +155,12 @@ const docTemplate = `{
             "properties": {
                 "content": {
                     "type": "string"
+                },
+                "embedUrls": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         }

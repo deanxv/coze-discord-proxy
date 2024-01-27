@@ -3,6 +3,7 @@ package discord
 import (
 	"context"
 	"coze-discord-proxy/common"
+	"coze-discord-proxy/model"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"os"
@@ -13,7 +14,7 @@ import (
 var cozeBotId = os.Getenv("COZE_BOT_ID")
 var GuildId = os.Getenv("GUILD_ID")
 
-var RepliesChans = make(map[string]chan string)
+var RepliesChans = make(map[string]chan model.ReplyResp)
 var ReplyStopChans = make(map[string]chan string)
 var Session *discordgo.Session
 
@@ -50,25 +51,62 @@ func StartBot(ctx context.Context, token string) {
 	<-sc
 }
 
+// messageUpdate handles the updated messages in Discord.
 func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
-	if m.Author.ID == s.State.User.ID {
+	// 提前检查参考消息是否为 nil
+	if m.ReferencedMessage == nil {
 		return
 	}
 
-	// 检查消息是否是对我们的回复
+	// 尝试获取 stopChan
+	stopChan, exists := ReplyStopChans[m.ReferencedMessage.ID]
+	if !exists {
+		fmt.Println("不存在的 stopChan")
+		return
+	}
+
+	// 如果作者为 nil 或消息来自 bot 本身，则发送停止信号
+	if m.Author == nil || m.Author.ID == s.State.User.ID {
+		stopChan <- m.ReferencedMessage.ID
+		fmt.Println("作者为 nil 或消息来自 bot 本身")
+		return
+	}
+
+	// 检查消息是否是对 bot 的回复
 	for _, mention := range m.Mentions {
 		if mention.ID == s.State.User.ID {
-			if replyChan, exists := RepliesChans[m.ReferencedMessage.ID]; exists {
-				replyChan <- m.Content
-				if len(m.Message.Components) > 0 {
-					stopChan := ReplyStopChans[m.ReferencedMessage.ID]
-					stopChan <- m.ReferencedMessage.ID
-				}
+			replyChan, exists := RepliesChans[m.ReferencedMessage.ID]
+			if !exists {
+				fmt.Println("不存在的 replyChan")
+				return
 			}
-			break
+
+			reply := processMessage(m)
+			replyChan <- reply
+
+			// 如果消息包含组件或嵌入，则发送停止信号
+			if len(m.Embeds) > 0 || len(m.Message.Components) > 0 {
+				stopChan <- m.ReferencedMessage.ID
+			}
+
+			return
+		}
+	}
+}
+
+// processMessage 提取并处理消息内容及其嵌入元素
+func processMessage(m *discordgo.MessageUpdate) model.ReplyResp {
+	var embedUrls []string
+	for _, embed := range m.Embeds {
+		if embed.Image != nil {
+			embedUrls = append(embedUrls, embed.Image.URL)
 		}
 	}
 
+	return model.ReplyResp{
+		Content:   m.Content,
+		EmbedUrls: embedUrls,
+	}
 }
 
 func SendMessage(channelID, message string) (*discordgo.Message, error) {
