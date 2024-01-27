@@ -114,6 +114,40 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/thread/create": {
+            "post": {
+                "description": "创建线程",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "thread"
+                ],
+                "summary": "创建线程",
+                "parameters": [
+                    {
+                        "description": "threadModel",
+                        "name": "threadModel",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ThreadReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/model.ThreadResp"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -121,6 +155,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "name": {
+                    "type": "string"
+                },
+                "parentId": {
                     "type": "string"
                 }
             }
@@ -139,7 +176,7 @@ const docTemplate = `{
         "model.ChatReq": {
             "type": "object",
             "properties": {
-                "channelID": {
+                "channelId": {
                     "type": "string"
                 },
                 "content": {
@@ -161,6 +198,31 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "model.ThreadReq": {
+            "type": "object",
+            "properties": {
+                "archiveDuration": {
+                    "type": "number"
+                },
+                "channelId": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ThreadResp": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         }

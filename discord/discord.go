@@ -138,3 +138,28 @@ func ChannelDel(channelId string) (string, error) {
 	}
 	return st.ID, nil
 }
+
+func ChannelCreateComplex(guildID, parentId, channelName string) (string, error) {
+	// 创建新的子频道
+	st, err := Session.GuildChannelCreateComplex(guildID, discordgo.GuildChannelCreateData{
+		Name:     channelName,
+		Type:     discordgo.ChannelTypeGuildText,
+		ParentID: parentId,
+	})
+	if err != nil {
+		common.LogError(context.Background(), fmt.Sprintf("创建子频道时异常 %s", err.Error()))
+		return "", err
+	}
+	return st.ID, nil
+}
+
+func ThreadStart(channelId, threadName string, archiveDuration int) (string, error) {
+	// 创建新的线程
+	th, err := Session.ThreadStart(channelId, threadName, discordgo.ChannelTypeGuildText, archiveDuration)
+
+	if err != nil {
+		common.LogError(context.Background(), fmt.Sprintf("创建线程时异常 %s", err.Error()))
+		return "", err
+	}
+	return th.ID, nil
+}

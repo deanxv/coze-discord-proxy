@@ -6,5 +6,6 @@ type ChannelResp struct {
 }
 
 type ChannelReq struct {
-	Name string `json:"name" swaggertype:"string" description:"频道名称"`
+	ParentId string `json:"parentId" swaggertype:"string" description:"父频道Id,为空时默认为创建父频道"`
+	Name     string `json:"name" swaggertype:"string" description:"频道名称"`
 }

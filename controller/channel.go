@@ -29,7 +29,14 @@ func ChannelCreate(c *gin.Context) {
 		return
 	}
 
-	channelId, err := discord.ChannelCreate(discord.GuildId, channelModel.Name)
+	var channelId string
+
+	if channelModel.ParentId == "" {
+		channelId, err = discord.ChannelCreate(discord.GuildId, channelModel.Name)
+	} else {
+		channelId, err = discord.ChannelCreateComplex(discord.GuildId, channelModel.ParentId, channelModel.Name)
+	}
+
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,

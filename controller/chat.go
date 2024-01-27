@@ -30,12 +30,13 @@ func Chat(c *gin.Context) {
 		return
 	}
 
-	sentMsg, err := discord.SendMessage(chatModel.ChannelID, chatModel.Content)
+	sentMsg, err := discord.SendMessage(chatModel.ChannelId, chatModel.Content)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"success": true,
 			"message": "discord发送消息异常",
 		})
+		return
 	}
 
 	replyChan := make(chan model.ReplyResp)
@@ -78,5 +79,4 @@ func Chat(c *gin.Context) {
 			}
 		}
 	}
-
 }

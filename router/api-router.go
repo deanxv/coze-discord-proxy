@@ -22,6 +22,10 @@ func SetApiRouter(router *gin.Engine) {
 		channelRoute := apiRouter.Group("/channel")
 		channelRoute.POST("/create", controller.ChannelCreate)
 		channelRoute.GET("/del/:id", controller.ChannelDel)
+
+		threadRoute := apiRouter.Group("/thread")
+		threadRoute.POST("/create", controller.ThreadCreate)
+		//threadRoute.GET("/del/:id", controller.ChannelDel)
 	}
 
 }

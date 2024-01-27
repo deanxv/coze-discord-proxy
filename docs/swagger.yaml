@@ -4,6 +4,8 @@ definitions:
     properties:
       name:
         type: string
+      parentId:
+        type: string
     type: object
   model.ChannelResp:
     properties:
@@ -14,7 +16,7 @@ definitions:
     type: object
   model.ChatReq:
     properties:
-      channelID:
+      channelId:
         type: string
       content:
         type: string
@@ -30,8 +32,24 @@ definitions:
           type: string
         type: array
     type: object
+  model.ThreadReq:
+    properties:
+      archiveDuration:
+        type: number
+      channelId:
+        type: string
+      name:
+        type: string
+    type: object
+  model.ThreadResp:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
 info:
-  contact: { }
+  contact: {}
   description: COZE-DISCORD-PROXY 代理服务
   title: COZE-DISCORD-PROXY
   version: 1.0.0
@@ -39,17 +57,17 @@ paths:
   /channel/create:
     post:
       consumes:
-        - application/json
+      - application/json
       description: 创建频道
       parameters:
-        - description: channelModel
-          in: body
-          name: channelModel
-          required: true
-          schema:
-            $ref: '#/definitions/model.ChannelReq'
+      - description: channelModel
+        in: body
+        name: channelModel
+        required: true
+        schema:
+          $ref: '#/definitions/model.ChannelReq'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: Successful response
@@ -57,20 +75,20 @@ paths:
             $ref: '#/definitions/model.ChannelResp'
       summary: 创建频道
       tags:
-        - channel
+      - channel
   /channel/del/{id}:
     get:
       consumes:
-        - application/json
+      - application/json
       description: 删除频道
       parameters:
-        - description: id
-          in: path
-          name: id
-          required: true
-          type: string
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: Successful response
@@ -78,21 +96,21 @@ paths:
             type: string
       summary: 删除频道
       tags:
-        - channel
+      - channel
   /chat:
     post:
       consumes:
-        - application/json
+      - application/json
       description: 发送消息
       parameters:
-        - description: chatModel
-          in: body
-          name: chatModel
-          required: true
-          schema:
-            $ref: '#/definitions/model.ChatReq'
+      - description: chatModel
+        in: body
+        name: chatModel
+        required: true
+        schema:
+          $ref: '#/definitions/model.ChatReq'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: Successful response
@@ -100,5 +118,27 @@ paths:
             $ref: '#/definitions/model.ReplyResp'
       summary: 发送消息
       tags:
-        - chat
+      - chat
+  /thread/create:
+    post:
+      consumes:
+      - application/json
+      description: 创建线程
+      parameters:
+      - description: threadModel
+        in: body
+        name: threadModel
+        required: true
+        schema:
+          $ref: '#/definitions/model.ThreadReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/model.ThreadResp'
+      summary: 创建线程
+      tags:
+      - thread
 swagger: "2.0"

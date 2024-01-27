@@ -1,161 +1,223 @@
 {
-  "swagger": "2.0",
-  "info": {
-    "description": "COZE-DISCORD-PROXY 代理服务",
-    "title": "COZE-DISCORD-PROXY",
-    "contact": {},
-    "version": "1.0.0"
-  },
-  "basePath": "/api",
-  "paths": {
-    "/channel/create": {
-      "post": {
-        "description": "创建频道",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "channel"
-        ],
-        "summary": "创建频道",
-        "parameters": [
-          {
-            "description": "channelModel",
-            "name": "channelModel",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/model.ChannelReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/model.ChannelResp"
-            }
-          }
-        }
-      }
+    "swagger": "2.0",
+    "info": {
+        "description": "COZE-DISCORD-PROXY 代理服务",
+        "title": "COZE-DISCORD-PROXY",
+        "contact": {},
+        "version": "1.0.0"
     },
-    "/channel/del/{id}": {
-      "get": {
-        "description": "删除频道",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "channel"
-        ],
-        "summary": "删除频道",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "id",
-            "name": "id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "type": "string"
+    "basePath": "/api",
+    "paths": {
+        "/channel/create": {
+            "post": {
+                "description": "创建频道",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "channel"
+                ],
+                "summary": "创建频道",
+                "parameters": [
+                    {
+                        "description": "channelModel",
+                        "name": "channelModel",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ChannelReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/model.ChannelResp"
+                        }
+                    }
+                }
             }
-          }
+        },
+        "/channel/del/{id}": {
+            "get": {
+                "description": "删除频道",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "channel"
+                ],
+                "summary": "删除频道",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/chat": {
+            "post": {
+                "description": "发送消息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chat"
+                ],
+                "summary": "发送消息",
+                "parameters": [
+                    {
+                        "description": "chatModel",
+                        "name": "chatModel",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ChatReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/model.ReplyResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/thread/create": {
+            "post": {
+                "description": "创建线程",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "thread"
+                ],
+                "summary": "创建线程",
+                "parameters": [
+                    {
+                        "description": "threadModel",
+                        "name": "threadModel",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ThreadReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/model.ThreadResp"
+                        }
+                    }
+                }
+            }
         }
-      }
     },
-    "/chat": {
-      "post": {
-        "description": "发送消息",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "chat"
-        ],
-        "summary": "发送消息",
-        "parameters": [
-          {
-            "description": "chatModel",
-            "name": "chatModel",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/model.ChatReq"
+    "definitions": {
+        "model.ChannelReq": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "parentId": {
+                    "type": "string"
+                }
             }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/model.ReplyResp"
+        },
+        "model.ChannelResp": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
             }
-          }
+        },
+        "model.ChatReq": {
+            "type": "object",
+            "properties": {
+                "channelId": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "stream": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "model.ReplyResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "embedUrls": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "model.ThreadReq": {
+            "type": "object",
+            "properties": {
+                "archiveDuration": {
+                    "type": "number"
+                },
+                "channelId": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ThreadResp": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
         }
-      }
     }
-  },
-  "definitions": {
-    "model.ChannelReq": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "model.ChannelResp": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "model.ChatReq": {
-      "type": "object",
-      "properties": {
-        "channelID": {
-          "type": "string"
-        },
-        "content": {
-          "type": "string"
-        },
-        "stream": {
-          "type": "boolean"
-        }
-      }
-    },
-    "model.ReplyResp": {
-      "type": "object",
-      "properties": {
-        "content": {
-          "type": "string"
-        },
-        "embedUrls": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    }
-  }
 }
