@@ -12,6 +12,12 @@ _觉得有点意思的话 别忘了点个🌟_
 
 ## 功能
 
+- [x] 对话支持流式返回
+- [x] 支持文生图（需coze配置DALL·E3插件）返回图片url
+- [x] 支持创建 `discord`频道/子频道/线程
+- [x] 支持对话指定 `discord`频道/子频道/线程 实现对话隔离
+- [ ] 新增和openai对齐的接口,用于集成NextChat、one-api等
+
 ### 接口文档:
 
 `http://<ip>:<port>/swagger/index.html`
@@ -88,7 +94,7 @@ deanxv/code-discord-proxy
 4. `PROXY_SECRET`:`123456` [可选]请求头校验的值（前后端统一）,配置此参数后，每次发起请求时请求头加上`proxy-secret`
    参数，即`header`中添加 `proxy-secret：123456`
 
-## Star History
+## ⭐ Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=deanxv/coze-discord-proxy&type=Date)](https://star-history.com/#deanxv/coze-discord-proxy&Date)
 
