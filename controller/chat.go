@@ -19,7 +19,7 @@ import (
 // @Produce json
 // @Param chatModel body model.ChatReq true "chatModel"
 // @Success 200 {object} model.ReplyResp "Successful response"
-// @Router /chat/ [post]
+// @Router /api/chat [post]
 func Chat(c *gin.Context) {
 
 	var chatModel model.ChatReq
@@ -91,7 +91,7 @@ func Chat(c *gin.Context) {
 // @Produce json
 // @Param request body model.OpenAIChatCompletionRequest true "request"
 // @Success 200 {object} model.OpenAIChatCompletionResponse "Successful response"
-// @Router /v1/chat/completions/ [post]
+// @Router /v1/chat/completions [post]
 func ChatForOpenAI(c *gin.Context) {
 
 	var request model.OpenAIChatCompletionRequest

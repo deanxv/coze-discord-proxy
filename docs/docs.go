@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/channel/create": {
+        "/api/channel/create": {
             "post": {
                 "description": "创建频道",
                 "consumes": [
@@ -49,7 +49,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/channel/del/{id}": {
+        "/api/channel/del/{id}": {
             "get": {
                 "description": "删除频道",
                 "consumes": [
@@ -81,7 +81,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/chat/": {
+        "/api/chat": {
             "post": {
                 "description": "发送消息",
                 "consumes": [
@@ -115,7 +115,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/thread/create": {
+        "/api/thread/create": {
             "post": {
                 "description": "创建线程",
                 "consumes": [
@@ -149,7 +149,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/chat/completions/": {
+        "/v1/chat/completions": {
             "post": {
                 "description": "发送消息-openai",
                 "consumes": [
@@ -278,6 +278,9 @@ const docTemplate = `{
         "model.OpenAIChoice": {
             "type": "object",
             "properties": {
+                "delta": {
+                    "$ref": "#/definitions/model.OpenAIDelta"
+                },
                 "finish_reason": {
                     "type": "string"
                 },
@@ -289,6 +292,14 @@ const docTemplate = `{
                 },
                 "message": {
                     "$ref": "#/definitions/model.OpenAIMessage"
+                }
+            }
+        },
+        "model.OpenAIDelta": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
                 }
             }
         },
@@ -363,7 +374,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0.0",
 	Host:             "",
-	BasePath:         "/api",
+	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "COZE-DISCORD-PROXY",
 	Description:      "COZE-DISCORD-PROXY 代理服务",

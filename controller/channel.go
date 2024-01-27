@@ -16,7 +16,7 @@ import (
 // @Produce json
 // @Param channelModel body model.ChannelReq true "channelModel"
 // @Success 200 {object} model.ChannelResp "Successful response"
-// @Router /channel/create [post]
+// @Router /api/channel/create [post]
 func ChannelCreate(c *gin.Context) {
 
 	var channelModel model.ChannelReq
@@ -62,7 +62,7 @@ func ChannelCreate(c *gin.Context) {
 // @Produce json
 // @Param id path string true "id"
 // @Success 200 {object} string "Successful response"
-// @Router /channel/del/{id} [get]
+// @Router /api/channel/del/{id} [get]
 func ChannelDel(c *gin.Context) {
 	channelId := c.Param("id")
 

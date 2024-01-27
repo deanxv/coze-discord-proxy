@@ -16,7 +16,7 @@ import (
 // @Produce json
 // @Param threadModel body model.ThreadReq true "threadModel"
 // @Success 200 {object} model.ThreadResp "Successful response"
-// @Router /thread/create [post]
+// @Router /api/thread/create [post]
 func ThreadCreate(c *gin.Context) {
 	var threadModel model.ThreadReq
 	err := json.NewDecoder(c.Request.Body).Decode(&threadModel)
