@@ -16,7 +16,7 @@ _觉得有点意思的话 别忘了点个🌟_
 - [x] 支持文生图（需coze配置DALL·E3插件）返回图片url
 - [x] 支持创建 `discord`频道/子频道/线程
 - [x] 支持对话指定 `discord`频道/子频道/线程 实现对话隔离
-- [ ] 新增和openai对齐的接口,用于集成NextChat、one-api等
+- [x] 支持和openai对齐的接口,用于集成NextChat、one-api等
 
 ### 接口文档:
 
@@ -65,7 +65,8 @@ services:
       - BOT_TOKEN=MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w  # 必须修改为我们主动发送消息的Bot-Token
       - GUILD_ID=119xxxxxxxx796  # 必须修改为两个机器人所在的服务器ID
       - COZE_BOT_ID=119xxxxxxxx7  # 必须修改为由coze托管的机器人ID
-      - PROXY_SECRET=123456  # 修改此行为请求头校验的值（前后端统一）
+      - PROXY_SECRET=123456  # [可选]修改此行为请求头校验的值（前后端统一）
+      - CHANNEL_ID=119xxxxxx24  # [可选]默认频道-在使用与openai对齐的接口时(/v1/chat/completions) 消息会默认发送到此频道
       - TZ=Asia/Shanghai
 ```
 
@@ -78,21 +79,23 @@ docker run --name code-discord-proxy -d --restart always \
 -e GUILD_ID="119xxxxxxxx796" \
 -e COZE_BOT_ID="119xxxxxxxx7" \
 -e PROXY_SECRET="123456" \
--e CHANNEL_ID="1199623573082484756" \
+-e CHANNEL_ID="119xxxxxx24" \
+-e TZ=Asia/Shanghai \
 deanxv/code-discord-proxy
 ```
 
-其中，`BOT_TOKEN`,`GUILD_ID`,`COZE_BOT_ID`,`PROXY_SECRET`修改为自己的。
+其中，`BOT_TOKEN`,`GUILD_ID`,`COZE_BOT_ID`,`PROXY_SECRET`,`CHANNEL_ID`修改为自己的。
 
 ## 配置
 
 ### 环境变量
 
-1. `BOT_TOKEN：MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w`  主动发送消息的Bot-Token
-2. `GUILD_ID：119xxxxxxxx796`  两个机器人所在的服务器ID
-3. `COZE_BOT_ID：119xxxxxxxx7` 由coze托管的机器人ID
-4. `PROXY_SECRET`:`123456` [可选]请求头校验的值（前后端统一）,配置此参数后，每次发起请求时请求头加上`proxy-secret`
+1. `BOT_TOKEN:MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w`  主动发送消息的Bot-Token
+2. `GUILD_ID:119xxxxxxxx796`  两个机器人所在的服务器ID
+3. `COZE_BOT_ID:119xxxxxxxx7` 由coze托管的机器人ID
+4. `PROXY_SECRET:123456` [可选]请求头校验的值（前后端统一）,配置此参数后，每次发起请求时请求头加上`proxy-secret`
    参数，即`header`中添加 `proxy-secret：123456`
+5. `CHANNEL_ID:119xxxxxx24`  # [可选]默认频道-在使用与openai对齐的接口时(/v1/chat/completions) 消息会默认发送到此频道
 
 ## ⭐ Star History
 
