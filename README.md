@@ -40,6 +40,10 @@ _觉得有点意思的话 别忘了点个🌟_
 7. 配置环境变量，并启动本项目。
 8. 访问接口地址即可开始调试。
 
+## 如何集成one-api
+
+
+
 ## 部署
 
 ### 基于 Docker-Compose(All In One) 进行部署
@@ -55,6 +59,7 @@ version: '3.4'
 
 services:
   coze-discord-proxy:
+    image: deanxv/coze-discord-proxy:latest
     container_name: coze-discord-proxy
     restart: always
     ports:
