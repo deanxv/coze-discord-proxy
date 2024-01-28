@@ -109,7 +109,9 @@ func ChatForOpenAI(c *gin.Context) {
 
 	content := "Hi！"
 	messages := request.Messages
-	for _, message := range messages {
+
+	for i := len(messages) - 1; i >= 0; i-- {
+		message := messages[i]
 		if message.Role == "user" {
 			content = message.Content
 			break
