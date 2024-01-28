@@ -107,7 +107,16 @@ func ChatForOpenAI(c *gin.Context) {
 		return
 	}
 
-	sentMsg, err := discord.SendMessage(discord.ChannelId, request.Messages[0].Content)
+	content := "Hi！"
+	messages := request.Messages
+	for _, message := range messages {
+		if message.Role == "user" {
+			content = message.Content
+			break
+		}
+	}
+
+	sentMsg, err := discord.SendMessage(discord.ChannelId, content)
 	if err != nil {
 		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 			OpenAIError: model.OpenAIError{
