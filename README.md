@@ -42,7 +42,7 @@ _觉得有点意思的话 别忘了点个🌟_
 
 ## 如何集成one-api
 
-填 `BaseURL` 及 密钥(`proxy-secret`)，其它的随便填随便选。
+填 `BaseURL` 及 密钥(`PROXY_SECRET`)，其它的随便填随便选。
 
 <span><img src="docs/img3.png" width="800"/></span>
 
@@ -96,6 +96,44 @@ deanxv/coze-discord-proxy
 ```
 
 其中，`BOT_TOKEN`,`GUILD_ID`,`COZE_BOT_ID`,`PROXY_SECRET`,`CHANNEL_ID`修改为自己的。
+
+### 部署到第三方平台
+
+<details>
+<summary><strong>部署到 Zeabur</strong></summary>
+<div>
+
+> Zeabur 的服务器在国外，自动解决了网络的问题，同时免费的额度也足够个人使用
+
+点击一键部署:
+
+[![Deploy on Zeabur](https://zeabur.com/button.svg)](https://zeabur.com/templates/GMU8C8?referralCode=deanxv)
+
+**一键部署后 `BOT_TOKEN`,`GUILD_ID`,`COZE_BOT_ID`,`PROXY_SECRET`,`CHANNEL_ID`变量也需要替换！**
+
+或手动部署:
+
+1. 首先 **fork** 一份代码。
+2. 进入 [Zeabur](https://zeabur.com?referralCode=deanxv)，使用github登录，进入控制台。
+3. 在 Service -> Add Service，选择 Git（第一次使用需要先授权），选择你 fork 的仓库。
+4. Deploy 会自动开始，先取消。
+5. 添加环境变量
+
+   `BOT_TOKEN:MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w`  主动发送消息的Bot-Token
+
+   `GUILD_ID:119xxxxxxxx796`  两个机器人所在的服务器ID
+
+   `COZE_BOT_ID:119xxxxxxxx7` 由coze托管的机器人ID
+
+   `PROXY_SECRET:123456` [可选]请求头校验的值（前后端统一）,配置此参数后，每次发起请求时请求头加上`proxy-secret`参数，即`header`中添加 `proxy-secret：123456`
+   
+   `CHANNEL_ID:119xxxxxx24`  # [可选]默认频道-在使用与openai对齐的接口时(/v1/chat/completions) 消息会默认发送到此频道
+
+   保存。
+6. 选择 Redeploy。
+
+</div>
+</details>
 
 ## 配置
 
