@@ -177,6 +177,10 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/model.ChatReq'
+        - description: proxy-secret
+          in: header
+          name: proxy-secret
+          type: string
       produces:
         - application/json
       responses:
@@ -221,6 +225,10 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/model.OpenAIChatCompletionRequest'
+        - description: Authorization
+          in: header
+          name: Authorization
+          type: string
       produces:
         - application/json
       responses:

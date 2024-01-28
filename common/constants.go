@@ -6,6 +6,8 @@ import (
 )
 
 var ProxySecret = os.Getenv("PROXY_SECRET")
+var RequestOutTime = os.Getenv("REQUEST_OUT_TIME")
+var StreamRequestOutTime = os.Getenv("STREAM_REQUEST_OUT_TIME")
 
 var DebugEnabled = os.Getenv("DEBUG") == "true"
 
@@ -34,3 +36,5 @@ var (
 )
 
 var RateLimitKeyExpirationDuration = 20 * time.Minute
+
+var RequestOutTimeDuration = 5 * time.Minute

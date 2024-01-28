@@ -103,6 +103,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.ChatReq"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "proxy-secret",
+                        "name": "proxy-secret",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -171,6 +177,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.OpenAIChatCompletionRequest"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header"
                     }
                 ],
                 "responses": {

@@ -77,11 +77,11 @@ services:
     volumes:
       - ./data/coze-discord-proxy:/data
     environment:
-      - BOT_TOKEN=MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w  # 必须修改为我们主动发送消息的Bot-Token
-      - GUILD_ID=119xxxxxxxx796  # 必须修改为两个机器人所在的服务器ID
-      - COZE_BOT_ID=119xxxxxxxx7  # 必须修改为由coze托管的机器人ID
-      - PROXY_SECRET=123456  # [可选]修改此行为请求头校验的值（前后端统一）
-      - CHANNEL_ID=119xxxxxx24  # [可选]默认频道-在使用与openai对齐的接口时(/v1/chat/completions) 消息会默认发送到此频道
+      - BOT_TOKEN=MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w  
+      - GUILD_ID=119xxxxxxxx796  
+      - COZE_BOT_ID=119xxxxxxxx7  
+      - PROXY_SECRET=123456  # [可选]
+      - CHANNEL_ID=119xxxxxx24  # [可选]
       - TZ=Asia/Shanghai
 ```
 
@@ -146,10 +146,12 @@ deanxv/coze-discord-proxy
 
 1. `BOT_TOKEN:MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w`  主动发送消息的Bot-Token
 2. `GUILD_ID:119xxxxxxxx796`  两个机器人所在的服务器ID
-3. `COZE_BOT_ID:119xxxxxxxx7` 由coze托管的机器人ID
-4. `PROXY_SECRET:123456` [可选]请求头校验的值（前后端统一）,配置此参数后，每次发起请求时请求头加上`proxy-secret`
+3. `COZE_BOT_ID:119xxxxxxxx7`  由coze托管的机器人ID
+4. `PROXY_SECRET:123456`  [可选]请求头校验的值（前后端统一）,配置此参数后，每次发起请求时请求头加上`proxy-secret`
    参数，即`header`中添加 `proxy-secret：123456`
-5. `CHANNEL_ID:119xxxxxx24`  # [可选]默认频道-在使用与openai对齐的接口时(/v1/chat/completions) 消息会默认发送到此频道
+5. `CHANNEL_ID:119xxxxxx24`  [可选]默认频道-在使用与openai对齐的接口时(/v1/chat/completions) 为[必填]消息会默认发送到此频道
+6. `REQUEST_OUT_TIME:60`  [可选]对话接口非流响应下的请求超时时间
+7. `STREAM_REQUEST_OUT_TIME:60`  [可选]对话接口流响应下的每次流返回超时时间
 
 ## ⭐ Star History
 
