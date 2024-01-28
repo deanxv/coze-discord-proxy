@@ -8,6 +8,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 )
@@ -126,10 +127,13 @@ func processMessage(m *discordgo.MessageUpdate) model.ReplyResp {
 }
 
 func processMessageForOpenAI(m *discordgo.MessageUpdate) model.OpenAIChatCompletionResponse {
-	var embedUrls []string
-	for _, embed := range m.Embeds {
-		if embed.Image != nil {
-			embedUrls = append(embedUrls, embed.Image.URL)
+
+	if len(m.Embeds) != 0 {
+		if !strings.Contains(m.Content, m.Embeds[len(m.Embeds)-1].Image.URL) {
+			if m.Content != "" {
+				m.Content += "\n"
+			}
+			m.Content += fmt.Sprintf("![Image](%s)", m.Embeds[len(m.Embeds)-1].Image.URL)
 		}
 	}
 

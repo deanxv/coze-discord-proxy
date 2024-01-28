@@ -5,6 +5,7 @@ import (
 	"coze-discord-proxy/discord"
 	"coze-discord-proxy/model"
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
@@ -56,7 +57,7 @@ func Chat(c *gin.Context) {
 				urls := ""
 				if len(reply.EmbedUrls) > 0 {
 					for _, url := range reply.EmbedUrls {
-						urls += "\n" + url
+						urls += "\n" + fmt.Sprintf("![Image](%s)", url)
 					}
 				}
 				c.SSEvent("message", reply.Content+urls)
@@ -144,7 +145,7 @@ func ChatForOpenAI(c *gin.Context) {
 			select {
 			case reply := <-replyChan:
 				newContent := strings.Replace(reply.Choices[0].Message.Content, strLen, "", 1)
-				if newContent == "" {
+				if newContent == "" && strings.HasSuffix(newContent, "[DONE]") {
 					return true
 				}
 				reply.Choices[0].Delta.Content = newContent

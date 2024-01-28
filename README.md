@@ -13,10 +13,10 @@ _觉得有点意思的话 别忘了点个🌟_
 ## 功能
 
 - [x] 对话支持流式返回
-- [x] 支持文生图（需coze配置DALL·E3插件）返回图片url
+- [x] 支持文生图(需coze配置DALL·E3插件)返回图片url
 - [x] 支持创建 `discord`频道/子频道/线程
 - [x] 支持对话指定 `discord`频道/子频道/线程 实现对话隔离
-- [x] 支持和openai对齐的接口(`v1/chat/completions`),可集成NextChat、one-api等
+- [x] 支持和openai对齐的接口(`v1/chat/completions`)(支持文生图),可集成NextChat、one-api等
 
 ### 接口文档:
 
