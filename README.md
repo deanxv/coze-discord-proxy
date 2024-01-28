@@ -13,10 +13,11 @@ _觉得有点意思的话 别忘了点个🌟_
 ## 功能
 
 - [x] 对话支持流式返回
-- [x] 支持文生图(需coze配置DALL·E3插件)返回图片url
+- [x] 支持文生图(需`coze`配置`DALL·E3`插件)返回图片url
+- [x] 支持图生文(需`coze`配置`GPT4V`插件)(发送的文本消息中携带图片url即可)
 - [x] 支持创建 `discord`频道/子频道/线程
 - [x] 支持对话指定 `discord`频道/子频道/线程 实现对话隔离
-- [x] 支持和openai对齐的接口(`v1/chat/completions`)(支持文生图),可集成NextChat、one-api等
+- [x] 支持和`openai`对齐的接口(`v1/chat/completions`)(支持文生图/图生文),可集成`NextChat`、`one-api`等
 
 ### 接口文档:
 
@@ -125,8 +126,9 @@ deanxv/coze-discord-proxy
 
    `COZE_BOT_ID:119xxxxxxxx7` 由coze托管的机器人ID
 
-   `PROXY_SECRET:123456` [可选]请求头校验的值（前后端统一）,配置此参数后，每次发起请求时请求头加上`proxy-secret`参数，即`header`中添加 `proxy-secret：123456`
-   
+   `PROXY_SECRET:123456` [可选]请求头校验的值（前后端统一）,配置此参数后，每次发起请求时请求头加上`proxy-secret`
+   参数，即`header`中添加 `proxy-secret：123456`
+
    `CHANNEL_ID:119xxxxxx24`  # [可选]默认频道-在使用与openai对齐的接口时(/v1/chat/completions) 消息会默认发送到此频道
 
    保存。
