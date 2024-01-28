@@ -10,6 +10,7 @@ import (
 )
 
 func SetApiRouter(router *gin.Engine) {
+	router.Use(middleware.CORS())
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
