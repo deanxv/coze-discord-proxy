@@ -17,7 +17,8 @@ _觉得有点意思的话 别忘了点个🌟_
 - [x] 支持图生文(需`coze`配置`GPT4V`插件)(发送的文本消息中携带图片url即可)
 - [x] 支持创建 `discord`频道/子频道/线程
 - [x] 支持对话指定 `discord`频道/子频道/线程 实现对话隔离
-- [x] 支持和`openai`对齐的接口(`v1/chat/completions`)(支持文生图/图生文),可集成`NextChat`、`one-api`等
+- [x] 支持和`openai`对齐的接口(`v1/chat/completions`)(支持文生图/图生文)
+- [x] 完美适配`NextChat`,`one-api`,`LobeChat`等
 
 ### 接口文档:
 
