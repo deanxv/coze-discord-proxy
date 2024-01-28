@@ -43,16 +43,18 @@ _觉得有点意思的话 别忘了点个🌟_
 
 ## 如何集成one-api
 
-填 `BaseURL` 及 密钥(`PROXY_SECRET`)，其它的随便填随便选。
+填 `BaseURL`(ip:端口/域名) 及 密钥(`PROXY_SECRET`)，其它的随便填随便选。
 
 <span><img src="docs/img3.png" width="800"/></span>
 
 ## 如何集成NextChat
 
-略
+填 `接口地址`(ip:端口/域名) 及 API-Key(`PROXY_SECRET`)，其它的随便填随便选。
+
+<span><img src="docs/img5.png" width="800"/></span>
 
 ## 部署
-
+填 `BaseURL` 及 密钥(`PROXY_SECRET`)，其它的随便填随便选。
 ### 基于 Docker-Compose(All In One) 进行部署
 
 ```shell
