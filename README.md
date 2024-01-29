@@ -152,6 +152,7 @@ deanxv/coze-discord-proxy
 5. `CHANNEL_ID:119xxxxxx24`  [可选]默认频道-在使用与openai对齐的接口时(/v1/chat/completions) 为[必填]消息会默认发送到此频道
 6. `REQUEST_OUT_TIME:60`  [可选]对话接口非流响应下的请求超时时间
 7. `STREAM_REQUEST_OUT_TIME:60`  [可选]对话接口流响应下的每次流返回超时时间
+8. `PROXY_URL`  [可选]代理 比如`socks5://127.0.0.1:10810`
 
 ## ⭐ Star History
 

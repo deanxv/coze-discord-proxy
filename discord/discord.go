@@ -6,6 +6,11 @@ import (
 	"coze-discord-proxy/model"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
+	"golang.org/x/net/proxy"
+	"log"
+	"net"
+	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
 	"strings"
@@ -16,6 +21,7 @@ import (
 var cozeBotId = os.Getenv("COZE_BOT_ID")
 var GuildId = os.Getenv("GUILD_ID")
 var ChannelId = os.Getenv("CHANNEL_ID")
+var ProxyUrl = os.Getenv("PROXY_URL")
 
 var RepliesChans = make(map[string]chan model.ReplyResp)
 var RepliesOpenAIChans = make(map[string]chan model.OpenAIChatCompletionResponse)
@@ -26,6 +32,15 @@ var Session *discordgo.Session
 func StartBot(ctx context.Context, token string) {
 	var err error
 	Session, err = discordgo.New("Bot " + token)
+
+	if ProxyUrl != "" {
+		client, err := NewProxyClient(ProxyUrl)
+		if err != nil {
+			common.FatalLog("error creating proxy client,", err)
+		}
+		Session.Client = client
+	}
+
 	if err != nil {
 		common.FatalLog("error creating Discord session,", err)
 		return
@@ -138,7 +153,7 @@ func processMessageForOpenAI(m *discordgo.MessageUpdate) model.OpenAIChatComplet
 				if m.Content != "" {
 					m.Content += "\n"
 				}
-				m.Content += fmt.Sprintf("![Image](%s)", embed.Image.URL)
+				m.Content += fmt.Sprintf("%s\n![Image](%s)", embed.Image.URL, embed.Image.URL)
 			}
 		}
 	}
@@ -224,4 +239,42 @@ func ThreadStart(channelId, threadName string, archiveDuration int) (string, err
 		return "", err
 	}
 	return th.ID, nil
+}
+
+func NewProxyClient(proxyUrl string) (*http.Client, error) {
+
+	proxyParse, err := url.Parse(proxyUrl)
+	if err != nil {
+		common.FatalLog("代理地址设置有误")
+	}
+
+	if strings.HasPrefix(proxyParse.Scheme, "http") {
+		httpTransport := &http.Transport{
+			Proxy: http.ProxyURL(proxyParse),
+		}
+		return &http.Client{
+			Transport: httpTransport,
+		}, nil
+	} else if strings.HasPrefix(proxyParse.Scheme, "sock") {
+		dialer, err := proxy.SOCKS5("tcp", proxyParse.Host, nil, proxy.Direct)
+		if err != nil {
+			log.Fatal("Error creating dialer, ", err)
+		}
+
+		dialContext := func(ctx context.Context, network, addr string) (net.Conn, error) {
+			return dialer.Dial(network, addr)
+		}
+
+		// 使用该拨号器创建一个 HTTP 客户端
+		httpClient := &http.Client{
+			Transport: &http.Transport{
+				DialContext: dialContext,
+			},
+		}
+
+		return httpClient, nil
+	} else {
+		return nil, fmt.Errorf("仅支持sock和http代理！")
+	}
+
 }
