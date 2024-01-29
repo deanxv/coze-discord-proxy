@@ -24,6 +24,8 @@ definitions:
     type: object
   model.OpenAIChatCompletionRequest:
     properties:
+      channelId:
+        type: string
       messages:
         items:
           $ref: '#/definitions/model.OpenAIChatMessage'
@@ -181,6 +183,10 @@ paths:
           in: header
           name: proxy-secret
           type: string
+        - description: out-time
+          in: header
+          name: out-time
+          type: string
       produces:
         - application/json
       responses:
@@ -228,6 +234,10 @@ paths:
         - description: Authorization
           in: header
           name: Authorization
+          type: string
+        - description: out-time
+          in: header
+          name: out-time
           type: string
       produces:
         - application/json

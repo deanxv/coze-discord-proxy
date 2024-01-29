@@ -15,6 +15,7 @@ var Version = "v1.0.0" // this hard coding will be replaced automatically when b
 
 const (
 	RequestIdKey = "X-Request-Id"
+	OutTime      = "out-time"
 )
 
 // Shouldn't larger then RateLimitKeyExpirationDuration

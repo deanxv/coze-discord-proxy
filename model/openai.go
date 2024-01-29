@@ -3,6 +3,11 @@ package model
 type OpenAIChatCompletionRequest struct {
 	Stream   bool                `json:"stream"`
 	Messages []OpenAIChatMessage `json:"messages"`
+	OpenAIChatCompletionExtraRequest
+}
+
+type OpenAIChatCompletionExtraRequest struct {
+	ChannelId *string `json:"channelId"`
 }
 
 type OpenAIChatMessage struct {

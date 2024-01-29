@@ -95,7 +95,7 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 			// data :{"id":"1200873365351698694","object":"chat.completion.chunk","created":1706380922,"model":"COZE","choices":[{"index":0,"message":{"role":"assistant","content":"你好！有什么我可以帮您的吗？如果有任"},"logprobs":null,"finish_reason":"","delta":{"content":"吗？如果有任"}}],"usage":{"prompt_tokens":13,"completion_tokens":19,"total_tokens":32},"system_fingerprint":null}
 
 			// 如果消息包含组件或嵌入，则发送停止信号
-			if len(m.Embeds) > 0 || len(m.Message.Components) > 0 {
+			if len(m.Message.Components) > 0 {
 				replyOpenAIChan, exists := RepliesOpenAIChans[m.ReferencedMessage.ID]
 				if exists {
 					reply := processMessageForOpenAI(m)
@@ -129,11 +129,17 @@ func processMessage(m *discordgo.MessageUpdate) model.ReplyResp {
 func processMessageForOpenAI(m *discordgo.MessageUpdate) model.OpenAIChatCompletionResponse {
 
 	if len(m.Embeds) != 0 {
-		if !strings.Contains(m.Content, m.Embeds[len(m.Embeds)-1].Image.URL) {
-			if m.Content != "" {
-				m.Content += "\n"
+		for _, embed := range m.Embeds {
+			if embed.Image != nil {
+				fmt.Println(embed.Image.URL)
 			}
-			m.Content += fmt.Sprintf("![Image](%s)", m.Embeds[len(m.Embeds)-1].Image.URL)
+			if embed.Image != nil && !strings.Contains(m.Content, embed.Image.URL) {
+				fmt.Println(embed.Image.URL)
+				if m.Content != "" {
+					m.Content += "\n"
+				}
+				m.Content += fmt.Sprintf("![Image](%s)", embed.Image.URL)
+			}
 		}
 	}
 

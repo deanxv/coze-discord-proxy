@@ -109,6 +109,12 @@ const docTemplate = `{
                         "description": "proxy-secret",
                         "name": "proxy-secret",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "out-time",
+                        "name": "out-time",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -183,6 +189,12 @@ const docTemplate = `{
                         "description": "Authorization",
                         "name": "Authorization",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "out-time",
+                        "name": "out-time",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -236,6 +248,9 @@ const docTemplate = `{
         "model.OpenAIChatCompletionRequest": {
             "type": "object",
             "properties": {
+                "channelId": {
+                    "type": "string"
+                },
                 "messages": {
                     "type": "array",
                     "items": {

@@ -20,7 +20,6 @@ _觉得有点意思的话 别忘了点个🌟_
 - [x] 支持对话指定 `discord`频道/子频道/线程 实现对话隔离
 - [x] 支持和`openai`对齐的接口(`v1/chat/completions`)(支持文生图/图生文)
 
-
 ### 接口文档:
 
 `http://<ip>:<port>/swagger/index.html`
@@ -43,17 +42,17 @@ _觉得有点意思的话 别忘了点个🌟_
 7. 配置环境变量，并启动本项目。
 8. 访问接口地址即可开始调试。
 
-## 如何集成one-api
-
-填 `BaseURL`(ip:端口/域名) 及 密钥(`PROXY_SECRET`)，其它的随便填随便选。
-
-<span><img src="docs/img3.png" width="800"/></span>
-
 ## 如何集成NextChat
 
 填 接口地址(ip:端口/域名) 及 API-Key(`PROXY_SECRET`)，其它的随便填随便选。
 
 <span><img src="docs/img5.png" width="800"/></span>
+
+## 如何集成one-api
+
+填 `BaseURL`(ip:端口/域名) 及 密钥(`PROXY_SECRET`)，其它的随便填随便选。
+
+<span><img src="docs/img3.png" width="800"/></span>
 
 ## 部署
 
