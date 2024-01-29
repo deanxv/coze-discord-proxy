@@ -25,6 +25,7 @@ var ProxyUrl = os.Getenv("PROXY_URL")
 
 var RepliesChans = make(map[string]chan model.ReplyResp)
 var RepliesOpenAIChans = make(map[string]chan model.OpenAIChatCompletionResponse)
+var RepliesOpenAIImageChans = make(map[string]chan model.OpenAIImagesGenerationResponse)
 
 var ReplyStopChans = make(map[string]chan string)
 var Session *discordgo.Session
@@ -103,7 +104,13 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 					reply := processMessageForOpenAI(m)
 					replyOpenAIChan <- reply
 				} else {
-					return
+					replyOpenAIImageChan, exists := RepliesOpenAIImageChans[m.ReferencedMessage.ID]
+					if exists {
+						reply := processMessageForOpenAIImage(m)
+						replyOpenAIImageChan <- reply
+					} else {
+						return
+					}
 				}
 			}
 			// data: {"id":"chatcmpl-8lho2xvdDFyBdFkRwWAcMpWWAgymJ","object":"chat.completion.chunk","created":1706380498,"model":"gpt-3.5-turbo-0613","system_fingerprint":null,"choices":[{"index":0,"delta":{"content":"？"},"logprobs":null,"finish_reason":null}]}
@@ -145,11 +152,7 @@ func processMessageForOpenAI(m *discordgo.MessageUpdate) model.OpenAIChatComplet
 
 	if len(m.Embeds) != 0 {
 		for _, embed := range m.Embeds {
-			if embed.Image != nil {
-				fmt.Println(embed.Image.URL)
-			}
 			if embed.Image != nil && !strings.Contains(m.Content, embed.Image.URL) {
-				fmt.Println(embed.Image.URL)
 				if m.Content != "" {
 					m.Content += "\n"
 				}
@@ -180,6 +183,28 @@ func processMessageForOpenAI(m *discordgo.MessageUpdate) model.OpenAIChatComplet
 			CompletionTokens: completionTokens,
 			TotalTokens:      promptTokens + completionTokens,
 		},
+	}
+}
+
+func processMessageForOpenAIImage(m *discordgo.MessageUpdate) model.OpenAIImagesGenerationResponse {
+	var response model.OpenAIImagesGenerationResponse
+
+	if len(m.Embeds) != 0 {
+		for _, embed := range m.Embeds {
+			if embed.Image != nil && !strings.Contains(m.Content, embed.Image.URL) {
+				if m.Content != "" {
+					m.Content += "\n"
+				}
+				response.Data = append(response.Data, struct {
+					URL string `json:"url"`
+				}{URL: fmt.Sprintf("%s\n![Image](%s)", embed.Image.URL, embed.Image.URL)})
+			}
+		}
+	}
+
+	return model.OpenAIImagesGenerationResponse{
+		Created: time.Now().Unix(),
+		Data:    response.Data,
 	}
 }
 

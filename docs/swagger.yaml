@@ -77,6 +77,27 @@ definitions:
       content:
         type: string
     type: object
+  model.OpenAIImagesGenerationRequest:
+    properties:
+      channelId:
+        type: string
+      model:
+        type: string
+      prompt:
+        type: string
+    type: object
+  model.OpenAIImagesGenerationResponse:
+    properties:
+      created:
+        type: integer
+      data:
+        items:
+          properties:
+            url:
+              type: string
+          type: object
+        type: array
+    type: object
   model.OpenAIMessage:
     properties:
       content:
@@ -247,6 +268,36 @@ paths:
           schema:
             $ref: '#/definitions/model.OpenAIChatCompletionResponse'
       summary: 发送消息-openai
+      tags:
+        - chat -openai
+  /v1/images/generations:
+    post:
+      consumes:
+        - application/json
+      description: 图片生成-openai
+      parameters:
+        - description: request
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: '#/definitions/model.OpenAIImagesGenerationRequest'
+        - description: Authorization
+          in: header
+          name: Authorization
+          type: string
+        - description: out-time
+          in: header
+          name: out-time
+          type: string
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/model.OpenAIImagesGenerationResponse'
+      summary: 图片生成-openai
       tags:
         - chat -openai
 swagger: "2.0"

@@ -244,10 +244,100 @@ func ChatForOpenAI(c *gin.Context) {
 	}
 }
 
-func getSendChannelId(request model.OpenAIChatCompletionRequest) (string, error) {
+// ImagesForOpenAI 图片生成-openai
+// @Summary 图片生成-openai
+// @Description 图片生成-openai
+// @Tags chat -openai
+// @Accept json
+// @Produce json
+// @Param request body model.OpenAIImagesGenerationRequest true "request"
+// @Param Authorization header string false "Authorization"
+// @Param out-time header string false "out-time"
+// @Success 200 {object} model.OpenAIImagesGenerationResponse "Successful response"
+// @Router /v1/images/generations [post]
+func ImagesForOpenAI(c *gin.Context) {
+
+	var request model.OpenAIImagesGenerationRequest
+	err := json.NewDecoder(c.Request.Body).Decode(&request)
+	if err != nil {
+		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
+			OpenAIError: model.OpenAIError{
+				Message: "无效的参数",
+				Type:    "invalid_request_error",
+				Code:    "invalid_parameter",
+			},
+		})
+		return
+	}
+
+	sendChannelId, err := getSendChannelId(request)
+	if err != nil {
+		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
+			OpenAIError: model.OpenAIError{
+				Message: "未指定discord频道Id或未配置默认频道Id",
+				Type:    "invalid_request_error",
+				Code:    "discord_request_err",
+			},
+		})
+		return
+	}
+
+	sentMsg, err := discord.SendMessage(sendChannelId, request.Prompt)
+	if err != nil {
+		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
+			OpenAIError: model.OpenAIError{
+				Message: "discord发送消息异常",
+				Type:    "invalid_request_error",
+				Code:    "discord_request_err",
+			},
+		})
+		return
+	}
+
+	replyChan := make(chan model.OpenAIImagesGenerationResponse)
+	discord.RepliesOpenAIImageChans[sentMsg.ID] = replyChan
+	defer delete(discord.RepliesOpenAIImageChans, sentMsg.ID)
+
+	stopChan := make(chan string)
+	discord.ReplyStopChans[sentMsg.ID] = stopChan
+	defer delete(discord.ReplyStopChans, sentMsg.ID)
+
+	timer, err := setTimerWithHeader(c, false, common.RequestOutTimeDuration)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": "超时时间设置异常",
+		})
+		return
+	}
+
+	var replyResp model.OpenAIImagesGenerationResponse
+	for {
+		select {
+		case reply := <-replyChan:
+			replyResp = reply
+		case <-timer.C:
+			c.JSON(http.StatusOK, model.OpenAIErrorResponse{
+				OpenAIError: model.OpenAIError{
+					Message: "请求超时",
+					Type:    "request_error",
+					Code:    "request_out_time",
+				},
+			})
+			return
+		case <-stopChan:
+			c.JSON(http.StatusOK, replyResp)
+			return
+		}
+	}
+
+}
+
+func getSendChannelId(request model.ChannelIdentifier) (string, error) {
 	var sendChannelId string
-	if request.ChannelId != nil && *request.ChannelId != "" {
-		sendChannelId = *request.ChannelId
+	channelId := request.GetChannelId()
+	if channelId != nil && *channelId != "" {
+		sendChannelId = *channelId
 	} else {
 		if discord.ChannelId != "" {
 			sendChannelId = discord.ChannelId
