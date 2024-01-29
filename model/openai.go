@@ -3,6 +3,11 @@ package model
 type OpenAIChatCompletionRequest struct {
 	Stream   bool                `json:"stream"`
 	Messages []OpenAIChatMessage `json:"messages"`
+	OpenAIChatCompletionExtraRequest
+}
+
+type OpenAIChatCompletionExtraRequest struct {
+	ChannelId *string `json:"channelId"`
 }
 
 type OpenAIChatMessage struct {
@@ -52,4 +57,29 @@ type OpenAIUsage struct {
 
 type OpenAIDelta struct {
 	Content string `json:"content"`
+}
+
+type OpenAIImagesGenerationRequest struct {
+	OpenAIChatCompletionExtraRequest
+	Model  string `json:"model"`
+	Prompt string `json:"prompt"`
+}
+
+type OpenAIImagesGenerationResponse struct {
+	Created int64 `json:"created"`
+	Data    []struct {
+		URL string `json:"url"`
+	} `json:"data"`
+}
+
+type ChannelIdentifier interface {
+	GetChannelId() *string
+}
+
+func (request OpenAIChatCompletionRequest) GetChannelId() *string {
+	return request.ChannelId
+}
+
+func (request OpenAIImagesGenerationRequest) GetChannelId() *string {
+	return request.ChannelId
 }

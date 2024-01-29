@@ -18,8 +18,8 @@ _觉得有点意思的话 别忘了点个🌟_
 - [x] 对话支持图生文(需`coze`配置`GPT4V`插件)(发送的文本消息中携带图片url即可)
 - [x] 支持创建 `discord`频道/子频道/线程
 - [x] 支持对话指定 `discord`频道/子频道/线程 实现对话隔离
-- [x] 支持和`openai`对齐的接口(`v1/chat/completions`)(支持文生图/图生文)
-
+- [x] 支持和`openai`对齐的对话接口(`v1/chat/completions`)(支持文生图/图生文)
+- [x] 支持和`openai`对齐的`dall-e-3`接口(`v1/images/generations`)
 
 ### 接口文档:
 
@@ -43,17 +43,17 @@ _觉得有点意思的话 别忘了点个🌟_
 7. 配置环境变量，并启动本项目。
 8. 访问接口地址即可开始调试。
 
-## 如何集成one-api
-
-填 `BaseURL`(ip:端口/域名) 及 密钥(`PROXY_SECRET`)，其它的随便填随便选。
-
-<span><img src="docs/img3.png" width="800"/></span>
-
 ## 如何集成NextChat
 
 填 接口地址(ip:端口/域名) 及 API-Key(`PROXY_SECRET`)，其它的随便填随便选。
 
 <span><img src="docs/img5.png" width="800"/></span>
+
+## 如何集成one-api
+
+填 `BaseURL`(ip:端口/域名) 及 密钥(`PROXY_SECRET`)，其它的随便填随便选。
+
+<span><img src="docs/img3.png" width="800"/></span>
 
 ## 部署
 
@@ -153,6 +153,7 @@ deanxv/coze-discord-proxy
 5. `CHANNEL_ID:119xxxxxx24`  [可选]默认频道-在使用与openai对齐的接口时(/v1/chat/completions) 为[必填]消息会默认发送到此频道
 6. `REQUEST_OUT_TIME:60`  [可选]对话接口非流响应下的请求超时时间
 7. `STREAM_REQUEST_OUT_TIME:60`  [可选]对话接口流响应下的每次流返回超时时间
+8. `PROXY_URL:socks5://127.0.0.1:10810`  [可选]代理
 
 ## ⭐ Star History
 

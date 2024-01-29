@@ -28,7 +28,10 @@ func SetApiRouter(router *gin.Engine) {
 		threadRoute.POST("/create", controller.ThreadCreate)
 	}
 
-	v1Router := router.Group("/v1/chat/completions")
+	//https://api.openai.com/v1/images/generations
+	v1Router := router.Group("/v1")
 	v1Router.Use(middleware.OpenAIAuth())
-	v1Router.POST("", controller.ChatForOpenAI)
+	v1Router.POST("/chat/completions", controller.ChatForOpenAI)
+	v1Router.POST("/images/generations", controller.ImagesForOpenAI)
+
 }
