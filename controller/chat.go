@@ -110,7 +110,7 @@ func Chat(c *gin.Context) {
 // ChatForOpenAI 发送消息-openai
 // @Summary 发送消息-openai
 // @Description 发送消息-openai
-// @Tags chat -openai
+// @Tags openai
 // @Accept json
 // @Produce json
 // @Param request body model.OpenAIChatCompletionRequest true "request"
@@ -247,7 +247,7 @@ func ChatForOpenAI(c *gin.Context) {
 // ImagesForOpenAI 图片生成-openai
 // @Summary 图片生成-openai
 // @Description 图片生成-openai
-// @Tags chat -openai
+// @Tags openai
 // @Accept json
 // @Produce json
 // @Param request body model.OpenAIImagesGenerationRequest true "request"

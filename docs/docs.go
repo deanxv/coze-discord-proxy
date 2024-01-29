@@ -171,7 +171,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "chat -openai"
+                    "openai"
                 ],
                 "summary": "发送消息-openai",
                 "parameters": [
@@ -217,7 +217,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "chat -openai"
+                    "openai"
                 ],
                 "summary": "图片生成-openai",
                 "parameters": [
