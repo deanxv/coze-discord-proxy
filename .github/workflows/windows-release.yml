@@ -21,14 +21,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - name: Build Frontend
-        env:
-          CI: ""
-        run: |
-          cd web
-          npm install
-          REACT_APP_VERSION=$(git describe --tags) npm run build
-          cd ..
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
