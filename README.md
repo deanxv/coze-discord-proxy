@@ -18,7 +18,8 @@ _觉得有点意思的话 别忘了点个🌟_
 - [x] 对话支持图生文(需`coze`配置`GPT4V`插件)(发送的文本消息中携带图片url即可)
 - [x] 支持创建 `discord`频道/子频道/线程
 - [x] 支持对话指定 `discord`频道/子频道/线程 实现对话隔离
-- [x] 支持和`openai`对齐的对话接口(`v1/chat/completions`)(支持文生图/图生文)
+- [x] 支持和`openai`对齐的对话接口(`v1/chat/completions`)(支持文生图)
+- [x] 支持和`openai`对齐的识图接口(`v1/chat/completions`)(读取 `url`/`base64`)
 - [x] 支持和`openai`对齐的`dall-e-3`接口(`v1/images/generations`)
 
 ### 接口文档:
