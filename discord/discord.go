@@ -197,7 +197,7 @@ func processMessageForOpenAIImage(m *discordgo.MessageUpdate) model.OpenAIImages
 				}
 				response.Data = append(response.Data, struct {
 					URL string `json:"url"`
-				}{URL: fmt.Sprintf("%s\n![Image](%s)", embed.Image.URL, embed.Image.URL)})
+				}{URL: fmt.Sprintf("![Image](%s)", embed.Image.URL)})
 			}
 		}
 	}
