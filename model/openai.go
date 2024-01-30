@@ -72,6 +72,14 @@ type OpenAIImagesGenerationResponse struct {
 	} `json:"data"`
 }
 
+type OpenAIGPT4VImagesReq struct {
+	Type     string `json:"type"`
+	Text     string `json:"text"`
+	ImageURL struct {
+		URL string `json:"url"`
+	} `json:"image_url"`
+}
+
 type ChannelIdentifier interface {
 	GetChannelId() *string
 }

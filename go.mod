@@ -11,11 +11,13 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-playground/validator/v10 v10.17.0
 	github.com/google/uuid v1.3.0
+	github.com/h2non/filetype v1.1.3
 	github.com/json-iterator/go v1.1.12
 	github.com/pkoukk/tiktoken-go v0.1.6
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.0
 	github.com/swaggo/swag v1.16.2
+	golang.org/x/net v0.20.0
 )
 
 require (
@@ -47,7 +49,6 @@ require (
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	golang.org/x/arch v0.5.0 // indirect
 	golang.org/x/crypto v0.18.0 // indirect
-	golang.org/x/net v0.20.0 // indirect
 	golang.org/x/sys v0.16.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/tools v0.17.0 // indirect

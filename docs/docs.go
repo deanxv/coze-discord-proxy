@@ -340,9 +340,7 @@ const docTemplate = `{
         "model.OpenAIChatMessage": {
             "type": "object",
             "properties": {
-                "content": {
-                    "type": "string"
-                },
+                "content": {},
                 "role": {
                     "type": "string"
                 }

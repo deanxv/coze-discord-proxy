@@ -1,6 +1,7 @@
 package common
 
 import (
+	"encoding/base64"
 	"fmt"
 	"github.com/google/uuid"
 	jsoniter "github.com/json-iterator/go"
@@ -172,4 +173,28 @@ func Obj2Bytes(obj interface{}) ([]byte, error) {
 		return nil, err
 	}
 	return bytes, nil
+}
+
+// IsImageBase64 判断给定的字符串是否可能是 Base64 编码
+func IsImageBase64(s string) bool {
+	// 检查字符串是否符合数据URL的格式
+	if !strings.HasPrefix(s, "data:image/") || !strings.Contains(s, ";base64,") {
+		return false
+	}
+
+	// 获取";base64,"后的Base64编码部分
+	dataParts := strings.Split(s, ";base64,")
+	if len(dataParts) != 2 {
+		return false
+	}
+	base64Data := dataParts[1]
+
+	// 尝试Base64解码
+	_, err := base64.StdEncoding.DecodeString(base64Data)
+	return err == nil
+}
+
+// IsURL 判断给定的字符串是否可能是 URL
+func IsURL(s string) bool {
+	return strings.HasPrefix(s, "http://") || strings.HasPrefix(s, "https://") || strings.HasPrefix(s, "ftp://")
 }

@@ -139,8 +139,12 @@ func ChatForOpenAI(c *gin.Context) {
 	for i := len(messages) - 1; i >= 0; i-- {
 		message := messages[i]
 		if message.Role == "user" {
-			contentStr, ok := message.Content.(string)
-			if !ok {
+			switch contentObj := message.Content.(type) {
+			case string:
+				content = contentObj
+			case []interface{}:
+				content, err = buildOpenAIGPT4VForImageContent(contentObj)
+			default:
 				c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 					OpenAIError: model.OpenAIError{
 						Message: "消息格式异常",
@@ -148,9 +152,8 @@ func ChatForOpenAI(c *gin.Context) {
 						Code:    "discord_request_err",
 					},
 				})
-				return
+
 			}
-			content = contentStr
 			break
 		}
 	}
@@ -253,6 +256,46 @@ func ChatForOpenAI(c *gin.Context) {
 			}
 		}
 	}
+}
+
+func buildOpenAIGPT4VForImageContent(objs []interface{}) (string, error) {
+	var content string
+
+	for i, obj := range objs {
+
+		jsonData, err := json.Marshal(obj)
+		if err != nil {
+			return "", err
+		}
+
+		var req model.OpenAIGPT4VImagesReq
+		err = json.Unmarshal(jsonData, &req)
+		if err != nil {
+			return "", err
+		}
+
+		if i == 0 && req.Type == "text" {
+			content += req.Text
+			continue
+		} else if i == 1 && req.Type == "image_url" {
+			if common.IsURL(req.ImageURL.URL) {
+				content += fmt.Sprintf("\n%s", req.ImageURL.URL)
+			} else if common.IsImageBase64(req.ImageURL.URL) {
+				url, err := discord.UploadToDiscordAndGetURL(discord.ChannelId, req.ImageURL.URL)
+				if err != nil {
+					return "", fmt.Errorf("图片上传异常")
+				}
+				content += fmt.Sprintf("\n%s", url)
+			} else {
+				return "", fmt.Errorf("图片格式有误")
+			}
+		} else {
+			return "", fmt.Errorf("消息格式错误")
+		}
+	}
+
+	return content, nil
+
 }
 
 // ImagesForOpenAI 图片生成-openai

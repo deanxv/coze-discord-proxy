@@ -1,11 +1,14 @@
 package discord
 
 import (
+	"bytes"
 	"context"
 	"coze-discord-proxy/common"
 	"coze-discord-proxy/model"
+	"encoding/base64"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
+	"github.com/h2non/filetype"
 	"golang.org/x/net/proxy"
 	"log"
 	"net"
@@ -40,6 +43,7 @@ func StartBot(ctx context.Context, token string) {
 			common.FatalLog("error creating proxy client,", err)
 		}
 		Session.Client = client
+		common.LogInfo(context.Background(), "Proxy Set Success")
 	}
 
 	if err != nil {
@@ -57,7 +61,9 @@ func StartBot(ctx context.Context, token string) {
 		return
 	}
 
-	common.LogInfo(ctx, "Bot is now running. Press CTRL+C to exit.")
+	common.LogInfo(ctx, "Bot is now running. Enjoy It.")
+
+	go scheduleDailyMessage(ChannelId, "Hi!")
 
 	go func() {
 		<-ctx.Done()
@@ -302,4 +308,71 @@ func NewProxyClient(proxyUrl string) (*http.Client, error) {
 		return nil, fmt.Errorf("仅支持sock和http代理！")
 	}
 
+}
+
+func scheduleDailyMessage(channelID string, message string) {
+	for {
+		// 计算距离下一个晚上12点的时间间隔
+		now := time.Now()
+		next := now.Add(time.Hour * 24)
+		next = time.Date(next.Year(), next.Month(), next.Day(), 0, 0, 0, 0, next.Location())
+		delay := next.Sub(now)
+
+		// 等待直到下一个间隔
+		time.Sleep(delay)
+
+		_, err := SendMessage(channelID, message)
+
+		if err != nil {
+			common.LogWarn(context.Background(), "活跃机器人任务消息发送异常!")
+		} else {
+			common.LogInfo(context.Background(), "活跃机器人任务消息发送成功!")
+		}
+	}
+}
+
+func UploadToDiscordAndGetURL(channelID string, base64Data string) (string, error) {
+
+	// 获取";base64,"后的Base64编码部分
+	dataParts := strings.Split(base64Data, ";base64,")
+	if len(dataParts) != 2 {
+		return "", fmt.Errorf("")
+	}
+	base64Data = dataParts[1]
+
+	data, err := base64.StdEncoding.DecodeString(base64Data)
+	if err != nil {
+		return "", err
+	}
+	// 创建一个新的文件读取器
+	file := bytes.NewReader(data)
+
+	kind, err := filetype.Match(data)
+
+	if err != nil {
+		return "", fmt.Errorf("无法识别的文件类型")
+	}
+
+	// 创建一个新的 MessageSend 结构
+	m := &discordgo.MessageSend{
+		Files: []*discordgo.File{
+			{
+				Name:   fmt.Sprintf("image-%s.%s", common.GetTimeString(), kind.Extension),
+				Reader: file,
+			},
+		},
+	}
+
+	// 发送消息
+	message, err := Session.ChannelMessageSendComplex(channelID, m)
+	if err != nil {
+		return "", err
+	}
+
+	// 检查消息中是否包含附件，并获取 URL
+	if len(message.Attachments) > 0 {
+		return message.Attachments[0].URL, nil
+	}
+
+	return "", fmt.Errorf("no attachment found in the message")
 }
