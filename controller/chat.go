@@ -39,6 +39,14 @@ func Chat(c *gin.Context) {
 		return
 	}
 
+	if runeCount := len([]rune(chatModel.Content)); runeCount > 2000 {
+		c.JSON(http.StatusOK, gin.H{
+			"success": false,
+			"message": fmt.Sprintf("prompt最大为2000字符 [%v]", runeCount),
+		})
+		return
+	}
+
 	sentMsg, err := discord.SendMessage(chatModel.ChannelId, chatModel.Content)
 	if err != nil {
 		common.LogError(context.Background(), err.Error())
@@ -146,9 +154,24 @@ func ChatForOpenAI(c *gin.Context) {
 		if message.Role == "user" {
 			switch contentObj := message.Content.(type) {
 			case string:
+				if runeCount := len([]rune(contentObj)); runeCount > 2000 {
+					c.JSON(http.StatusOK, gin.H{
+						"success": false,
+						"message": fmt.Sprintf("prompt最大为2000字符 [%v]", runeCount),
+					})
+					return
+				}
 				content = contentObj
+
 			case []interface{}:
 				content, err = buildOpenAIGPT4VForImageContent(contentObj)
+				if err != nil {
+					c.JSON(http.StatusOK, gin.H{
+						"success": false,
+						"message": err.Error(),
+					})
+					return
+				}
 			default:
 				c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 					OpenAIError: model.OpenAIError{
@@ -157,6 +180,7 @@ func ChatForOpenAI(c *gin.Context) {
 						Code:    "discord_request_err",
 					},
 				})
+				return
 
 			}
 			break
@@ -301,7 +325,9 @@ func buildOpenAIGPT4VForImageContent(objs []interface{}) (string, error) {
 			return "", fmt.Errorf("消息格式错误")
 		}
 	}
-
+	if runeCount := len([]rune(content)); runeCount > 2000 {
+		return "", fmt.Errorf("prompt最大为2000字符 [%v]", runeCount)
+	}
 	return content, nil
 
 }
@@ -342,6 +368,14 @@ func ImagesForOpenAI(c *gin.Context) {
 				Type:    "invalid_request_error",
 				Code:    "discord_request_err",
 			},
+		})
+		return
+	}
+
+	if runeCount := len([]rune(request.Prompt)); runeCount > 2000 {
+		c.JSON(http.StatusOK, gin.H{
+			"success": false,
+			"message": fmt.Sprintf("prompt最大为2000字符 [%v]", runeCount),
 		})
 		return
 	}
