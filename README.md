@@ -143,6 +143,19 @@ deanxv/coze-discord-proxy
 6. 选择 Redeploy。
 
 </div>
+
+
+</details>
+
+<details>
+<summary><strong>部署到 Render</strong></summary>
+<div>
+
+> Render 提供免费额度，绑卡后可以进一步提升额度
+
+Render 可以直接部署 docker 镜像，不需要 fork 仓库：https://dashboard.render.com
+
+</div>
 </details>
 
 ## 配置
