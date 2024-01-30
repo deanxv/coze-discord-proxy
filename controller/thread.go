@@ -28,10 +28,10 @@ func ThreadCreate(c *gin.Context) {
 		return
 	}
 
-	if threadModel.ArchiveDuration < 60 {
+	if threadModel.ArchiveDuration != 60 && threadModel.ArchiveDuration != 1440 && threadModel.ArchiveDuration != 4320 && threadModel.ArchiveDuration != 10080 {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
-			"message": "线程最小为60",
+			"message": "线程创建时间只可为[60,1440,4320,10080]",
 		})
 		return
 	}

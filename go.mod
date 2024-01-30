@@ -3,7 +3,7 @@ module coze-discord-proxy
 // +heroku goVersion go1.18
 go 1.21
 
-toolchain go1.21.5
+//toolchain go1.21.5
 
 require (
 	github.com/bwmarrin/discordgo v0.27.1

@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"context"
 	"coze-discord-proxy/common"
 	"coze-discord-proxy/discord"
 	"coze-discord-proxy/model"
@@ -30,6 +31,7 @@ func Chat(c *gin.Context) {
 	var chatModel model.ChatReq
 	err := json.NewDecoder(c.Request.Body).Decode(&chatModel)
 	if err != nil {
+		common.LogError(context.Background(), err.Error())
 		c.JSON(http.StatusOK, gin.H{
 			"message": "无效的参数",
 			"success": false,
@@ -39,6 +41,7 @@ func Chat(c *gin.Context) {
 
 	sentMsg, err := discord.SendMessage(chatModel.ChannelId, chatModel.Content)
 	if err != nil {
+		common.LogError(context.Background(), err.Error())
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
 			"message": "discord发送消息异常",
@@ -56,6 +59,7 @@ func Chat(c *gin.Context) {
 
 	timer, err := setTimerWithHeader(c, chatModel.Stream, common.RequestOutTimeDuration)
 	if err != nil {
+		common.LogError(context.Background(), err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
 			"message": "超时时间设置异常",
@@ -123,6 +127,7 @@ func ChatForOpenAI(c *gin.Context) {
 	var request model.OpenAIChatCompletionRequest
 	err := json.NewDecoder(c.Request.Body).Decode(&request)
 	if err != nil {
+		common.LogError(context.Background(), err.Error())
 		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 			OpenAIError: model.OpenAIError{
 				Message: "无效的参数",
@@ -160,6 +165,7 @@ func ChatForOpenAI(c *gin.Context) {
 
 	sendChannelId, err := getSendChannelId(request)
 	if err != nil {
+		common.LogError(context.Background(), err.Error())
 		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 			OpenAIError: model.OpenAIError{
 				Message: "未指定discord频道Id或未配置默认频道Id",
@@ -172,6 +178,7 @@ func ChatForOpenAI(c *gin.Context) {
 
 	sentMsg, err := discord.SendMessage(sendChannelId, content)
 	if err != nil {
+		common.LogError(context.Background(), err.Error())
 		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 			OpenAIError: model.OpenAIError{
 				Message: "discord发送消息异常",
@@ -192,6 +199,7 @@ func ChatForOpenAI(c *gin.Context) {
 
 	timer, err := setTimerWithHeader(c, request.Stream, common.RequestOutTimeDuration)
 	if err != nil {
+		common.LogError(context.Background(), err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
 			"message": "超时时间设置异常",
@@ -314,6 +322,7 @@ func ImagesForOpenAI(c *gin.Context) {
 	var request model.OpenAIImagesGenerationRequest
 	err := json.NewDecoder(c.Request.Body).Decode(&request)
 	if err != nil {
+		common.LogError(context.Background(), err.Error())
 		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 			OpenAIError: model.OpenAIError{
 				Message: "无效的参数",
@@ -326,6 +335,7 @@ func ImagesForOpenAI(c *gin.Context) {
 
 	sendChannelId, err := getSendChannelId(request)
 	if err != nil {
+		common.LogError(context.Background(), err.Error())
 		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 			OpenAIError: model.OpenAIError{
 				Message: "未指定discord频道Id或未配置默认频道Id",
@@ -338,6 +348,7 @@ func ImagesForOpenAI(c *gin.Context) {
 
 	sentMsg, err := discord.SendMessage(sendChannelId, request.Prompt)
 	if err != nil {
+		common.LogError(context.Background(), err.Error())
 		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 			OpenAIError: model.OpenAIError{
 				Message: "discord发送消息异常",
@@ -358,6 +369,7 @@ func ImagesForOpenAI(c *gin.Context) {
 
 	timer, err := setTimerWithHeader(c, false, common.RequestOutTimeDuration)
 	if err != nil {
+		common.LogError(context.Background(), err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
 			"message": "超时时间设置异常",
@@ -380,6 +392,16 @@ func ImagesForOpenAI(c *gin.Context) {
 			})
 			return
 		case <-stopChan:
+			if replyResp.Data == nil {
+				c.JSON(http.StatusOK, model.OpenAIErrorResponse{
+					OpenAIError: model.OpenAIError{
+						Message: "discord未返回URL,检查prompt中是否有敏感内容",
+						Type:    "invalid_request_error",
+						Code:    "discord_request_err",
+					},
+				})
+				return
+			}
 			c.JSON(http.StatusOK, replyResp)
 			return
 		}

@@ -48,6 +48,8 @@ _觉得有点意思的话 别忘了点个🌟_
 
 填 接口地址(ip:端口/域名) 及 API-Key(`PROXY_SECRET`)，其它的随便填随便选。
 
+> 如果自己没有搭建NextChat面板，这里有个已经搭建好的可以使用 [NextChat](https://ci.goeast.io/)
+
 <span><img src="docs/img5.png" width="800"/></span>
 
 ## 如何集成one-api
