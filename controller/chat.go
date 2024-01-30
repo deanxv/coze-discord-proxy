@@ -139,7 +139,18 @@ func ChatForOpenAI(c *gin.Context) {
 	for i := len(messages) - 1; i >= 0; i-- {
 		message := messages[i]
 		if message.Role == "user" {
-			content = message.Content
+			contentStr, ok := message.Content.(string)
+			if !ok {
+				c.JSON(http.StatusOK, model.OpenAIErrorResponse{
+					OpenAIError: model.OpenAIError{
+						Message: "消息格式异常",
+						Type:    "invalid_request_error",
+						Code:    "discord_request_err",
+					},
+				})
+				return
+			}
+			content = contentStr
 			break
 		}
 	}
