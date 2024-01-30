@@ -153,7 +153,7 @@ deanxv/coze-discord-proxy
 
 > Render 提供免费额度，绑卡后可以进一步提升额度
 
-Render 可以直接部署 docker 镜像，不需要 fork 仓库：https://dashboard.render.com
+Render 可以直接部署 docker 镜像，不需要 fork 仓库：[Render](https://dashboard.render.com)
 
 </div>
 </details>
