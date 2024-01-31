@@ -173,7 +173,7 @@ Render 可以直接部署 docker 镜像，不需要 fork 仓库：[Render](https
    参数，即`header`中添加 `proxy-secret：123456`
 6. `REQUEST_OUT_TIME:60`  [可选]对话接口非流响应下的请求超时时间
 7. `STREAM_REQUEST_OUT_TIME:60`  [可选]对话接口流响应下的每次流返回超时时间
-8. `PROXY_URL:socks5://127.0.0.1:10810`  [可选]代理
+8. `PROXY_URL:http://127.0.0.1:10801`  [可选]代理
 
 ## 进阶配置
 
