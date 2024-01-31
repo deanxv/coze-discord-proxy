@@ -111,7 +111,7 @@ func loadBotConfig() {
 		common.FatalLog("Error parsing JSON:", err)
 	}
 
-	common.LogInfo(context.Background(), fmt.Sprintf("载入配置文件成功 BotConfigs: %+v\n", BotConfigList))
+	common.LogInfo(context.Background(), fmt.Sprintf("载入配置文件成功 BotConfigs: %+v", BotConfigList))
 }
 
 // messageUpdate handles the updated messages in Discord.
@@ -256,7 +256,7 @@ func SendMessage(channelID, cozeBotId, message string) (*discordgo.Message, erro
 	}
 
 	// 添加@机器人逻辑
-	sentMsg, err := Session.ChannelMessageSend(channelID, fmt.Sprintf("<@%s> %s", CozeBotId, message))
+	sentMsg, err := Session.ChannelMessageSend(channelID, fmt.Sprintf("<@%s> %s", cozeBotId, message))
 	if err != nil {
 		return nil, fmt.Errorf("error sending message: %s", err)
 	}
