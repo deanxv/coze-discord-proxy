@@ -469,12 +469,17 @@ func ImagesForOpenAI(c *gin.Context) {
 }
 
 func getSendChannelIdAndCozeBotId(c *gin.Context, isOpenAIAPI bool, request model.ChannelIdentifier) (sendChannelId string, calledCozeBotId string, err error) {
-	var secret string
+	secret := ""
 	if isOpenAIAPI {
-		secret = c.Request.Header.Get("Authorization")
-		secret = strings.Replace(secret, "Bearer ", "", 1)
+		if secret = c.Request.Header.Get("Authorization"); secret != "" {
+			secret = strings.Replace(secret, "Bearer ", "", 1)
+		}
 	} else {
 		secret = c.Request.Header.Get("proxy-secret")
+	}
+
+	if secret == "" {
+		return discord.ChannelId, discord.CozeBotId, nil
 	}
 
 	// botConfigs不为空
