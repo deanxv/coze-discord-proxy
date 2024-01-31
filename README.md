@@ -137,8 +137,7 @@ deanxv/coze-discord-proxy
 
    `CHANNEL_ID:119xxxxxx24`  # 默认频道-在使用与openai对齐的接口时(/v1/chat/completions) 消息会默认发送到此频道
 
-   `PROXY_SECRET:123456` [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)
-   （前后端统一）,配置此参数后，每次发起请求时请求头加上`proxy-secret`
+   `PROXY_SECRET:123456` [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)(前后端统一)，配置此参数后，每次发起请求时请求头加上`proxy-secret`
    参数，即`header`中添加 `proxy-secret：123456`
 
 保存。
@@ -169,7 +168,7 @@ Render 可以直接部署 docker 镜像，不需要 fork 仓库：[Render](https
 2. `GUILD_ID:119xxxxxxxx796`  两个机器人所在的服务器ID
 3. `COZE_BOT_ID:119xxxxxxxx7`  由coze托管的机器人ID
 4. `CHANNEL_ID:119xxxxxx24`  默认频道-在使用与openai对齐的接口时(/v1/chat/completions) 消息会默认发送到此频道
-5. `PROXY_SECRET:123456`  [可选]请求头校验的值（前后端统一）,配置此参数后，每次发起请求时请求头加上`proxy-secret`
+5. `PROXY_SECRET:123456`  [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)(前后端统一),配置此参数后，每次发起请求时请求头加上`proxy-secret`
    参数，即`header`中添加 `proxy-secret：123456`
 6. `REQUEST_OUT_TIME:60`  [可选]对话接口非流响应下的请求超时时间
 7. `STREAM_REQUEST_OUT_TIME:60`  [可选]对话接口流响应下的每次流返回超时时间
