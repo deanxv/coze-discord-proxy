@@ -46,11 +46,12 @@ func StartBot(ctx context.Context, token string) {
 	}
 
 	if ProxyUrl != "" {
-		client, err := NewProxyClient(ProxyUrl)
+		proxyParse, client, err := NewProxyClient(ProxyUrl)
 		if err != nil {
 			common.FatalLog("error creating proxy client,", err)
 		}
 		Session.Client = client
+		Session.Dialer.Proxy = http.ProxyURL(proxyParse)
 		common.LogInfo(context.Background(), "Proxy Set Success")
 	}
 
@@ -307,9 +308,9 @@ func ThreadStart(channelId, threadName string, archiveDuration int) (string, err
 	return th.ID, nil
 }
 
-func NewProxyClient(proxyUrl string) (*http.Client, error) {
+func NewProxyClient(proxyUrl string) (proxyParse *url.URL, client *http.Client, err error) {
 
-	proxyParse, err := url.Parse(proxyUrl)
+	proxyParse, err = url.Parse(proxyUrl)
 	if err != nil {
 		common.FatalLog("代理地址设置有误")
 	}
@@ -318,7 +319,7 @@ func NewProxyClient(proxyUrl string) (*http.Client, error) {
 		httpTransport := &http.Transport{
 			Proxy: http.ProxyURL(proxyParse),
 		}
-		return &http.Client{
+		return proxyParse, &http.Client{
 			Transport: httpTransport,
 		}, nil
 	} else if strings.HasPrefix(proxyParse.Scheme, "sock") {
@@ -338,9 +339,9 @@ func NewProxyClient(proxyUrl string) (*http.Client, error) {
 			},
 		}
 
-		return httpClient, nil
+		return proxyParse, httpClient, nil
 	} else {
-		return nil, fmt.Errorf("仅支持sock和http代理！")
+		return nil, nil, fmt.Errorf("仅支持sock和http代理！")
 	}
 
 }
