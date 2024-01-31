@@ -21,6 +21,7 @@ _觉得有点意思的话 别忘了点个🌟_
 - [x] 支持和`openai`对齐的对话接口(`v1/chat/completions`)(支持文生图)
 - [x] 支持和`openai`对齐的GPT4V识图接口(`v1/chat/completions`)(读取 `url`/`base64`)
 - [x] 支持和`openai`对齐的`dall-e-3`接口(`v1/images/generations`)
+- [x] 支持配置多个[机器人-频道] (通过`PROXY_SECRET`指定) 详细请看[进阶配置](#进阶配置)
 
 ### 接口文档:
 
@@ -79,13 +80,13 @@ services:
     ports:
       - "7077:7077"
     volumes:
-      - ./data/coze-discord-proxy:/data
+      - ./data:/app/coze-discord-proxy/data
     environment:
-      - BOT_TOKEN=MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w  
-      - GUILD_ID=119xxxxxxxx796  
-      - COZE_BOT_ID=119xxxxxxxx7  
-      - CHANNEL_ID=119xxxxxx24 
-      - PROXY_SECRET=123456  # [可选]
+      - BOT_TOKEN=MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w  # 必须修改为我们主动发送消息的Bot-Token
+      - GUILD_ID=119xxxxxxxx796  # 必须修改为两个机器人所在的服务器ID
+      - COZE_BOT_ID=119xxxxxxxx7  # 必须修改为由coze托管的机器人ID
+      - PROXY_SECRET=123456  # [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)（前后端统一）
+      - CHANNEL_ID=119xxxxxx24  # [可选]默认频道-在使用与openai对齐的接口时(/v1/chat/completions) 消息会默认发送到此频道
       - TZ=Asia/Shanghai
 ```
 
@@ -94,6 +95,7 @@ services:
 ```shell
 docker run --name coze-discord-proxy -d --restart always \
 -p 7077:7077 \
+-v $(pwd)/data:/app/coze-discord-proxy/data \
 -e BOT_TOKEN="MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w" \
 -e GUILD_ID="119xxxxxxxx796" \
 -e COZE_BOT_ID="119xxxxxxxx7" \
@@ -135,7 +137,8 @@ deanxv/coze-discord-proxy
 
    `CHANNEL_ID:119xxxxxx24`  # 默认频道-在使用与openai对齐的接口时(/v1/chat/completions) 消息会默认发送到此频道
 
-   `PROXY_SECRET:123456` [可选]请求头校验的值（前后端统一）,配置此参数后，每次发起请求时请求头加上`proxy-secret`
+   `PROXY_SECRET:123456` [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)
+   （前后端统一）,配置此参数后，每次发起请求时请求头加上`proxy-secret`
    参数，即`header`中添加 `proxy-secret：123456`
 
 保存。
@@ -171,6 +174,38 @@ Render 可以直接部署 docker 镜像，不需要 fork 仓库：[Render](https
 6. `REQUEST_OUT_TIME:60`  [可选]对话接口非流响应下的请求超时时间
 7. `STREAM_REQUEST_OUT_TIME:60`  [可选]对话接口流响应下的每次流返回超时时间
 8. `PROXY_URL:socks5://127.0.0.1:10810`  [可选]代理
+
+## 进阶配置
+
+### 配置多个[机器人-频道]
+
+1. 部署前在`docker`/`docker-compose`部署同级目录下创建`data/config/bot_config.json`文件
+2. 编写该`json`文件,`bot_config.json`格式如下
+
+```shell
+[
+  {
+    "proxySecret": "123", // 接口请求密钥(PROXY_SECRET)
+    "cozeBotId": "12***************31", // coze托管的机器人ID
+    "channelId": "12***************56"  // discord频道ID(机器人必须在此频道所在的服务器)
+  },
+  {
+    "proxySecret": "456",
+    "cozeBotId": "12***************64",
+    "channelId": "12***************78"
+  },
+  {
+    "proxySecret": "789",
+    "cozeBotId": "12***************12",
+    "channelId": "12***************24"
+  }
+]
+```
+
+3. 重启服务
+
+> 当有此配置时,会通过请求头携带的请求密钥匹配此配置中的`cozeBotId`,`channelId`,若匹配到多个则随机匹配一个，所以当存在*
+*多用户**使用时可对每个用户分发独立的请求密钥。
 
 ## ⭐ Star History
 

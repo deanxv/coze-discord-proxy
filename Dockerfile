@@ -30,6 +30,6 @@ COPY --from=builder /coze-discord-proxy .
 # 暴露端口
 EXPOSE 7077
 # 工作目录
-WORKDIR /data
+WORKDIR /app/coze-discord-proxy/data
 # 设置入口命令
 ENTRYPOINT ["/coze-discord-proxy"]

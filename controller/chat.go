@@ -47,7 +47,20 @@ func Chat(c *gin.Context) {
 		return
 	}
 
-	sentMsg, err := discord.SendMessage(chatModel.ChannelId, chatModel.Content)
+	sendChannelId, calledCozeBotId, err := getSendChannelIdAndCozeBotId(c, false, chatModel)
+	if err != nil {
+		common.LogError(context.Background(), err.Error())
+		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
+			OpenAIError: model.OpenAIError{
+				Message: "配置异常",
+				Type:    "invalid_request_error",
+				Code:    "discord_request_err",
+			},
+		})
+		return
+	}
+
+	sentMsg, err := discord.SendMessage(sendChannelId, calledCozeBotId, chatModel.Content)
 	if err != nil {
 		common.LogError(context.Background(), err.Error())
 		c.JSON(http.StatusOK, gin.H{
@@ -187,12 +200,12 @@ func ChatForOpenAI(c *gin.Context) {
 		}
 	}
 
-	sendChannelId, err := getSendChannelId(request)
+	sendChannelId, calledCozeBotId, err := getSendChannelIdAndCozeBotId(c, true, request)
 	if err != nil {
 		common.LogError(context.Background(), err.Error())
 		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 			OpenAIError: model.OpenAIError{
-				Message: "未指定discord频道Id或未配置默认频道Id",
+				Message: "配置异常",
 				Type:    "invalid_request_error",
 				Code:    "discord_request_err",
 			},
@@ -200,7 +213,7 @@ func ChatForOpenAI(c *gin.Context) {
 		return
 	}
 
-	sentMsg, err := discord.SendMessage(sendChannelId, content)
+	sentMsg, err := discord.SendMessage(sendChannelId, calledCozeBotId, content)
 	if err != nil {
 		common.LogError(context.Background(), err.Error())
 		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
@@ -359,12 +372,11 @@ func ImagesForOpenAI(c *gin.Context) {
 		return
 	}
 
-	sendChannelId, err := getSendChannelId(request)
 	if err != nil {
 		common.LogError(context.Background(), err.Error())
 		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 			OpenAIError: model.OpenAIError{
-				Message: "未指定discord频道Id或未配置默认频道Id",
+				Message: "配置异常",
 				Type:    "invalid_request_error",
 				Code:    "discord_request_err",
 			},
@@ -380,7 +392,20 @@ func ImagesForOpenAI(c *gin.Context) {
 		return
 	}
 
-	sentMsg, err := discord.SendMessage(sendChannelId, request.Prompt)
+	sendChannelId, calledCozeBotId, err := getSendChannelIdAndCozeBotId(c, true, request)
+	if err != nil {
+		common.LogError(context.Background(), err.Error())
+		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
+			OpenAIError: model.OpenAIError{
+				Message: "配置异常",
+				Type:    "invalid_request_error",
+				Code:    "discord_request_err",
+			},
+		})
+		return
+	}
+
+	sentMsg, err := discord.SendMessage(sendChannelId, calledCozeBotId, request.Prompt)
 	if err != nil {
 		common.LogError(context.Background(), err.Error())
 		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
@@ -443,19 +468,37 @@ func ImagesForOpenAI(c *gin.Context) {
 
 }
 
-func getSendChannelId(request model.ChannelIdentifier) (string, error) {
-	var sendChannelId string
-	channelId := request.GetChannelId()
-	if channelId != nil && *channelId != "" {
-		sendChannelId = *channelId
+func getSendChannelIdAndCozeBotId(c *gin.Context, isOpenAIAPI bool, request model.ChannelIdentifier) (sendChannelId string, calledCozeBotId string, err error) {
+	var secret string
+	if isOpenAIAPI {
+		secret = c.Request.Header.Get("Authorization")
+		secret = strings.Replace(secret, "Bearer ", "", 1)
 	} else {
-		if discord.ChannelId != "" {
-			sendChannelId = discord.ChannelId
-		} else {
-			return "", fmt.Errorf("未指定discord频道Id或未配置默认频道Id")
-		}
+		secret = c.Request.Header.Get("proxy-secret")
 	}
-	return sendChannelId, nil
+
+	// botConfigs不为空
+	if len(discord.BotConfigList) != 0 {
+
+		botConfigs := discord.FilterConfigs(discord.BotConfigList, secret, request.GetChannelId())
+		if len(botConfigs) != 0 {
+			// 有值则随机一个
+			botConfig, err := common.RandomElement(botConfigs)
+			if err != nil {
+				return "", "", err
+			}
+			return botConfig.ChannelId, botConfig.CozeBotId, nil
+		}
+		// 没有值抛出异常
+		return "", "", fmt.Errorf("secret和channelId匹配不到有效bot")
+	} else {
+		channelId := request.GetChannelId()
+		if channelId == nil || *channelId == "" {
+			channelId = &discord.ChannelId
+		}
+		// botConfigs为空
+		return *channelId, discord.CozeBotId, nil
+	}
 }
 
 func setTimerWithHeader(c *gin.Context, isStream bool, defaultTimeout time.Duration) (*time.Timer, error) {

@@ -198,3 +198,28 @@ func IsImageBase64(s string) bool {
 func IsURL(s string) bool {
 	return strings.HasPrefix(s, "http://") || strings.HasPrefix(s, "https://") || strings.HasPrefix(s, "ftp://")
 }
+
+// Contains checks if a string is present in a slice of strings.
+func SliceContains(slice []string, str string) bool {
+	for _, item := range slice {
+		if item == str {
+			return true
+		}
+	}
+	return false
+}
+
+// RandomElement 返回给定切片中的随机元素
+func RandomElement[T any](slice []T) (T, error) {
+	if len(slice) == 0 {
+		var zero T
+		return zero, fmt.Errorf("empty slice")
+	}
+
+	// 确保每次随机都不一样
+	rand.Seed(time.Now().UnixNano())
+
+	// 随机选择一个索引
+	index := rand.Intn(len(slice))
+	return slice[index], nil
+}

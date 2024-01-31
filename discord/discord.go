@@ -6,6 +6,7 @@ import (
 	"coze-discord-proxy/common"
 	"coze-discord-proxy/model"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"github.com/h2non/filetype"
@@ -21,10 +22,12 @@ import (
 	"time"
 )
 
-var cozeBotId = os.Getenv("COZE_BOT_ID")
+var CozeBotId = os.Getenv("COZE_BOT_ID")
 var GuildId = os.Getenv("GUILD_ID")
 var ChannelId = os.Getenv("CHANNEL_ID")
 var ProxyUrl = os.Getenv("PROXY_URL")
+
+var BotConfigList []model.BotConfig
 
 var RepliesChans = make(map[string]chan model.ReplyResp)
 var RepliesOpenAIChans = make(map[string]chan model.OpenAIChatCompletionResponse)
@@ -37,6 +40,11 @@ func StartBot(ctx context.Context, token string) {
 	var err error
 	Session, err = discordgo.New("Bot " + token)
 
+	if err != nil {
+		common.FatalLog("error creating Discord session,", err)
+		return
+	}
+
 	if ProxyUrl != "" {
 		client, err := NewProxyClient(ProxyUrl)
 		if err != nil {
@@ -46,10 +54,8 @@ func StartBot(ctx context.Context, token string) {
 		common.LogInfo(context.Background(), "Proxy Set Success")
 	}
 
-	if err != nil {
-		common.FatalLog("error creating Discord session,", err)
-		return
-	}
+	// 读取配置文件
+	loadBotConfig()
 
 	// 注册消息处理函数
 	Session.AddHandler(messageUpdate)
@@ -63,7 +69,7 @@ func StartBot(ctx context.Context, token string) {
 
 	common.LogInfo(ctx, "Bot is now running. Enjoy It.")
 
-	go scheduleDailyMessage(ChannelId, "Hi!")
+	go scheduleDailyMessage()
 
 	go func() {
 		<-ctx.Done()
@@ -76,6 +82,35 @@ func StartBot(ctx context.Context, token string) {
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
+}
+
+func loadBotConfig() {
+	// 检查文件是否存在
+	_, err := os.Stat("config/bot_config.json")
+	if err != nil {
+		if os.IsNotExist(err) {
+			return
+		} else {
+			common.SysError("载入bot_config.json文件异常")
+		}
+	}
+
+	// 读取文件
+	file, err := os.ReadFile("config/bot_config.json")
+	if err != nil {
+		common.FatalLog("error reading bot config file,", err)
+	}
+	if len(file) == 0 {
+		return
+	}
+
+	// 解析JSON到结构体切片  并载入内存
+	err = json.Unmarshal(file, &BotConfigList)
+	if err != nil {
+		common.FatalLog("Error parsing JSON:", err)
+	}
+
+	common.LogInfo(context.Background(), fmt.Sprintf("载入配置文件成功 BotConfigs: %+v\n", BotConfigList))
 }
 
 // messageUpdate handles the updated messages in Discord.
@@ -214,13 +249,13 @@ func processMessageForOpenAIImage(m *discordgo.MessageUpdate) model.OpenAIImages
 	}
 }
 
-func SendMessage(channelID, message string) (*discordgo.Message, error) {
+func SendMessage(channelID, cozeBotId, message string) (*discordgo.Message, error) {
 	if Session == nil {
 		return nil, fmt.Errorf("Discord session not initialized")
 	}
 
 	// 添加@机器人逻辑
-	sentMsg, err := Session.ChannelMessageSend(channelID, fmt.Sprintf("<@%s> %s", cozeBotId, message))
+	sentMsg, err := Session.ChannelMessageSend(channelID, fmt.Sprintf("<@%s> %s", CozeBotId, message))
 	if err != nil {
 		return nil, fmt.Errorf("error sending message: %s", err)
 	}
@@ -310,7 +345,7 @@ func NewProxyClient(proxyUrl string) (*http.Client, error) {
 
 }
 
-func scheduleDailyMessage(channelID string, message string) {
+func scheduleDailyMessage() {
 	for {
 		// 计算距离下一个晚上12点的时间间隔
 		now := time.Now()
@@ -321,13 +356,22 @@ func scheduleDailyMessage(channelID string, message string) {
 		// 等待直到下一个间隔
 		time.Sleep(delay)
 
-		_, err := SendMessage(channelID, message)
+		BotConfigList = append(BotConfigList, model.BotConfig{
+			ChannelId: ChannelId,
+			CozeBotId: CozeBotId,
+		})
 
-		if err != nil {
-			common.LogWarn(context.Background(), "活跃机器人任务消息发送异常!")
-		} else {
-			common.LogInfo(context.Background(), "活跃机器人任务消息发送成功!")
+		botConfigs := model.FilterUniqueBotChannel(BotConfigList)
+		for _, config := range botConfigs {
+
+			_, err := SendMessage(config.ChannelId, config.CozeBotId, "Hi!")
+			if err != nil {
+				common.LogWarn(context.Background(), fmt.Sprintf("ChannelId{%s} BotId{%s} 活跃机器人任务消息发送异常!", config.ChannelId, config.CozeBotId))
+			} else {
+				common.LogInfo(context.Background(), fmt.Sprintf("ChannelId{%s} BotId{%s} 活跃机器人任务消息发送成功!", config.ChannelId, config.CozeBotId))
+			}
 		}
+
 	}
 }
 
@@ -375,4 +419,17 @@ func UploadToDiscordAndGetURL(channelID string, base64Data string) (string, erro
 	}
 
 	return "", fmt.Errorf("no attachment found in the message")
+}
+
+// FilterConfigs 根据proxySecret和channelId过滤BotConfig
+func FilterConfigs(configs []model.BotConfig, secret string, channelId *string) []model.BotConfig {
+	var filteredConfigs []model.BotConfig
+	for _, config := range configs {
+		matchSecret := secret == "" || config.ProxySecret == secret
+		matchChannelId := channelId == nil || *channelId == "" || config.ChannelId == *channelId
+		if matchSecret && matchChannelId {
+			filteredConfigs = append(filteredConfigs, config)
+		}
+	}
+	return filteredConfigs
 }
