@@ -372,18 +372,6 @@ func ImagesForOpenAI(c *gin.Context) {
 		return
 	}
 
-	if err != nil {
-		common.LogError(context.Background(), err.Error())
-		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
-			OpenAIError: model.OpenAIError{
-				Message: "配置异常",
-				Type:    "invalid_request_error",
-				Code:    "discord_request_err",
-			},
-		})
-		return
-	}
-
 	if runeCount := len([]rune(request.Prompt)); runeCount > 2000 {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
