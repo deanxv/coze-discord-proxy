@@ -23,7 +23,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	go discord.StartBot(ctx, os.Getenv("BOT_TOKEN"))
+	go discord.StartBot(ctx, discord.BotToken)
 
 	common.SetupLogger()
 	common.SysLog("COZE-DISCORD-PROXY " + common.Version + " started")
