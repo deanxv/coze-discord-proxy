@@ -22,6 +22,7 @@ import (
 	"time"
 )
 
+var BotToken = os.Getenv("BOT_TOKEN")
 var CozeBotId = os.Getenv("COZE_BOT_ID")
 var GuildId = os.Getenv("GUILD_ID")
 var ChannelId = os.Getenv("CHANNEL_ID")
@@ -52,12 +53,8 @@ func StartBot(ctx context.Context, token string) {
 		}
 		Session.Client = client
 		Session.Dialer.Proxy = http.ProxyURL(proxyParse)
-		common.LogInfo(context.Background(), "Proxy Set Success")
+		common.SysLog("Proxy Set Success!")
 	}
-
-	// 读取配置文件
-	loadBotConfig()
-
 	// 注册消息处理函数
 	Session.AddHandler(messageUpdate)
 
@@ -67,8 +64,11 @@ func StartBot(ctx context.Context, token string) {
 		common.FatalLog("error opening connection,", err)
 		return
 	}
-
-	common.LogInfo(ctx, "Bot is now running. Enjoy It.")
+	// 读取机器人配置文件
+	loadBotConfig()
+	// 验证docker配置文件
+	checkEnvVariable()
+	common.SysLog("Bot is now running. Enjoy It.")
 
 	go scheduleDailyMessage()
 
@@ -83,6 +83,31 @@ func StartBot(ctx context.Context, token string) {
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
+}
+
+func checkEnvVariable() {
+	if BotToken == "" {
+		common.FatalLog("环境变量 BOT_TOKEN 未设置")
+	}
+	if GuildId == "" {
+		common.FatalLog("环境变量 GUILD_ID 未设置")
+	}
+	if CozeBotId == "" {
+		common.FatalLog("环境变量 COZE_BOT_ID 未设置")
+	} else if Session.State.User.ID == CozeBotId {
+		common.FatalLog("环境变量 COZE_BOT_ID 不可为当前服务 BOT_TOKEN 关联的 BOT_ID")
+	}
+
+	if ChannelId == "" {
+		common.FatalLog("环境变量 CHANNEL_ID 未设置")
+	}
+	if ProxyUrl != "" {
+		_, _, err := NewProxyClient(ProxyUrl)
+		if err != nil {
+			common.FatalLog("环境变量 PROXY_URL 设置有误")
+		}
+	}
+	common.SysLog("Environment variable check passed.")
 }
 
 func loadBotConfig() {
