@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
+	"github.com/gin-gonic/gin"
 	"github.com/h2non/filetype"
 	"golang.org/x/net/proxy"
 	"log"
@@ -275,15 +276,31 @@ func processMessageForOpenAIImage(m *discordgo.MessageUpdate) model.OpenAIImages
 	}
 }
 
-func SendMessage(channelID, cozeBotId, message string) (*discordgo.Message, error) {
+func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discordgo.Message, error) {
+	var ctx context.Context
+	if c == nil {
+		ctx = context.Background()
+	} else {
+		ctx = c.Request.Context()
+	}
+
 	if Session == nil {
-		return nil, fmt.Errorf("Discord session not initialized")
+		common.LogError(ctx, "discord session is nil")
+		return nil, fmt.Errorf("discord session not initialized")
+	}
+
+	content := fmt.Sprintf("<@%s> %s", cozeBotId, message)
+
+	if runeCount := len([]rune(content)); runeCount > 2000 {
+		common.LogError(ctx, fmt.Sprintf("prompt已超过限制,请分段发送 [%v] %s", runeCount, content))
+		return nil, fmt.Errorf("prompt已超过限制,请分段发送 [%v]", runeCount)
 	}
 
 	// 添加@机器人逻辑
-	sentMsg, err := Session.ChannelMessageSend(channelID, fmt.Sprintf("<@%s> %s", cozeBotId, message))
+	sentMsg, err := Session.ChannelMessageSend(channelID, content)
 	if err != nil {
-		return nil, fmt.Errorf("error sending message: %s", err)
+		common.LogError(ctx, fmt.Sprintf("error sending message: %s", err))
+		return nil, fmt.Errorf("error sending message")
 	}
 	return sentMsg, nil
 }
@@ -390,7 +407,7 @@ func scheduleDailyMessage() {
 		botConfigs := model.FilterUniqueBotChannel(BotConfigList)
 		for _, config := range botConfigs {
 
-			_, err := SendMessage(config.ChannelId, config.CozeBotId, "Hi!")
+			_, err := SendMessage(nil, config.ChannelId, config.CozeBotId, "Hi!")
 			if err != nil {
 				common.LogWarn(context.Background(), fmt.Sprintf("ChannelId{%s} BotId{%s} 活跃机器人任务消息发送异常!", config.ChannelId, config.CozeBotId))
 			} else {
