@@ -115,11 +115,10 @@ func loadBotConfig() {
 	// 检查文件是否存在
 	_, err := os.Stat("config/bot_config.json")
 	if err != nil {
-		if os.IsNotExist(err) {
-			return
-		} else {
+		if !os.IsNotExist(err) {
 			common.SysError("载入bot_config.json文件异常")
 		}
+		return
 	}
 
 	// 读取文件
