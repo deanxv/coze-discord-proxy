@@ -209,9 +209,13 @@ Render 可以直接部署 docker 镜像，不需要 fork 仓库：[Render](https
 
 [![Star History Chart](https://api.star-history.com/svg?repos=deanxv/coze-discord-proxy&type=Date)](https://star-history.com/#deanxv/coze-discord-proxy&Date)
 
-## 其他 
+## 其他版本
 
 **开源不易，若你参考此项目或基于此项目二开可否麻烦在你的项目文档中标识此项目呢？谢谢你！♥♥♥** 
+
+Java: https://github.com/oddfar/coze-discord
+
+## 其他引用
 
 Coze 官网 : https://www.coze.com 
 
