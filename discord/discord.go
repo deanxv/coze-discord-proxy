@@ -404,15 +404,20 @@ func scheduleDailyMessage() {
 		})
 
 		botConfigs := model.FilterUniqueBotChannel(BotConfigList)
-		for _, config := range botConfigs {
 
-			_, err := SendMessage(nil, config.ChannelId, config.CozeBotId, "Hi!")
+		common.SysLog("CDP Scheduled Task Job Start!")
+
+		for _, config := range botConfigs {
+			time.Sleep(5 * time.Second)
+			_, err := SendMessage(nil, config.ChannelId, config.CozeBotId, "CDP Scheduled Task Job Send Msg Success！")
 			if err != nil {
 				common.LogWarn(context.Background(), fmt.Sprintf("ChannelId{%s} BotId{%s} 活跃机器人任务消息发送异常!", config.ChannelId, config.CozeBotId))
 			} else {
 				common.LogInfo(context.Background(), fmt.Sprintf("ChannelId{%s} BotId{%s} 活跃机器人任务消息发送成功!", config.ChannelId, config.CozeBotId))
 			}
 		}
+
+		common.SysLog("CDP Scheduled Task Job End!")
 
 	}
 }
