@@ -205,13 +205,15 @@ Render 可以直接部署 docker 镜像，不需要 fork 仓库：[Render](https
 
 > 当有此配置时,会通过请求头携带的请求密钥匹配此配置中的`cozeBotId`,`channelId`,若匹配到多个则随机匹配一个，所以当存在多用户使用时可对每个用户分发独立的请求密钥。
 
-## ⭐ Star History
+## ⭐ Star History 
 
 [![Star History Chart](https://api.star-history.com/svg?repos=deanxv/coze-discord-proxy&type=Date)](https://star-history.com/#deanxv/coze-discord-proxy&Date)
 
-## 其他
+## 其他 
 
-Coze 官网 : https://www.coze.com
+**开源不易，若你参考此项目或基于此项目二开可否麻烦在你的项目文档中标识此项目呢？谢谢你！♥♥♥** 
+
+Coze 官网 : https://www.coze.com 
 
 Discord 开发地址 : https://discord.com/developers/applications
 
