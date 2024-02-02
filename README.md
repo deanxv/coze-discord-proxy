@@ -175,7 +175,7 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 
 ## 进阶配置
 
-### 配置多个[机器人-频道]
+### 配置多[机器人-频道]
 
 1. 部署前在`docker`/`docker-compose`部署同级目录下创建`data/config/bot_config.json`文件
 2. 编写该`json`文件,`bot_config.json`格式如下
@@ -208,7 +208,7 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 
 ##### Q: 我们如何使用该服务托管多个Bot去请求多个由coze托管的Bot？
 
-###### A: 首先用不同的端口启动多个`coze-discord-proxy`服务,并对每个服务设置不同的`BOT_TOKEN`,再部署[one-api](https://github.com/songquanpeng/one-api)后[配置多个渠道](#如何集成one-api),利用[one-api](https://github.com/songquanpeng/one-api)的轮询去请求我们的`coze-discord-proxy`服务。
+###### A: 首先用不同的端口部署多个`coze-discord-proxy`服务,对每个服务都[配置多[机器人-频道]](#配置多[机器人-频道]),并对每个服务设置不同的`BOT_TOKEN`,再部署[one-api](https://github.com/songquanpeng/one-api)后[配置多个渠道](#如何集成one-api),利用[one-api](https://github.com/songquanpeng/one-api)的轮询去请求我们的`coze-discord-proxy`服务。
 
 ## ⭐ Star History
 
