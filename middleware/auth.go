@@ -13,7 +13,7 @@ func authHelper(c *gin.Context) {
 	if common.ProxySecret != "" && !common.SliceContains(strings.Split(common.ProxySecret, ","), secret) {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"success": false,
-			"message": "无权进行此操作，未提供正确的 proxy-secret",
+			"message": "无权进行此操作,未提供正确的 proxy-secret",
 		})
 		c.Abort()
 		return
