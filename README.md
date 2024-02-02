@@ -41,21 +41,21 @@ _觉得有点意思的话 别忘了点个🌟_
 4. 两个bot开通对应权限(`Send Messages`,`Read Message History`等)并邀请进服务器,记录服务器ID(`GUILD_ID`) (
    过程不在此赘述)。
 5. 打开 [coze官网](https://www.coze.com) 创建自己bot。
-6. 创建好后推送，配置discord-bot的`token`,即bot-A的`token`,点击完成后在discord的服务器中可看到bot-A在线并可以@使用。
-7. 配置环境变量，并启动本项目。
+6. 创建好后推送,配置discord-bot的`token`,即bot-A的`token`,点击完成后在discord的服务器中可看到bot-A在线并可以@使用。
+7. 配置环境变量,并启动本项目。
 8. 访问接口地址即可开始调试。
 
 ## 如何集成NextChat
 
-填 接口地址(ip:端口/域名) 及 API-Key(`PROXY_SECRET`)，其它的随便填随便选。
+填 接口地址(ip:端口/域名) 及 API-Key(`PROXY_SECRET`),其它的随便填随便选。
 
-> 如果自己没有搭建NextChat面板，这里有个已经搭建好的可以使用 [NextChat](https://ci.goeast.io/)
+> 如果自己没有搭建NextChat面板,这里有个已经搭建好的可以使用 [NextChat](https://ci.goeast.io/)
 
 <span><img src="docs/img5.png" width="800"/></span>
 
 ## 如何集成one-api
 
-填 `BaseURL`(ip:端口/域名) 及 密钥(`PROXY_SECRET`)，其它的随便填随便选。
+填 `BaseURL`(ip:端口/域名) 及 密钥(`PROXY_SECRET`),其它的随便填随便选。
 
 <span><img src="docs/img3.png" width="800"/></span>
 
@@ -105,7 +105,7 @@ docker run --name coze-discord-proxy -d --restart always \
 deanxv/coze-discord-proxy
 ```
 
-其中，`BOT_TOKEN`,`GUILD_ID`,`COZE_BOT_ID`,`PROXY_SECRET`,`CHANNEL_ID`修改为自己的。
+其中,`BOT_TOKEN`,`GUILD_ID`,`COZE_BOT_ID`,`PROXY_SECRET`,`CHANNEL_ID`修改为自己的。
 
 ### 部署到第三方平台
 
@@ -113,7 +113,7 @@ deanxv/coze-discord-proxy
 <summary><strong>部署到 Zeabur</strong></summary>
 <div>
 
-> Zeabur 的服务器在国外，自动解决了网络的问题，同时免费的额度也足够个人使用
+> Zeabur 的服务器在国外,自动解决了网络的问题,同时免费的额度也足够个人使用
 
 点击一键部署:
 
@@ -124,9 +124,9 @@ deanxv/coze-discord-proxy
 或手动部署:
 
 1. 首先 **fork** 一份代码。
-2. 进入 [Zeabur](https://zeabur.com?referralCode=deanxv)，使用github登录，进入控制台。
-3. 在 Service -> Add Service，选择 Git（第一次使用需要先授权），选择你 fork 的仓库。
-4. Deploy 会自动开始，先取消。
+2. 进入 [Zeabur](https://zeabur.com?referralCode=deanxv),使用github登录,进入控制台。
+3. 在 Service -> Add Service,选择 Git（第一次使用需要先授权）,选择你 fork 的仓库。
+4. Deploy 会自动开始,先取消。
 5. 添加环境变量
 
    `BOT_TOKEN:MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w`  主动发送消息的Bot-Token
@@ -137,8 +137,7 @@ deanxv/coze-discord-proxy
 
    `CHANNEL_ID:119xxxxxx24`  # 默认频道-在使用与openai对齐的接口时(/v1/chat/completions) 消息会默认发送到此频道
 
-   `PROXY_SECRET:123456` [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)，配置此参数后，每次发起请求时请求头加上`proxy-secret`
-   参数，即`header`中添加 `proxy-secret：123456`
+   `PROXY_SECRET:123456` [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔),配置此参数后,每次发起请求时请求头加上`proxy-secret`参数,即`header`中添加 `proxy-secret：123456`
 
 保存。
 
@@ -153,9 +152,9 @@ deanxv/coze-discord-proxy
 <summary><strong>部署到 Render</strong></summary>
 <div>
 
-> Render 提供免费额度，绑卡后可以进一步提升额度
+> Render 提供免费额度,绑卡后可以进一步提升额度
 
-Render 可以直接部署 docker 镜像，不需要 fork 仓库：[Render](https://dashboard.render.com)
+Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https://dashboard.render.com)
 
 </div>
 </details>
@@ -168,8 +167,7 @@ Render 可以直接部署 docker 镜像，不需要 fork 仓库：[Render](https
 2. `GUILD_ID:119xxxxxxxx796`  两个机器人所在的服务器ID
 3. `COZE_BOT_ID:119xxxxxxxx7`  由coze托管的机器人ID
 4. `CHANNEL_ID:119xxxxxx24`  默认频道-在使用与openai对齐的接口时(/v1/chat/completions) 消息会默认发送到此频道
-5. `PROXY_SECRET:123456`  [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔),配置此参数后，每次发起请求时请求头加上`proxy-secret`
-   参数，即`header`中添加 `proxy-secret：123456`
+5. `PROXY_SECRET:123456`  [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔),配置此参数后,每次发起请求时请求头加上`proxy-secret`参数,即`header`中添加 `proxy-secret：123456`
 6. `REQUEST_OUT_TIME:60`  [可选]对话接口非流响应下的请求超时时间
 7. `STREAM_REQUEST_OUT_TIME:60`  [可选]对话接口流响应下的每次流返回超时时间
 8. `PROXY_URL:http://127.0.0.1:10801`  [可选]代理
@@ -203,21 +201,27 @@ Render 可以直接部署 docker 镜像，不需要 fork 仓库：[Render](https
 
 3. 重启服务
 
-> 当有此配置时,会通过请求头携带的请求密钥匹配此配置中的`cozeBotId`,`channelId`,若匹配到多个则随机匹配一个，所以当存在多用户使用时可对每个用户分发独立的请求密钥。
+> 当有此配置时,会通过请求头携带的请求密钥匹配此配置中的`cozeBotId`,`channelId`,若匹配到多个则随机匹配一个,所以当存在多用户使用时可对每个用户分发独立的请求密钥。
 
-## ⭐ Star History 
+## Q&A
+
+##### Q: 我们如何使用该服务托管多个Bot去请求多个由coze托管的Bot？
+
+###### A: 首先用不同的端口启动多个`coze-discord-proxy`服务,并对每个服务设置不同的`BOT_TOKEN`,再部署[one-api](https://github.com/songquanpeng/one-api)后[配置多个渠道](#如何集成one-api),利用[one-api](https://github.com/songquanpeng/one-api)的轮询去请求我们的`coze-discord-proxy`服务。
+
+## ⭐ Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=deanxv/coze-discord-proxy&type=Date)](https://star-history.com/#deanxv/coze-discord-proxy&Date)
 
 ## 其他版本
 
-**开源不易，若你参考此项目或基于此项目二开可否麻烦在你的项目文档中标识此项目呢？谢谢你！♥♥♥** 
+**开源不易,若你参考此项目或基于此项目二开可否麻烦在你的项目文档中标识此项目呢？谢谢你！♥♥♥**
 
 Java: https://github.com/oddfar/coze-discord
 
 ## 其他引用
 
-Coze 官网 : https://www.coze.com 
+Coze 官网 : https://www.coze.com
 
 Discord 开发地址 : https://discord.com/developers/applications
 

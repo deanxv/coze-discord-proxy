@@ -9,7 +9,7 @@ ENV GO111MODULE=on \
 # 设置工作目录
 WORKDIR /build
 
-# 复制 go.mod 和 go.sum 文件，先下载依赖
+# 复制 go.mod 和 go.sum 文件,先下载依赖
 COPY go.mod go.sum ./
 ENV GOPROXY=https://goproxy.cn,direct
 RUN go mod download

@@ -92,7 +92,7 @@ func Chat(c *gin.Context) {
 				c.SSEvent("message", reply.Content+urls)
 				return true // 继续保持流式连接
 			case <-timer.C:
-				// 定时器到期时，关闭流
+				// 定时器到期时,关闭流
 				return false
 			case <-stopChan:
 				return false // 关闭流式连接
@@ -253,7 +253,7 @@ func ChatForOpenAI(c *gin.Context) {
 				c.SSEvent("", " "+string(bytes))
 				return true // 继续保持流式连接
 			case <-timer.C:
-				// 定时器到期时，关闭流
+				// 定时器到期时,关闭流
 				c.SSEvent("", " [DONE]")
 				return false
 			case <-stopChan:
@@ -450,7 +450,7 @@ func getSendChannelIdAndCozeBotId(c *gin.Context, isOpenAIAPI bool, request mode
 		if request.GetChannelId() == nil || *request.GetChannelId() == "" {
 			return discord.ChannelId, discord.CozeBotId, nil
 		} else {
-			return discord.ChannelId, *request.GetChannelId(), nil
+			return *request.GetChannelId(), discord.CozeBotId, nil
 		}
 	}
 

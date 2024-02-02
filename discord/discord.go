@@ -152,7 +152,7 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 		return
 	}
 
-	// 如果作者为 nil 或消息来自 bot 本身，则发送停止信号
+	// 如果作者为 nil 或消息来自 bot 本身,则发送停止信号
 	if m.Author == nil || m.Author.ID == s.State.User.ID {
 		stopChan <- m.ReferencedMessage.ID
 		return
@@ -183,7 +183,7 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 			// data: {"id":"chatcmpl-8lho2xvdDFyBdFkRwWAcMpWWAgymJ","object":"chat.completion.chunk","created":1706380498,"model":"gpt-3.5-turbo-0613","system_fingerprint":null,"choices":[{"index":0,"delta":{"content":"？"},"logprobs":null,"finish_reason":null}]}
 			// data :{"id":"1200873365351698694","object":"chat.completion.chunk","created":1706380922,"model":"COZE","choices":[{"index":0,"message":{"role":"assistant","content":"你好！有什么我可以帮您的吗？如果有任"},"logprobs":null,"finish_reason":"","delta":{"content":"吗？如果有任"}}],"usage":{"prompt_tokens":13,"completion_tokens":19,"total_tokens":32},"system_fingerprint":null}
 
-			// 如果消息包含组件或嵌入，则发送停止信号
+			// 如果消息包含组件或嵌入,则发送停止信号
 			if len(m.Message.Components) > 0 {
 				replyOpenAIChan, exists := RepliesOpenAIChans[m.ReferencedMessage.ID]
 				if exists {
@@ -460,7 +460,7 @@ func UploadToDiscordAndGetURL(channelID string, base64Data string) (string, erro
 		return "", err
 	}
 
-	// 检查消息中是否包含附件，并获取 URL
+	// 检查消息中是否包含附件,并获取 URL
 	if len(message.Attachments) > 0 {
 		return message.Attachments[0].URL, nil
 	}
