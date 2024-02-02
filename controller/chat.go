@@ -447,7 +447,11 @@ func getSendChannelIdAndCozeBotId(c *gin.Context, isOpenAIAPI bool, request mode
 	}
 
 	if secret == "" {
-		return discord.ChannelId, discord.CozeBotId, nil
+		if request.GetChannelId() == nil || *request.GetChannelId() == "" {
+			return discord.ChannelId, discord.CozeBotId, nil
+		} else {
+			return discord.ChannelId, *request.GetChannelId(), nil
+		}
 	}
 
 	// botConfigs不为空
