@@ -6,7 +6,7 @@ _coze+discord 代理服务—通过接口调用被`coze`托管的`discord-bot`_
 
 _觉得有点意思的话 别忘了点个🌟_
 
-🐞<a href="https://t.me/+LGKwlC_xa-E5ZDk9" style="font-size: 15px;">COZE-DISCORD-PROXY交流群</a>
+🐞<a href="https://t.me/+LGKwlC_xa-E5ZDk9" style="font-size: 15px;">COZE-DISCORD-PROXY交流群</a>(群内有详细教程)
 
 </div>
 
