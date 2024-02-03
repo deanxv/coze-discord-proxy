@@ -304,9 +304,9 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 	return sentMsg, nil
 }
 
-func ChannelCreate(guildID, channelName string) (string, error) {
+func ChannelCreate(guildID, channelName string, channelType int) (string, error) {
 	// 创建新的频道
-	st, err := Session.GuildChannelCreate(guildID, channelName, discordgo.ChannelTypeGuildText)
+	st, err := Session.GuildChannelCreate(guildID, channelName, discordgo.ChannelType(channelType))
 	if err != nil {
 		common.LogError(context.Background(), fmt.Sprintf("创建频道时异常 %s", err.Error()))
 		return "", err
@@ -324,11 +324,11 @@ func ChannelDel(channelId string) (string, error) {
 	return st.ID, nil
 }
 
-func ChannelCreateComplex(guildID, parentId, channelName string) (string, error) {
+func ChannelCreateComplex(guildID, parentId, channelName string, channelType int) (string, error) {
 	// 创建新的子频道
 	st, err := Session.GuildChannelCreateComplex(guildID, discordgo.GuildChannelCreateData{
 		Name:     channelName,
-		Type:     discordgo.ChannelTypeGuildText,
+		Type:     discordgo.ChannelType(channelType),
 		ParentID: parentId,
 	})
 	if err != nil {
@@ -398,16 +398,18 @@ func scheduleDailyMessage() {
 		// 等待直到下一个间隔
 		time.Sleep(delay)
 
-		BotConfigList = append(BotConfigList, model.BotConfig{
+		var taskBotConfigs = BotConfigList
+
+		taskBotConfigs = append(taskBotConfigs, model.BotConfig{
 			ChannelId: ChannelId,
 			CozeBotId: CozeBotId,
 		})
 
-		botConfigs := model.FilterUniqueBotChannel(BotConfigList)
+		taskBotConfigs = model.FilterUniqueBotChannel(taskBotConfigs)
 
 		common.SysLog("CDP Scheduled Task Job Start!")
 
-		for _, config := range botConfigs {
+		for _, config := range taskBotConfigs {
 			time.Sleep(5 * time.Second)
 			_, err := SendMessage(nil, config.ChannelId, config.CozeBotId, "CDP Scheduled Task Job Send Msg Success！")
 			if err != nil {

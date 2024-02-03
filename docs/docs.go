@@ -263,6 +263,9 @@ const docTemplate = `{
                 },
                 "parentId": {
                     "type": "string"
+                },
+                "type": {
+                    "type": "number"
                 }
             }
         },

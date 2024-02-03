@@ -16,8 +16,8 @@ _觉得有点意思的话 别忘了点个🌟_
 - [x] 对话支持流式返回
 - [x] 对话支持文生图(需`coze`配置`DALL·E3`插件)返回图片url
 - [x] 对话支持图生文(需`coze`配置`GPT4V`插件)(发送的文本消息中携带图片url/按照GPT4V识图请求格式发起请求)
-- [x] 支持创建 `discord`频道/子频道/线程
-- [x] 支持对话指定 `discord`频道/子频道/线程 实现对话隔离
+- [x] 支持创建 `discord`分类/频道/线程
+- [x] 支持对话指定 `discord`频道/线程-实现对话隔离
 - [x] 支持和`openai`对齐的对话接口(`v1/chat/completions`)(支持文生图)
 - [x] 支持和`openai`对齐的GPT4V识图接口(`v1/chat/completions`)(读取 `url`/`base64`)
 - [x] 支持和`openai`对齐的`dall-e-3`接口(`v1/images/generations`)
@@ -137,7 +137,8 @@ deanxv/coze-discord-proxy
 
    `CHANNEL_ID:119xxxxxx24`  # 默认频道-在使用与openai对齐的接口时(/v1/chat/completions) 消息会默认发送到此频道
 
-   `PROXY_SECRET:123456` [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔),配置此参数后,每次发起请求时请求头加上`proxy-secret`参数,即`header`中添加 `proxy-secret：123456`
+   `PROXY_SECRET:123456` [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)
+   ,配置此参数后,每次发起请求时请求头加上`proxy-secret`参数,即`header`中添加 `proxy-secret：123456`
 
 保存。
 

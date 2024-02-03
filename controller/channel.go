@@ -20,6 +20,7 @@ import (
 func ChannelCreate(c *gin.Context) {
 
 	var channelModel model.ChannelReq
+	channelModel.Type = 0
 	err := json.NewDecoder(c.Request.Body).Decode(&channelModel)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
@@ -32,9 +33,9 @@ func ChannelCreate(c *gin.Context) {
 	var channelId string
 
 	if channelModel.ParentId == "" {
-		channelId, err = discord.ChannelCreate(discord.GuildId, channelModel.Name)
+		channelId, err = discord.ChannelCreate(discord.GuildId, channelModel.Name, channelModel.Type)
 	} else {
-		channelId, err = discord.ChannelCreateComplex(discord.GuildId, channelModel.ParentId, channelModel.Name)
+		channelId, err = discord.ChannelCreateComplex(discord.GuildId, channelModel.ParentId, channelModel.Name, channelModel.Type)
 	}
 
 	if err != nil {

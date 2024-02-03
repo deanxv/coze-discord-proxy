@@ -1,467 +1,470 @@
 {
-  "swagger": "2.0",
-  "info": {
-    "description": "COZE-DISCORD-PROXY 代理服务",
-    "title": "COZE-DISCORD-PROXY",
-    "contact": {},
-    "version": "1.0.0"
-  },
-  "paths": {
-    "/api/channel/create": {
-      "post": {
-        "description": "创建频道",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "channel"
-        ],
-        "summary": "创建频道",
-        "parameters": [
-          {
-            "description": "channelModel",
-            "name": "channelModel",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/model.ChannelReq"
+    "swagger": "2.0",
+    "info": {
+        "description": "COZE-DISCORD-PROXY 代理服务",
+        "title": "COZE-DISCORD-PROXY",
+        "contact": {},
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/channel/create": {
+            "post": {
+                "description": "创建频道",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "channel"
+                ],
+                "summary": "创建频道",
+                "parameters": [
+                    {
+                        "description": "channelModel",
+                        "name": "channelModel",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ChannelReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/model.ChannelResp"
+                        }
+                    }
+                }
             }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/model.ChannelResp"
+        },
+        "/api/channel/del/{id}": {
+            "get": {
+                "description": "删除频道",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "channel"
+                ],
+                "summary": "删除频道",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
-          }
-        }
-      }
-    },
-    "/api/channel/del/{id}": {
-      "get": {
-        "description": "删除频道",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "channel"
-        ],
-        "summary": "删除频道",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "id",
-            "name": "id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "type": "string"
+        },
+        "/api/chat": {
+            "post": {
+                "description": "发送消息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chat"
+                ],
+                "summary": "发送消息",
+                "parameters": [
+                    {
+                        "description": "chatModel",
+                        "name": "chatModel",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ChatReq"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "proxy-secret",
+                        "name": "proxy-secret",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "out-time",
+                        "name": "out-time",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/model.ReplyResp"
+                        }
+                    }
+                }
             }
-          }
-        }
-      }
-    },
-    "/api/chat": {
-      "post": {
-        "description": "发送消息",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "chat"
-        ],
-        "summary": "发送消息",
-        "parameters": [
-          {
-            "description": "chatModel",
-            "name": "chatModel",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/model.ChatReq"
+        },
+        "/api/thread/create": {
+            "post": {
+                "description": "创建线程",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "thread"
+                ],
+                "summary": "创建线程",
+                "parameters": [
+                    {
+                        "description": "threadModel",
+                        "name": "threadModel",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ThreadReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/model.ThreadResp"
+                        }
+                    }
+                }
             }
-          },
-          {
-            "type": "string",
-            "description": "proxy-secret",
-            "name": "proxy-secret",
-            "in": "header"
-          },
-          {
-            "type": "string",
-            "description": "out-time",
-            "name": "out-time",
-            "in": "header"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/model.ReplyResp"
+        },
+        "/v1/chat/completions": {
+            "post": {
+                "description": "发送消息-openai",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "openai"
+                ],
+                "summary": "发送消息-openai",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.OpenAIChatCompletionRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "out-time",
+                        "name": "out-time",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/model.OpenAIChatCompletionResponse"
+                        }
+                    }
+                }
             }
-          }
-        }
-      }
-    },
-    "/api/thread/create": {
-      "post": {
-        "description": "创建线程",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "thread"
-        ],
-        "summary": "创建线程",
-        "parameters": [
-          {
-            "description": "threadModel",
-            "name": "threadModel",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/model.ThreadReq"
+        },
+        "/v1/images/generations": {
+            "post": {
+                "description": "图片生成-openai",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "openai"
+                ],
+                "summary": "图片生成-openai",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.OpenAIImagesGenerationRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "out-time",
+                        "name": "out-time",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/model.OpenAIImagesGenerationResponse"
+                        }
+                    }
+                }
             }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/model.ThreadResp"
-            }
-          }
         }
-      }
     },
-    "/v1/chat/completions": {
-      "post": {
-        "description": "发送消息-openai",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "openai"
-        ],
-        "summary": "发送消息-openai",
-        "parameters": [
-          {
-            "description": "request",
-            "name": "request",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/model.OpenAIChatCompletionRequest"
-            }
-          },
-          {
-            "type": "string",
-            "description": "Authorization",
-            "name": "Authorization",
-            "in": "header"
-          },
-          {
-            "type": "string",
-            "description": "out-time",
-            "name": "out-time",
-            "in": "header"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/model.OpenAIChatCompletionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/v1/images/generations": {
-      "post": {
-        "description": "图片生成-openai",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "openai"
-        ],
-        "summary": "图片生成-openai",
-        "parameters": [
-          {
-            "description": "request",
-            "name": "request",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/model.OpenAIImagesGenerationRequest"
-            }
-          },
-          {
-            "type": "string",
-            "description": "Authorization",
-            "name": "Authorization",
-            "in": "header"
-          },
-          {
-            "type": "string",
-            "description": "out-time",
-            "name": "out-time",
-            "in": "header"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/model.OpenAIImagesGenerationResponse"
-            }
-          }
-        }
-      }
-    }
-  },
-  "definitions": {
-    "model.ChannelReq": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "parentId": {
-          "type": "string"
-        }
-      }
-    },
-    "model.ChannelResp": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "model.ChatReq": {
-      "type": "object",
-      "properties": {
-        "channelId": {
-          "type": "string"
-        },
-        "content": {
-          "type": "string"
-        },
-        "stream": {
-          "type": "boolean"
-        }
-      }
-    },
-    "model.OpenAIChatCompletionRequest": {
-      "type": "object",
-      "properties": {
-        "channelId": {
-          "type": "string"
-        },
-        "messages": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/model.OpenAIChatMessage"
-          }
-        },
-        "stream": {
-          "type": "boolean"
-        }
-      }
-    },
-    "model.OpenAIChatCompletionResponse": {
-      "type": "object",
-      "properties": {
-        "choices": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/model.OpenAIChoice"
-          }
-        },
-        "created": {
-          "type": "integer"
-        },
-        "id": {
-          "type": "string"
-        },
-        "model": {
-          "type": "string"
-        },
-        "object": {
-          "type": "string"
-        },
-        "system_fingerprint": {
-          "type": "string"
-        },
-        "usage": {
-          "$ref": "#/definitions/model.OpenAIUsage"
-        }
-      }
-    },
-    "model.OpenAIChatMessage": {
-      "type": "object",
-      "properties": {
-        "content": {},
-        "role": {
-          "type": "string"
-        }
-      }
-    },
-    "model.OpenAIChoice": {
-      "type": "object",
-      "properties": {
-        "delta": {
-          "$ref": "#/definitions/model.OpenAIDelta"
-        },
-        "finish_reason": {
-          "type": "string"
-        },
-        "index": {
-          "type": "integer"
-        },
-        "logprobs": {
-          "type": "string"
-        },
-        "message": {
-          "$ref": "#/definitions/model.OpenAIMessage"
-        }
-      }
-    },
-    "model.OpenAIDelta": {
-      "type": "object",
-      "properties": {
-        "content": {
-          "type": "string"
-        }
-      }
-    },
-    "model.OpenAIImagesGenerationRequest": {
-      "type": "object",
-      "properties": {
-        "channelId": {
-          "type": "string"
-        },
-        "model": {
-          "type": "string"
-        },
-        "prompt": {
-          "type": "string"
-        }
-      }
-    },
-    "model.OpenAIImagesGenerationResponse": {
-      "type": "object",
-      "properties": {
-        "created": {
-          "type": "integer"
-        },
-        "data": {
-          "type": "array",
-          "items": {
+    "definitions": {
+        "model.ChannelReq": {
             "type": "object",
             "properties": {
-              "url": {
-                "type": "string"
-              }
+                "name": {
+                    "type": "string"
+                },
+                "parentId": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "number"
+                }
             }
-          }
+        },
+        "model.ChannelResp": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ChatReq": {
+            "type": "object",
+            "properties": {
+                "channelId": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "stream": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "model.OpenAIChatCompletionRequest": {
+            "type": "object",
+            "properties": {
+                "channelId": {
+                    "type": "string"
+                },
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.OpenAIChatMessage"
+                    }
+                },
+                "stream": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "model.OpenAIChatCompletionResponse": {
+            "type": "object",
+            "properties": {
+                "choices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.OpenAIChoice"
+                    }
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "system_fingerprint": {
+                    "type": "string"
+                },
+                "usage": {
+                    "$ref": "#/definitions/model.OpenAIUsage"
+                }
+            }
+        },
+        "model.OpenAIChatMessage": {
+            "type": "object",
+            "properties": {
+                "content": {},
+                "role": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.OpenAIChoice": {
+            "type": "object",
+            "properties": {
+                "delta": {
+                    "$ref": "#/definitions/model.OpenAIDelta"
+                },
+                "finish_reason": {
+                    "type": "string"
+                },
+                "index": {
+                    "type": "integer"
+                },
+                "logprobs": {
+                    "type": "string"
+                },
+                "message": {
+                    "$ref": "#/definitions/model.OpenAIMessage"
+                }
+            }
+        },
+        "model.OpenAIDelta": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.OpenAIImagesGenerationRequest": {
+            "type": "object",
+            "properties": {
+                "channelId": {
+                    "type": "string"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "prompt": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.OpenAIImagesGenerationResponse": {
+            "type": "object",
+            "properties": {
+                "created": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "url": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "model.OpenAIMessage": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.OpenAIUsage": {
+            "type": "object",
+            "properties": {
+                "completion_tokens": {
+                    "type": "integer"
+                },
+                "prompt_tokens": {
+                    "type": "integer"
+                },
+                "total_tokens": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.ReplyResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "embedUrls": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "model.ThreadReq": {
+            "type": "object",
+            "properties": {
+                "archiveDuration": {
+                    "type": "number"
+                },
+                "channelId": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ThreadResp": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
         }
-      }
-    },
-    "model.OpenAIMessage": {
-      "type": "object",
-      "properties": {
-        "content": {
-          "type": "string"
-        },
-        "role": {
-          "type": "string"
-        }
-      }
-    },
-    "model.OpenAIUsage": {
-      "type": "object",
-      "properties": {
-        "completion_tokens": {
-          "type": "integer"
-        },
-        "prompt_tokens": {
-          "type": "integer"
-        },
-        "total_tokens": {
-          "type": "integer"
-        }
-      }
-    },
-    "model.ReplyResp": {
-      "type": "object",
-      "properties": {
-        "content": {
-          "type": "string"
-        },
-        "embedUrls": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "model.ThreadReq": {
-      "type": "object",
-      "properties": {
-        "archiveDuration": {
-          "type": "number"
-        },
-        "channelId": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "model.ThreadResp": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      }
     }
-  }
 }
