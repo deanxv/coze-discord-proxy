@@ -207,6 +207,8 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 
 > 当有此配置时,会通过请求头携带的请求密钥匹配此配置中的`cozeBotId`,`channelId`,若匹配到多个则随机匹配一个,所以当存在多用户使用时可对每个用户分发独立的请求密钥。
 
+第三方平台(如: `zeabur`)部署的服务需要配置多[机器人-频道]请参考[issue#30](https://github.com/deanxv/coze-discord-proxy/issues/30)
+
 ## Q&A
 
 ##### Q: 我们如何使用该服务托管多个Bot去请求多个由coze托管的Bot？
