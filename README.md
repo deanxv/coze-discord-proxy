@@ -2,7 +2,7 @@
 
 # coze-discord-proxy
 
-_coze+discord 代理服务—通过接口调用被`coze`托管的`discord-bot`_
+_代理`Discord-Bot`对话`Coze-Bot`，实现API形式请求GPT4对话模型/微调模型_
 
 _觉得有点意思的话 别忘了点个🌟_
 
