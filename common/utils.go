@@ -223,3 +223,21 @@ func RandomElement[T any](slice []T) (T, error) {
 	index := rand.Intn(len(slice))
 	return slice[index], nil
 }
+
+func ReverseSegment(s string, segLen int) []string {
+	var result []string
+	runeSlice := []rune(s) // 将字符串转换为rune切片，以正确处理多字节字符
+
+	// 从字符串开头开始切片
+	for i := 0; i < len(runeSlice); i += segLen {
+		// 检查是否达到或超过字符串末尾
+		if i+segLen > len(runeSlice) {
+			// 如果超过，直接从当前位置到字符串末尾的所有字符都添加到结果切片中
+			result = append(result, string(runeSlice[i:len(runeSlice)]))
+		} else {
+			// 否则，从当前位置到i+segLen的子切片添加到结果切片中
+			result = append(result, string(runeSlice[i:i+segLen]))
+		}
+	}
+	return result
+}

@@ -288,19 +288,39 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 		return nil, fmt.Errorf("discord session not initialized")
 	}
 
-	content := fmt.Sprintf("<@%s> %s", cozeBotId, message)
+	var sentMsg *discordgo.Message
 
-	if runeCount := len([]rune(content)); runeCount > 2000 {
+	content := fmt.Sprintf("%s <@%s>", message, cozeBotId)
+
+	if runeCount := len([]rune(content)); runeCount > 50000 {
 		common.LogError(ctx, fmt.Sprintf("prompt已超过限制,请分段发送 [%v] %s", runeCount, content))
 		return nil, fmt.Errorf("prompt已超过限制,请分段发送 [%v]", runeCount)
 	}
 
-	// 添加@机器人逻辑
-	sentMsg, err := Session.ChannelMessageSend(channelID, content)
-	if err != nil {
-		common.LogError(ctx, fmt.Sprintf("error sending message: %s", err))
-		return nil, fmt.Errorf("error sending message")
+	for i, msg := range common.ReverseSegment(content, 2000) {
+		sentMsg, err := Session.ChannelMessageSend(channelID, msg)
+		if err != nil {
+			common.LogError(ctx, fmt.Sprintf("error sending message: %s", err))
+			return nil, fmt.Errorf("error sending message")
+		}
+		if i == len(common.ReverseSegment(content, 2000))-1 {
+			return sentMsg, nil
+		}
 	}
+
+	//content := fmt.Sprintf("<@%s> %s", cozeBotId, message)
+	//
+	//if runeCount := len([]rune(content)); runeCount > 2000 {
+	//	common.LogError(ctx, fmt.Sprintf("prompt已超过限制,请分段发送 [%v] %s", runeCount, content))
+	//	return nil, fmt.Errorf("prompt已超过限制,请分段发送 [%v]", runeCount)
+	//}
+	//
+	//// 添加@机器人逻辑
+	//sentMsg, err := Session.ChannelMessageSend(channelID, content)
+	//if err != nil {
+	//	common.LogError(ctx, fmt.Sprintf("error sending message: %s", err))
+	//	return nil, fmt.Errorf("error sending message")
+	//}
 	return sentMsg, nil
 }
 
