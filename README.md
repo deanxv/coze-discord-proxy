@@ -108,6 +108,8 @@ deanxv/coze-discord-proxy
 
 其中,`BOT_TOKEN`,`GUILD_ID`,`COZE_BOT_ID`,`PROXY_SECRET`,`CHANNEL_ID`修改为自己的。
 
+如果上面的镜像无法拉取，可以尝试使用 GitHub 的 Docker 镜像，将上面的 `deanxv/coze-discord-proxy` 替换为 `ghcr.io/deanxv/coze-discord-proxy` 即可。
+
 ### 部署到第三方平台
 
 <details>
