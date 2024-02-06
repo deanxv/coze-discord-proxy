@@ -81,52 +81,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/chat": {
-            "post": {
-                "description": "发送消息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "chat"
-                ],
-                "summary": "发送消息",
-                "parameters": [
-                    {
-                        "description": "chatModel",
-                        "name": "chatModel",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.ChatReq"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "proxy-secret",
-                        "name": "proxy-secret",
-                        "in": "header"
-                    },
-                    {
-                        "type": "string",
-                        "description": "out-time",
-                        "name": "out-time",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful response",
-                        "schema": {
-                            "$ref": "#/definitions/model.ReplyResp"
-                        }
-                    }
-                }
-            }
-        },
         "/api/thread/create": {
             "post": {
                 "description": "创建线程",
@@ -280,26 +234,9 @@ const docTemplate = `{
                 }
             }
         },
-        "model.ChatReq": {
-            "type": "object",
-            "properties": {
-                "channelId": {
-                    "type": "string"
-                },
-                "content": {
-                    "type": "string"
-                },
-                "stream": {
-                    "type": "boolean"
-                }
-            }
-        },
         "model.OpenAIChatCompletionRequest": {
             "type": "object",
             "properties": {
-                "channelId": {
-                    "type": "string"
-                },
                 "messages": {
                     "type": "array",
                     "items": {
@@ -432,20 +369,6 @@ const docTemplate = `{
                 },
                 "total_tokens": {
                     "type": "integer"
-                }
-            }
-        },
-        "model.ReplyResp": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "embedUrls": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
                 }
             }
         },

@@ -35,7 +35,7 @@ var RepliesChans = make(map[string]chan model.ReplyResp)
 var RepliesOpenAIChans = make(map[string]chan model.OpenAIChatCompletionResponse)
 var RepliesOpenAIImageChans = make(map[string]chan model.OpenAIImagesGenerationResponse)
 
-var ReplyStopChans = make(map[string]chan model.ChannelResp)
+var ReplyStopChans = make(map[string]chan model.ChannelStopChan)
 var Session *discordgo.Session
 
 func StartBot(ctx context.Context, token string) {
@@ -99,9 +99,6 @@ func checkEnvVariable() {
 		common.FatalLog("环境变量 COZE_BOT_ID 不可为当前服务 BOT_TOKEN 关联的 BOT_ID")
 	}
 
-	if ChannelId == "" {
-		common.FatalLog("环境变量 CHANNEL_ID 未设置")
-	}
 	if ProxyUrl != "" {
 		_, _, err := NewProxyClient(ProxyUrl)
 		if err != nil {
@@ -155,7 +152,7 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 	// 如果作者为 nil 或消息来自 bot 本身,则发送停止信号
 	if m.Author == nil || m.Author.ID == s.State.User.ID {
 		ChannelDel(m.ChannelID)
-		stopChan <- model.ChannelResp{
+		stopChan <- model.ChannelStopChan{
 			Id: m.ChannelID,
 		}
 		return
@@ -196,8 +193,12 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 					replyOpenAIChan <- reply
 				}
 				// 删除该频道
-				ChannelDel(m.ChannelID)
-				stopChan <- model.ChannelResp{
+				go func() {
+					time.Sleep(5 * time.Second)
+					ChannelDel(m.ChannelID)
+				}()
+
+				stopChan <- model.ChannelStopChan{
 					Id: m.ChannelID,
 				}
 			}
@@ -435,17 +436,27 @@ func scheduleDailyMessage() {
 		taskBotConfigs = model.FilterUniqueBotChannel(taskBotConfigs)
 
 		common.SysLog("CDP Scheduled Task Job Start!")
-
+		var sendChannelList []string
 		for _, config := range taskBotConfigs {
-			time.Sleep(5 * time.Second)
-			_, err := SendMessage(nil, config.ChannelId, config.CozeBotId, "CDP Scheduled Task Job Send Msg Success！")
-			if err != nil {
-				common.LogWarn(context.Background(), fmt.Sprintf("ChannelId{%s} BotId{%s} 活跃机器人任务消息发送异常!", config.ChannelId, config.CozeBotId))
+			var sendChannelId string
+			if config.ChannelId == "" {
+				nextID, _ := common.NextID()
+				sendChannelId, _ = ChannelCreate(GuildId, fmt.Sprintf("对话%s", nextID), 0)
+				sendChannelList = append(sendChannelList, sendChannelId)
 			} else {
-				common.LogInfo(context.Background(), fmt.Sprintf("ChannelId{%s} BotId{%s} 活跃机器人任务消息发送成功!", config.ChannelId, config.CozeBotId))
+				sendChannelId = config.ChannelId
 			}
+			_, err := SendMessage(nil, sendChannelId, config.CozeBotId, "CDP Scheduled Task Job Send Msg Success！")
+			if err != nil {
+				common.SysError(fmt.Sprintf("ChannelId{%s} BotId{%s} 活跃机器人任务消息发送异常!", sendChannelId, config.CozeBotId))
+			} else {
+				common.SysLog(fmt.Sprintf("ChannelId{%s} BotId{%s} 活跃机器人任务消息发送成功!", sendChannelId, config.CozeBotId))
+			}
+			time.Sleep(5 * time.Second)
 		}
-
+		for _, channelId := range sendChannelList {
+			ChannelDel(channelId)
+		}
 		common.SysLog("CDP Scheduled Task Job End!")
 
 	}

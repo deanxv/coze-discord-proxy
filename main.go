@@ -10,6 +10,7 @@ import (
 	"coze-discord-proxy/discord"
 	"coze-discord-proxy/middleware"
 	"coze-discord-proxy/router"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
@@ -53,7 +54,7 @@ func main() {
 	}
 
 	go func() {
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			common.FatalLog("failed to start HTTP server: " + err.Error())
 		}
 	}()

@@ -3,7 +3,7 @@ package model
 type OpenAIChatCompletionRequest struct {
 	Stream   bool                `json:"stream"`
 	Messages []OpenAIChatMessage `json:"messages"`
-	OpenAIChatCompletionExtraRequest
+	//OpenAIChatCompletionExtraRequest
 }
 
 type OpenAIChatCompletionExtraRequest struct {
@@ -80,14 +80,14 @@ type OpenAIGPT4VImagesReq struct {
 	} `json:"image_url"`
 }
 
-type ChannelIdentifier interface {
-	GetChannelId() *string
-}
-
-func (request OpenAIChatCompletionRequest) GetChannelId() *string {
-	return request.ChannelId
-}
-
-func (request OpenAIImagesGenerationRequest) GetChannelId() *string {
-	return request.ChannelId
-}
+//type ChannelIdentifier interface {
+//	GetChannelId() *string
+//}
+//
+//func (request OpenAIChatCompletionRequest) GetChannelId() *string {
+//	return request.ChannelId
+//}
+//
+//func (request OpenAIImagesGenerationRequest) GetChannelId() *string {
+//	return request.ChannelId
+//}

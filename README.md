@@ -12,17 +12,17 @@ _觉得有点意思的话 别忘了点个🌟_
 
 ## 功能
 
-- [x] 完美适配`NextChat`,`one-api`,`LobeChat`等
-- [x] 对话支持流式返回
-- [x] 自有对话接口支持文生图(需`coze`配置`dall-e-3`插件)
-- [x] 自有对话接口支持图生文(需`coze`配置`GPT4V`插件)(发送的文本消息中携带图片url)
-- [x] 支持创建 `discord`分类/频道/线程
-- [x] 支持对话指定 `discord`频道/线程-实现对话隔离
+- [x] 完美适配对话面板`NextChat`,`one-api`,`LobeChat`等,完美支持对话隔离。
+- [x] 对话接口均支持流式返回。
+- [x] 自有对话接口支持文生图(需`coze`配置`dall-e-3`插件)。
+- [x] 自有对话接口支持图生文(需`coze`配置`GPT4V`插件)(发送的文本消息中携带图片url)。
+- [x] 支持创建 `discord`分类/频道/线程。
+- [x] 支持对话指定 `discord`频道/线程-实现对话隔离。
 - [x] 支持和`openai`对齐的对话接口(`v1/chat/completions`)(支持`dall-e-3`文生图)(支持`GPT4V`
-  图生文接口的请求格式 [ `url`或`base64` ])
-- [x] 支持和`openai`对齐的`dall-e-3`文生图接口(`v1/images/generations`)
-- [x] 支持每日`24`点定时任务自动活跃机器人
-- [x] 支持配置多个[机器人-频道] (通过`PROXY_SECRET`指定) 详细请看[进阶配置](#进阶配置)
+  图生文接口的请求格式 [ `url`或`base64` ])。
+- [x] 支持和`openai`对齐的`dall-e-3`文生图接口(`v1/images/generations`)。
+- [x] 支持每日`24`点定时任务自动活跃机器人。
+- [x] 支持配置多机器人 (通过`PROXY_SECRET`指定) 详细请看[进阶配置](#进阶配置)。
 
 ### 接口文档:
 
@@ -86,7 +86,7 @@ services:
       - BOT_TOKEN=MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w  # 必须修改为我们主动发送消息的Bot-Token
       - GUILD_ID=119xxxxxxxx796  # 必须修改为两个机器人所在的服务器ID
       - COZE_BOT_ID=119xxxxxxxx7  # 必须修改为由coze托管的机器人ID
-      - CHANNEL_ID=119xxxxxx24  # 默认频道-在使用与openai对齐的接口时(/v1/chat/completions) 消息会默认发送到此频道
+      - CHANNEL_ID=119xxxxxx24  # [可选]默认频道-(目前版本下该参数仅用来活跃机器人)
       - PROXY_SECRET=123456  # [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)
       - TZ=Asia/Shanghai
 ```
@@ -138,7 +138,7 @@ deanxv/coze-discord-proxy
 
    `COZE_BOT_ID:119xxxxxxxx7` 由coze托管的机器人ID
 
-   `CHANNEL_ID:119xxxxxx24`  # 默认频道-在使用与openai对齐的接口时(/v1/chat/completions) 消息会默认发送到此频道
+   `CHANNEL_ID:119xxxxxx24`  # [可选]默认频道-(目前版本下该参数仅用来活跃机器人)
 
    `PROXY_SECRET:123456` [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)
    ,配置此参数后,每次发起请求时请求头加上`proxy-secret`参数,即`header`中添加 `proxy-secret：123456`
@@ -170,7 +170,7 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 1. `BOT_TOKEN:MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w`  主动发送消息的Bot-Token
 2. `GUILD_ID:119xxxxxxxx796`  两个机器人所在的服务器ID
 3. `COZE_BOT_ID:119xxxxxxxx7`  由coze托管的机器人ID
-4. `CHANNEL_ID:119xxxxxx24`  默认频道-在使用与openai对齐的接口时(/v1/chat/completions) 消息会默认发送到此频道
+4. `CHANNEL_ID:119xxxxxx24`  [可选]默认频道-(目前版本下该参数仅用来活跃机器人)
 5. `PORT`  [可选]端口
 6. `PROXY_SECRET:123456`  [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)
    ,配置此参数后,每次发起请求时请求头加上`proxy-secret`参数,即`header`中添加 `proxy-secret：123456`
@@ -180,7 +180,7 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 
 ## 进阶配置
 
-### 配置多[机器人-频道]
+### 配置多机器人
 
 1. 部署前在`docker`/`docker-compose`部署同级目录下创建`data/config/bot_config.json`文件
 2. 编写该`json`文件,`bot_config.json`格式如下
@@ -190,7 +190,7 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
   {
     "proxySecret": "123", // 接口请求密钥(PROXY_SECRET)
     "cozeBotId": "12***************31", // coze托管的机器人ID
-    "channelId": "12***************56"  // discord频道ID(机器人必须在此频道所在的服务器)
+    "channelId": "12***************56"  // discord频道ID(机器人必须在此频道所在的服务器)(目前版本下该参数仅用来活跃机器人)
   },
   {
     "proxySecret": "456",
@@ -209,13 +209,13 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 
 > 当有此配置时,会通过请求头携带的请求密钥匹配此配置中的`cozeBotId`,`channelId`,若匹配到多个则随机匹配一个,所以当存在多用户使用时可对每个用户分发独立的请求密钥。
 
-第三方平台(如: `zeabur`)部署的服务需要配置多[机器人-频道]请参考[issue#30](https://github.com/deanxv/coze-discord-proxy/issues/30)
+第三方平台(如: `zeabur`)部署的服务需要[配置多机器人]请参考[issue#30](https://github.com/deanxv/coze-discord-proxy/issues/30)
 
 ## Q&A
 
 ##### Q: 我们如何使用该服务托管多个Bot去请求多个由coze托管的Bot？
 
-###### A: 首先用不同的端口部署多个`coze-discord-proxy`服务,对每个服务都[配置多[机器人-频道]](#配置多机器人-频道),并对每个服务设置不同的`BOT_TOKEN`,再部署[one-api](https://github.com/songquanpeng/one-api)后[添加多个渠道](#如何集成one-api),利用[one-api](https://github.com/songquanpeng/one-api)的轮询去请求我们的`coze-discord-proxy`服务。
+###### A: 首先用不同的端口部署多个`coze-discord-proxy`服务,对每个服务都[配置多机器人](#配置多机器人),并对每个服务设置不同的`BOT_TOKEN`,再部署[one-api](https://github.com/songquanpeng/one-api)后[添加多个渠道](#如何集成one-api),利用[one-api](https://github.com/songquanpeng/one-api)的轮询去请求我们的`coze-discord-proxy`服务。
 
 ## ⭐ Star History
 

@@ -15,19 +15,8 @@ definitions:
       name:
         type: string
     type: object
-  model.ChatReq:
-    properties:
-      channelId:
-        type: string
-      content:
-        type: string
-      stream:
-        type: boolean
-    type: object
   model.OpenAIChatCompletionRequest:
     properties:
-      channelId:
-        type: string
       messages:
         items:
           $ref: '#/definitions/model.OpenAIChatMessage'
@@ -115,15 +104,6 @@ definitions:
       total_tokens:
         type: integer
     type: object
-  model.ReplyResp:
-    properties:
-      content:
-        type: string
-      embedUrls:
-        items:
-          type: string
-        type: array
-    type: object
   model.ThreadReq:
     properties:
       archiveDuration:
@@ -189,36 +169,6 @@ paths:
       summary: 删除频道
       tags:
         - channel
-  /api/chat:
-    post:
-      consumes:
-        - application/json
-      description: 发送消息
-      parameters:
-        - description: chatModel
-          in: body
-          name: chatModel
-          required: true
-          schema:
-            $ref: '#/definitions/model.ChatReq'
-        - description: proxy-secret
-          in: header
-          name: proxy-secret
-          type: string
-        - description: out-time
-          in: header
-          name: out-time
-          type: string
-      produces:
-        - application/json
-      responses:
-        "200":
-          description: Successful response
-          schema:
-            $ref: '#/definitions/model.ReplyResp'
-      summary: 发送消息
-      tags:
-        - chat
   /api/thread/create:
     post:
       consumes:

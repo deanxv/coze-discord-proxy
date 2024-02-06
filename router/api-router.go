@@ -17,8 +17,8 @@ func SetApiRouter(router *gin.Engine) {
 	apiRouter := router.Group("/api")
 	apiRouter.Use(middleware.Auth())
 	{
-		chatRoute := apiRouter.Group("/chat")
-		chatRoute.POST("", controller.Chat)
+		//chatRoute := apiRouter.Group("/chat")
+		//chatRoute.POST("", controller.Chat)
 
 		channelRoute := apiRouter.Group("/channel")
 		channelRoute.POST("/create", controller.ChannelCreate)
