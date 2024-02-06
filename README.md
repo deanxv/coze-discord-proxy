@@ -12,14 +12,12 @@ _觉得有点意思的话 别忘了点个🌟_
 
 ## 功能
 
-- [x] 完美适配对话面板`NextChat`,`one-api`,`LobeChat`等,完美支持对话隔离。
-- [x] 对话接口均支持流式返回。
-- [x] 自有对话接口支持文生图(需`coze`配置`dall-e-3`插件)。
-- [x] 自有对话接口支持图生文(需`coze`配置`GPT4V`插件)(发送的文本消息中携带图片url)。
+- [x] 完美适配`NextChat`,`one-api`,`LobeChat`等对话面板。
+- [x] 完美支持对话隔离。
+- [x] 对话接口支持流式返回。
 - [x] 支持创建 `discord`分类/频道/线程。
-- [x] 支持对话指定 `discord`频道/线程-实现对话隔离。
-- [x] 支持和`openai`对齐的对话接口(`v1/chat/completions`)(支持`dall-e-3`文生图)(支持`GPT4V`
-  图生文接口的请求格式 [ `url`或`base64` ])。
+- [x] 支持和`openai`对齐的对话接口(`v1/chat/completions`)(也支持`dall-e-3`文生图)
+- [x] 支持和`openai`对齐的图生文接口(`v1/chat/completions`)(按照`GPT4V`图生文接口的请求格式 [ 支持`url`或`base64` ])。
 - [x] 支持和`openai`对齐的`dall-e-3`文生图接口(`v1/images/generations`)。
 - [x] 支持每日`24`点定时任务自动活跃机器人。
 - [x] 支持配置多机器人 (通过`PROXY_SECRET`指定) 详细请看[进阶配置](#进阶配置)。
