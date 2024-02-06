@@ -18,6 +18,7 @@ import (
 	"net/url"
 	"os"
 	"os/signal"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -28,6 +29,7 @@ var CozeBotId = os.Getenv("COZE_BOT_ID")
 var GuildId = os.Getenv("GUILD_ID")
 var ChannelId = os.Getenv("CHANNEL_ID")
 var ProxyUrl = os.Getenv("PROXY_URL")
+var ChannelAutoDelTime = os.Getenv("CHANNEL_AUTO_DEL_TIME")
 
 var BotConfigList []model.BotConfig
 
@@ -93,6 +95,9 @@ func checkEnvVariable() {
 	if GuildId == "" {
 		common.FatalLog("环境变量 GUILD_ID 未设置")
 	}
+	if ChannelId == "" {
+		common.FatalLog("环境变量 CHANNEL_ID 未设置")
+	}
 	if CozeBotId == "" {
 		common.FatalLog("环境变量 COZE_BOT_ID 未设置")
 	} else if Session.State.User.ID == CozeBotId {
@@ -103,6 +108,12 @@ func checkEnvVariable() {
 		_, _, err := NewProxyClient(ProxyUrl)
 		if err != nil {
 			common.FatalLog("环境变量 PROXY_URL 设置有误")
+		}
+	}
+	if ChannelAutoDelTime != "" {
+		_, _err := strconv.Atoi(ChannelAutoDelTime)
+		if _err != nil {
+			common.FatalLog("环境变量 CHANNEL_AUTO_DEL_TIME 设置有误")
 		}
 	}
 	common.SysLog("Environment variable check passed.")
@@ -192,11 +203,23 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 					reply.Choices[0].FinishReason = &stopStr
 					replyOpenAIChan <- reply
 				}
-				// 删除该频道
-				go func() {
-					time.Sleep(5 * time.Second)
-					ChannelDel(m.ChannelID)
-				}()
+
+				if ChannelAutoDelTime != "" {
+					delTime, _ := strconv.Atoi(ChannelAutoDelTime)
+					if delTime > 0 {
+						// 删除该频道
+						go func() {
+							time.Sleep(time.Duration(delTime) * time.Second)
+							ChannelDel(m.ChannelID)
+						}()
+					}
+				} else {
+					// 删除该频道
+					go func() {
+						time.Sleep(5 * time.Second)
+						ChannelDel(m.ChannelID)
+					}()
+				}
 
 				stopChan <- model.ChannelStopChan{
 					Id: m.ChannelID,
@@ -304,6 +327,9 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 		common.LogError(ctx, fmt.Sprintf("prompt已超过限制,请分段发送 [%v] %s", runeCount, content))
 		return nil, fmt.Errorf("prompt已超过限制,请分段发送 [%v]", runeCount)
 	}
+
+	// 特殊处理
+	content = strings.ReplaceAll(content, "\\n", " \\n ")
 
 	for i, msg := range common.ReverseSegment(content, 2000) {
 		sentMsg, err := Session.ChannelMessageSend(channelID, msg)

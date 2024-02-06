@@ -84,7 +84,7 @@ services:
       - BOT_TOKEN=MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w  # 必须修改为我们主动发送消息的Bot-Token
       - GUILD_ID=119xxxxxxxx796  # 必须修改为两个机器人所在的服务器ID
       - COZE_BOT_ID=119xxxxxxxx7  # 必须修改为由coze托管的机器人ID
-      - CHANNEL_ID=119xxxxxx24  # [可选]默认频道-(目前版本下该参数仅用来活跃机器人)
+      - CHANNEL_ID=119xxxxxx24  # 默认频道-(目前版本下该参数仅用来活跃机器人)
       - PROXY_SECRET=123456  # [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)
       - TZ=Asia/Shanghai
 ```
@@ -136,7 +136,7 @@ deanxv/coze-discord-proxy
 
    `COZE_BOT_ID:119xxxxxxxx7` 由coze托管的机器人ID
 
-   `CHANNEL_ID:119xxxxxx24`  # [可选]默认频道-(目前版本下该参数仅用来活跃机器人)
+   `CHANNEL_ID:119xxxxxx24`  # 默认频道-(目前版本下该参数仅用来活跃机器人)
 
    `PROXY_SECRET:123456` [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)
    ,配置此参数后,每次发起请求时请求头加上`proxy-secret`参数,即`header`中添加 `proxy-secret：123456`
@@ -168,13 +168,13 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 1. `BOT_TOKEN:MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w`  主动发送消息的Bot-Token
 2. `GUILD_ID:119xxxxxxxx796`  两个机器人所在的服务器ID
 3. `COZE_BOT_ID:119xxxxxxxx7`  由coze托管的机器人ID
-4. `CHANNEL_ID:119xxxxxx24`  [可选]默认频道-(目前版本下该参数仅用来活跃机器人)
-5. `PORT`  [可选]端口
-6. `PROXY_SECRET:123456`  [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)
-   ,配置此参数后,每次发起请求时请求头加上`proxy-secret`参数,即`header`中添加 `proxy-secret：123456`
-7. `REQUEST_OUT_TIME:60`  [可选]对话接口非流响应下的请求超时时间
-8. `STREAM_REQUEST_OUT_TIME:60`  [可选]对话接口流响应下的每次流返回超时时间
-9. `PROXY_URL:http://127.0.0.1:10801`  [可选]代理
+4. `CHANNEL_ID:119xxxxxx24`  默认频道-(目前版本下该参数仅用来活跃机器人)
+5. `CHANNEL_AUTO_DEL_TIME:60`  [可选]频道自动删除时间(秒) 此参数为每次对话完成后自动删除频道的时间(默认为5s),为空或0时则不删除,推荐不设置
+6. `PORT:7077`  [可选]端口
+7. `PROXY_SECRET:123456`  [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔),配置此参数后,每次发起请求时请求头加上`proxy-secret`参数,即`header`中添加 `proxy-secret：123456`
+8. `REQUEST_OUT_TIME:60`  [可选]对话接口非流响应下的请求超时时间,推荐不设置
+9. `STREAM_REQUEST_OUT_TIME:60`  [可选]对话接口流响应下的每次流返回超时时间,推荐不设置
+10. `PROXY_URL:http://127.0.0.1:10801`  [可选]代理
 
 ## 进阶配置
 
