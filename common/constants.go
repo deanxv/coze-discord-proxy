@@ -2,10 +2,11 @@ package common
 
 import (
 	"os"
+	"strings"
 	"time"
 )
 
-var ProxySecret = os.Getenv("PROXY_SECRET")
+var ProxySecrets = strings.Split(os.Getenv("PROXY_SECRET"), ",")
 var RequestOutTime = os.Getenv("REQUEST_OUT_TIME")
 var StreamRequestOutTime = os.Getenv("STREAM_REQUEST_OUT_TIME")
 
