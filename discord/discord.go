@@ -35,7 +35,7 @@ var RepliesChans = make(map[string]chan model.ReplyResp)
 var RepliesOpenAIChans = make(map[string]chan model.OpenAIChatCompletionResponse)
 var RepliesOpenAIImageChans = make(map[string]chan model.OpenAIImagesGenerationResponse)
 
-var ReplyStopChans = make(map[string]chan string)
+var ReplyStopChans = make(map[string]chan model.ChannelResp)
 var Session *discordgo.Session
 
 func StartBot(ctx context.Context, token string) {
@@ -154,7 +154,10 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 
 	// 如果作者为 nil 或消息来自 bot 本身,则发送停止信号
 	if m.Author == nil || m.Author.ID == s.State.User.ID {
-		stopChan <- m.ReferencedMessage.ID
+		ChannelDel(m.ChannelID)
+		stopChan <- model.ChannelResp{
+			Id: m.ChannelID,
+		}
 		return
 	}
 
@@ -192,7 +195,11 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 					reply.Choices[0].FinishReason = &stopStr
 					replyOpenAIChan <- reply
 				}
-				stopChan <- m.ReferencedMessage.ID
+				// 删除该频道
+				ChannelDel(m.ChannelID)
+				stopChan <- model.ChannelResp{
+					Id: m.ChannelID,
+				}
 			}
 
 			return
@@ -335,7 +342,7 @@ func ChannelCreate(guildID, channelName string, channelType int) (string, error)
 }
 
 func ChannelDel(channelId string) (string, error) {
-	// 创建新的频道
+	// 删除频道
 	st, err := Session.ChannelDelete(channelId)
 	if err != nil {
 		common.LogError(context.Background(), fmt.Sprintf("删除频道时异常 %s", err.Error()))

@@ -64,7 +64,7 @@ func Chat(c *gin.Context) {
 	discord.RepliesChans[sentMsg.ID] = replyChan
 	defer delete(discord.RepliesChans, sentMsg.ID)
 
-	stopChan := make(chan string)
+	stopChan := make(chan model.ChannelResp)
 	discord.ReplyStopChans[sentMsg.ID] = stopChan
 	defer delete(discord.ReplyStopChans, sentMsg.ID)
 
@@ -157,7 +157,16 @@ func ChatForOpenAI(c *gin.Context) {
 		if message.Role == "user" {
 			switch contentObj := message.Content.(type) {
 			case string:
-				content = contentObj
+				jsonData, err := json.Marshal(messages)
+				if err != nil {
+					c.JSON(http.StatusOK, gin.H{
+						"success": false,
+						"message": err.Error(),
+					})
+					return
+				}
+				content = string(jsonData)
+				//content = contentObj
 			case []interface{}:
 				content, err = buildOpenAIGPT4VForImageContent(contentObj)
 				if err != nil {
@@ -211,7 +220,7 @@ func ChatForOpenAI(c *gin.Context) {
 	discord.RepliesOpenAIChans[sentMsg.ID] = replyChan
 	defer delete(discord.RepliesOpenAIChans, sentMsg.ID)
 
-	stopChan := make(chan string)
+	stopChan := make(chan model.ChannelResp)
 	discord.ReplyStopChans[sentMsg.ID] = stopChan
 	defer delete(discord.ReplyStopChans, sentMsg.ID)
 
@@ -319,9 +328,9 @@ func buildOpenAIGPT4VForImageContent(objs []interface{}) (string, error) {
 			return "", fmt.Errorf("消息格式错误")
 		}
 	}
-	if runeCount := len([]rune(content)); runeCount > 2000 {
-		return "", fmt.Errorf("prompt最大为2000字符 [%v]", runeCount)
-	}
+	//if runeCount := len([]rune(content)); runeCount > 2000 {
+	//	return "", fmt.Errorf("prompt最大为2000字符 [%v]", runeCount)
+	//}
 	return content, nil
 
 }
@@ -390,7 +399,7 @@ func ImagesForOpenAI(c *gin.Context) {
 	discord.RepliesOpenAIImageChans[sentMsg.ID] = replyChan
 	defer delete(discord.RepliesOpenAIImageChans, sentMsg.ID)
 
-	stopChan := make(chan string)
+	stopChan := make(chan model.ChannelResp)
 	discord.ReplyStopChans[sentMsg.ID] = stopChan
 	defer delete(discord.ReplyStopChans, sentMsg.ID)
 
@@ -464,14 +473,23 @@ func getSendChannelIdAndCozeBotId(c *gin.Context, isOpenAIAPI bool, request mode
 			if err != nil {
 				return "", "", err
 			}
-			return botConfig.ChannelId, botConfig.CozeBotId, nil
+			var sendChannelId string
+			if channelId := botConfig.ChannelId; channelId != "" {
+				sendChannelId = channelId
+			} else {
+				// 创建新频道
+				sendChannelId, _ = discord.ChannelCreate(discord.GuildId, fmt.Sprintf("对话%s", c.Request.Context().Value(common.RequestIdKey)), 0)
+			}
+			return sendChannelId, botConfig.CozeBotId, nil
 		}
 		// 没有值抛出异常
 		return "", "", fmt.Errorf("secret和channelId匹配不到有效bot")
 	} else {
 		channelId := request.GetChannelId()
 		if channelId == nil || *channelId == "" {
-			channelId = &discord.ChannelId
+			//channelId = &discord.ChannelId
+			channelCreateId, _ := discord.ChannelCreate(discord.GuildId, fmt.Sprintf("对话%s", c.Request.Context().Value(common.RequestIdKey)), 0)
+			channelId = &channelCreateId
 		}
 		// botConfigs为空
 		return *channelId, discord.CozeBotId, nil
