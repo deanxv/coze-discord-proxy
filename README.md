@@ -138,8 +138,7 @@ deanxv/coze-discord-proxy
 
    `CHANNEL_ID:119xxxxxx24`  # 默认频道-(目前版本下该参数仅用来活跃机器人)
 
-   `PROXY_SECRET:123456` [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)
-   ,配置此参数后,每次发起请求时请求头加上`proxy-secret`参数,即`header`中添加 `proxy-secret：123456`
+   `PROXY_SECRET:123456` [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)(与openai-API-KEY用法一致)
 
 保存。
 
@@ -171,7 +170,7 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 4. `CHANNEL_ID:119xxxxxx24`  默认频道-(目前版本下该参数仅用来活跃机器人)
 5. `CHANNEL_AUTO_DEL_TIME:60`  [可选]频道自动删除时间(秒) 此参数为每次对话完成后自动删除频道的时间(默认为5s),为空或0时则不删除,推荐不设置
 6. `PORT:7077`  [可选]端口
-7. `PROXY_SECRET:123456`  [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔),配置此参数后,每次发起请求时请求头加上`proxy-secret`参数,即`header`中添加 `proxy-secret：123456`
+7. `PROXY_SECRET:123456`  [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)(与openai-API-KEY用法一致)
 8. `REQUEST_OUT_TIME:60`  [可选]对话接口非流响应下的请求超时时间,推荐不设置
 9. `STREAM_REQUEST_OUT_TIME:60`  [可选]对话接口流响应下的每次流返回超时时间,推荐不设置
 10. `PROXY_URL:http://127.0.0.1:10801`  [可选]代理
@@ -211,9 +210,9 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 
 ## Q&A
 
-##### Q: 我们如何使用该服务托管多个Bot去请求多个由coze托管的Bot？
+Q: 我们如何使用该服务托管多个Bot去请求多个由coze托管的Bot？
 
-###### A: 首先用不同的端口部署多个`coze-discord-proxy`服务,对每个服务都[配置多机器人](#配置多机器人),并对每个服务设置不同的`BOT_TOKEN`,再部署[one-api](https://github.com/songquanpeng/one-api)后[添加多个渠道](#如何集成one-api),利用[one-api](https://github.com/songquanpeng/one-api)的轮询去请求我们的`coze-discord-proxy`服务。
+A: 首先用不同的端口部署多个`coze-discord-proxy`服务,对每个服务都[配置多机器人](#配置多机器人),并对每个服务设置不同的`BOT_TOKEN`,再部署[one-api](https://github.com/songquanpeng/one-api)后[添加多个渠道](#如何集成one-api),利用[one-api](https://github.com/songquanpeng/one-api)的轮询去请求我们的`coze-discord-proxy`服务。
 
 ## ⭐ Star History
 

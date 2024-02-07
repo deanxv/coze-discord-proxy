@@ -474,27 +474,15 @@ func getSendChannelIdAndCozeBotId(c *gin.Context, isOpenAIAPI bool) (sendChannel
 				return "", "", err
 			}
 			var sendChannelId string
-			//if channelId := botConfig.ChannelId; channelId != "" {
-			//	sendChannelId = channelId
-			//} else {
-			// 创建新频道
 			sendChannelId, _ = discord.ChannelCreate(discord.GuildId, fmt.Sprintf("对话%s", c.Request.Context().Value(common.RequestIdKey)), 0)
-			//}
+			discord.SetChannelDeleteTimer(sendChannelId, 5*time.Minute)
 			return sendChannelId, botConfig.CozeBotId, nil
 		}
 		// 没有值抛出异常
 		return "", "", fmt.Errorf("secret匹配不到有效bot")
 	} else {
-		// botConfigs为空
-		//channelId := request.GetChannelId()
-		//if channelId == nil || *channelId == "" {
-		//	if discord.ChannelId != "" {
-		//		channelId = &discord.ChannelId
-		//	} else {
 		channelCreateId, _ := discord.ChannelCreate(discord.GuildId, fmt.Sprintf("对话%s", c.Request.Context().Value(common.RequestIdKey)), 0)
-		//channelId = &channelCreateId
-		//}
-		//}
+		discord.SetChannelDeleteTimer(channelCreateId, 5*time.Minute)
 		return channelCreateId, discord.CozeBotId, nil
 	}
 }

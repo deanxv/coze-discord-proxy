@@ -191,7 +191,7 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 					}
 				}
 			}
-			// data: {"id":"chatcmpl-8lho2xvdDFyBdFkRwWAcMpWWAgymJ","object":"chat.completion.chunk","created":1706380498,"model":"gpt-3.5-turbo-0613","system_fingerprint":null,"choices":[{"index":0,"delta":{"content":"？"},"logprobs":null,"finish_reason":null}]}
+			// data: {"id":"chatcmpl-8lho2xvdDFyBdFkRwWAcMpWWAgymJ","object":"chat.completion.chunk","created":1706380498,"model":"gpt-4-turbo-0613","system_fingerprint":null,"choices":[{"index":0,"delta":{"content":"？"},"logprobs":null,"finish_reason":null}]}
 			// data :{"id":"1200873365351698694","object":"chat.completion.chunk","created":1706380922,"model":"COZE","choices":[{"index":0,"message":{"role":"assistant","content":"你好！有什么我可以帮您的吗？如果有任"},"logprobs":null,"finish_reason":"","delta":{"content":"吗？如果有任"}}],"usage":{"prompt_tokens":13,"completion_tokens":19,"total_tokens":32},"system_fingerprint":null}
 
 			// 如果消息包含组件或嵌入,则发送停止信号
@@ -206,21 +206,16 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 
 				if ChannelAutoDelTime != "" {
 					delTime, _ := strconv.Atoi(ChannelAutoDelTime)
-					if delTime > 0 {
+					if delTime == 0 {
+						CancelChannelDeleteTimer(m.ChannelID)
+					} else if delTime > 0 {
 						// 删除该频道
-						go func() {
-							time.Sleep(time.Duration(delTime) * time.Second)
-							ChannelDel(m.ChannelID)
-						}()
+						SetChannelDeleteTimer(m.ChannelID, time.Duration(delTime)*time.Second)
 					}
 				} else {
 					// 删除该频道
-					go func() {
-						time.Sleep(5 * time.Second)
-						ChannelDel(m.ChannelID)
-					}()
+					SetChannelDeleteTimer(m.ChannelID, 5*time.Second)
 				}
-
 				stopChan <- model.ChannelStopChan{
 					Id: m.ChannelID,
 				}
@@ -266,7 +261,7 @@ func processMessageForOpenAI(m *discordgo.MessageUpdate) model.OpenAIChatComplet
 		ID:      m.ID,
 		Object:  "chat.completion",
 		Created: time.Now().Unix(),
-		Model:   "gpt-3.5-turbo",
+		Model:   "gpt-4-turbo",
 		Choices: []model.OpenAIChoice{
 			{
 				Index: 0,
@@ -341,20 +336,6 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 			return sentMsg, nil
 		}
 	}
-
-	//content := fmt.Sprintf("<@%s> %s", cozeBotId, message)
-	//
-	//if runeCount := len([]rune(content)); runeCount > 2000 {
-	//	common.LogError(ctx, fmt.Sprintf("prompt已超过限制,请分段发送 [%v] %s", runeCount, content))
-	//	return nil, fmt.Errorf("prompt已超过限制,请分段发送 [%v]", runeCount)
-	//}
-	//
-	//// 添加@机器人逻辑
-	//sentMsg, err := Session.ChannelMessageSend(channelID, content)
-	//if err != nil {
-	//	common.LogError(ctx, fmt.Sprintf("error sending message: %s", err))
-	//	return nil, fmt.Errorf("error sending message")
-	//}
 	return sentMsg, nil
 }
 

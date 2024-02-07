@@ -7,7 +7,7 @@ var (
 )
 
 func init() {
-	// gpt-3.5-turbo encoding
+	// gpt-4-turbo encoding
 	tke, err := tiktoken.GetEncoding("cl100k_base")
 	if err != nil {
 		FatalLog(err.Error())
