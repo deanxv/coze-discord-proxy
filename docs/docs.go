@@ -243,6 +243,9 @@ const docTemplate = `{
                         "$ref": "#/definitions/model.OpenAIChatMessage"
                     }
                 },
+                "model": {
+                    "type": "string"
+                },
                 "stream": {
                     "type": "boolean"
                 }
@@ -317,10 +320,8 @@ const docTemplate = `{
         "model.OpenAIImagesGenerationRequest": {
             "type": "object",
             "properties": {
-                "channelId": {
-                    "type": "string"
-                },
                 "model": {
+                    "description": "OpenAIChatCompletionExtraRequest",
                     "type": "string"
                 },
                 "prompt": {
