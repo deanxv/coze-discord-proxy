@@ -178,7 +178,11 @@ func Obj2Bytes(obj interface{}) ([]byte, error) {
 // IsImageBase64 判断给定的字符串是否可能是 Base64 编码
 func IsImageBase64(s string) bool {
 	// 检查字符串是否符合数据URL的格式
-	if !strings.HasPrefix(s, "data:image/") || !strings.Contains(s, ";base64,") {
+	//if !strings.HasPrefix(s, "data:image/") || !strings.Contains(s, ";base64,") {
+	//	return false
+	//}
+
+	if !strings.Contains(s, ";base64,") {
 		return false
 	}
 

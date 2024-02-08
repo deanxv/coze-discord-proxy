@@ -495,7 +495,7 @@ func UploadToDiscordAndGetURL(channelID string, base64Data string) (string, erro
 	m := &discordgo.MessageSend{
 		Files: []*discordgo.File{
 			{
-				Name:   fmt.Sprintf("image-%s.%s", common.GetTimeString(), kind.Extension),
+				Name:   fmt.Sprintf("file-%s.%s", common.GetTimeString(), kind.Extension),
 				Reader: file,
 			},
 		},

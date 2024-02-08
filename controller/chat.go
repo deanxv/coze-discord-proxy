@@ -149,6 +149,8 @@ func ChatForOpenAI(c *gin.Context) {
 		return
 	}
 
+	sendChannelId, calledCozeBotId, err := getSendChannelIdAndCozeBotId(c, true)
+
 	content := "Hi！"
 	messages := request.Messages
 
@@ -168,7 +170,7 @@ func ChatForOpenAI(c *gin.Context) {
 				content = string(jsonData)
 				//content = contentObj
 			case []interface{}:
-				content, err = buildOpenAIGPT4VForImageContent(contentObj)
+				content, err = buildOpenAIGPT4VForImageContent(sendChannelId, contentObj)
 				if err != nil {
 					c.JSON(http.StatusOK, gin.H{
 						"success": false,
@@ -191,7 +193,6 @@ func ChatForOpenAI(c *gin.Context) {
 		}
 	}
 
-	sendChannelId, calledCozeBotId, err := getSendChannelIdAndCozeBotId(c, true)
 	if err != nil {
 		common.LogError(c.Request.Context(), err.Error())
 		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
@@ -293,7 +294,7 @@ func ChatForOpenAI(c *gin.Context) {
 	}
 }
 
-func buildOpenAIGPT4VForImageContent(objs []interface{}) (string, error) {
+func buildOpenAIGPT4VForImageContent(sendChannelId string, objs []interface{}) (string, error) {
 	var content string
 
 	for i, obj := range objs {
@@ -316,13 +317,13 @@ func buildOpenAIGPT4VForImageContent(objs []interface{}) (string, error) {
 			if common.IsURL(req.ImageURL.URL) {
 				content += fmt.Sprintf("\n%s", req.ImageURL.URL)
 			} else if common.IsImageBase64(req.ImageURL.URL) {
-				url, err := discord.UploadToDiscordAndGetURL(discord.ChannelId, req.ImageURL.URL)
+				_, err := discord.UploadToDiscordAndGetURL(sendChannelId, req.ImageURL.URL)
 				if err != nil {
-					return "", fmt.Errorf("图片上传异常")
+					return "", fmt.Errorf("文件上传异常")
 				}
-				content += fmt.Sprintf("\n%s", url)
+				//content += fmt.Sprintf("\n%s", url)
 			} else {
-				return "", fmt.Errorf("图片格式有误")
+				return "", fmt.Errorf("文件格式有误")
 			}
 		} else {
 			return "", fmt.Errorf("消息格式错误")

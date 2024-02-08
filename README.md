@@ -17,7 +17,7 @@ _觉得有点意思的话 别忘了点个🌟_
 - [x] 对话接口支持流式返回。
 - [x] 支持创建 `discord`分类/频道/线程。
 - [x] 支持和`openai`对齐的对话接口(`v1/chat/completions`)(也支持`dall-e-3`文生图)
-- [x] 支持和`openai`对齐的图生文接口(`v1/chat/completions`)(按照`GPT4V`图生文接口的请求格式 [ 支持`url`或`base64` ])。
+- [x] 支持和`openai`对齐的图/文件生文接口(`v1/chat/completions`)(按照`GPT4V`图/文件生文接口的请求格式 [ 支持`url`或`base64` ])。
 - [x] 支持和`openai`对齐的`dall-e-3`文生图接口(`v1/images/generations`)。
 - [x] 支持每日`24`点定时任务自动活跃机器人。
 - [x] 支持配置多机器人 (通过`PROXY_SECRET`指定) 详细请看[进阶配置](#进阶配置)。
@@ -106,7 +106,7 @@ deanxv/coze-discord-proxy
 
 其中,`BOT_TOKEN`,`GUILD_ID`,`COZE_BOT_ID`,`PROXY_SECRET`,`CHANNEL_ID`修改为自己的。
 
-如果上面的镜像无法拉取，可以尝试使用 GitHub 的 Docker 镜像，将上面的 `deanxv/coze-discord-proxy` 替换为 `ghcr.io/deanxv/coze-discord-proxy` 即可。
+如果上面的镜像无法拉取，可以尝试使用 GitHub 的 Docker 镜像，将上面的 `deanxv/coze-discord-proxy`替换为 `ghcr.io/deanxv/coze-discord-proxy` 即可。
 
 ### 部署到第三方平台
 
