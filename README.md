@@ -187,16 +187,19 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
   {
     "proxySecret": "123", // 接口请求密钥(PROXY_SECRET)
     "cozeBotId": "12***************31", // coze托管的机器人ID
-    "channelId": "12***************56"  // discord频道ID(机器人必须在此频道所在的服务器)(目前版本下该参数仅用来活跃机器人)
+    "model": "GPT-3.5-16k", // [可选]coze托管的机器人模型名称
+    "channelId": "12***************56"  // [可选]discord频道ID(机器人必须在此频道所在的服务器)(目前版本下该参数仅用来活跃机器人)
   },
   {
     "proxySecret": "456",
     "cozeBotId": "12***************64",
+    "model": "GPT-4-8k", 
     "channelId": "12***************78"
   },
   {
     "proxySecret": "789",
     "cozeBotId": "12***************12",
+    "model": "GPT-4-Turbo-128k",
     "channelId": "12***************24"
   }
 ]

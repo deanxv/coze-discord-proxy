@@ -3,6 +3,7 @@ package model
 type BotConfig struct {
 	ProxySecret string `json:"proxySecret"`
 	CozeBotId   string `json:"cozeBotId"`
+	Model       string `json:"model"`
 	ChannelId   string `json:"channelId"`
 }
 

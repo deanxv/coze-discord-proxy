@@ -149,7 +149,7 @@ func ChatForOpenAI(c *gin.Context) {
 		return
 	}
 
-	sendChannelId, calledCozeBotId, err := getSendChannelIdAndCozeBotId(c, true)
+	sendChannelId, calledCozeBotId, err := getSendChannelIdAndCozeBotId(c, request.Model, true)
 
 	content := "Hi！"
 	messages := request.Messages
@@ -371,7 +371,7 @@ func ImagesForOpenAI(c *gin.Context) {
 		return
 	}
 
-	sendChannelId, calledCozeBotId, err := getSendChannelIdAndCozeBotId(c, true)
+	sendChannelId, calledCozeBotId, err := getSendChannelIdAndCozeBotId(c, request.Model, true)
 	if err != nil {
 		common.LogError(c.Request.Context(), err.Error())
 		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
@@ -446,7 +446,7 @@ func ImagesForOpenAI(c *gin.Context) {
 
 }
 
-func getSendChannelIdAndCozeBotId(c *gin.Context, isOpenAIAPI bool) (sendChannelId string, calledCozeBotId string, err error) {
+func getSendChannelIdAndCozeBotId(c *gin.Context, model string, isOpenAIAPI bool) (sendChannelId string, calledCozeBotId string, err error) {
 	secret := ""
 	if isOpenAIAPI {
 		if secret = c.Request.Header.Get("Authorization"); secret != "" {
@@ -467,7 +467,7 @@ func getSendChannelIdAndCozeBotId(c *gin.Context, isOpenAIAPI bool) (sendChannel
 	// botConfigs不为空
 	if len(discord.BotConfigList) != 0 {
 
-		botConfigs := discord.FilterConfigs(discord.BotConfigList, secret, nil)
+		botConfigs := discord.FilterConfigs(discord.BotConfigList, secret, model, nil)
 		if len(botConfigs) != 0 {
 			// 有值则随机一个
 			botConfig, err := common.RandomElement(botConfigs)
