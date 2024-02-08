@@ -15,15 +15,19 @@ var (
 func SetChannelDeleteTimer(channelId string, duration time.Duration) {
 	// 检查是否已存在定时器
 	if timer, ok := channelTimers.Load(channelId); ok {
-		timer.(*time.Timer).Stop() // 停止现有定时器
+		if timer.(*time.Timer).Stop() {
+			// 仅当定时器成功停止时才从映射中删除
+			channelTimers.Delete(channelId)
+		}
 	}
 
 	// 设置新的定时器
 	newTimer := time.AfterFunc(duration, func() {
 		ChannelDel(channelId)
-		channelTimers.Delete(channelId) // 删除完成后从map中移除
+		// 删除完成后从map中移除
+		channelTimers.Delete(channelId)
 	})
-
+	fmt.Println("添加channelId:" + channelId)
 	// 存储新的定时器
 	channelTimers.Store(channelId, newTimer)
 }
