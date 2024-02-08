@@ -157,6 +157,8 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 	// 尝试获取 stopChan
 	stopChan, exists := ReplyStopChans[m.ReferencedMessage.ID]
 	if !exists {
+		// 不存在则直接删除频道
+		ChannelDel(m.ChannelID)
 		return
 	}
 
@@ -213,7 +215,6 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 						SetChannelDeleteTimer(m.ChannelID, time.Duration(delTime)*time.Second)
 					}
 				} else {
-					fmt.Println("删除channelId:" + m.ChannelID)
 					// 删除该频道
 					SetChannelDeleteTimer(m.ChannelID, 5*time.Second)
 				}

@@ -27,7 +27,6 @@ func SetChannelDeleteTimer(channelId string, duration time.Duration) {
 		// 删除完成后从map中移除
 		channelTimers.Delete(channelId)
 	})
-	fmt.Println("添加channelId:" + channelId)
 	// 存储新的定时器
 	channelTimers.Store(channelId, newTimer)
 }
