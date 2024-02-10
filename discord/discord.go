@@ -18,6 +18,7 @@ import (
 	"net/url"
 	"os"
 	"os/signal"
+	"regexp"
 	"strconv"
 	"strings"
 	"syscall"
@@ -286,6 +287,15 @@ func processMessageForOpenAI(m *discordgo.MessageUpdate) model.OpenAIChatComplet
 
 func processMessageForOpenAIImage(m *discordgo.MessageUpdate) model.OpenAIImagesGenerationResponse {
 	var response model.OpenAIImagesGenerationResponse
+
+	re := regexp.MustCompile(`]\((https?://\S+)\)`)
+	submatches := re.FindAllStringSubmatch(m.Content, -1)
+
+	for _, match := range submatches {
+		response.Data = append(response.Data, struct {
+			URL string `json:"url"`
+		}{URL: match[1]})
+	}
 
 	if len(m.Embeds) != 0 {
 		for _, embed := range m.Embeds {
