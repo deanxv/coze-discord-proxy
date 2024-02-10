@@ -30,6 +30,7 @@ var GuildId = os.Getenv("GUILD_ID")
 var ChannelId = os.Getenv("CHANNEL_ID")
 var ProxyUrl = os.Getenv("PROXY_URL")
 var ChannelAutoDelTime = os.Getenv("CHANNEL_AUTO_DEL_TIME")
+var CozeBotStayActiveEnable = os.Getenv("COZE_BOT_STAY_ACTIVE_ENABLE")
 
 var BotConfigList []model.BotConfig
 
@@ -73,7 +74,9 @@ func StartBot(ctx context.Context, token string) {
 	checkEnvVariable()
 	common.SysLog("Bot is now running. Enjoy It.")
 
-	go scheduleDailyMessage()
+	if CozeBotStayActiveEnable != "0" {
+		go scheduleDailyMessage()
+	}
 
 	go func() {
 		<-ctx.Done()

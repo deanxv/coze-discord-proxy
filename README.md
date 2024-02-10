@@ -40,7 +40,7 @@ _觉得有点意思的话 别忘了点个🌟_
 4. 两个bot开通对应权限(`Administrator`)并邀请进服务器,记录服务器ID(`GUILD_ID`) (
    过程不在此赘述)。
 5. 打开 [coze官网](https://www.coze.com) 创建自己bot。
-6. 创建好后推送,配置discord-bot的`token`,即bot-A的`token`,点击完成后在discord的服务器中可看到bot-A在线并可以@使用。
+6. 创建好后推送(`Auto-Suggestion`为`default`),配置discord-bot的`token`,即bot-A的`token`,点击完成后在discord的服务器中可看到bot-A在线并可以@使用。
 7. 配置环境变量,并启动本项目。
 8. 访问接口地址即可开始调试。
 
@@ -168,12 +168,13 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 2. `GUILD_ID:119xxxxxxxx796`  两个机器人所在的服务器ID
 3. `COZE_BOT_ID:119xxxxxxxx7`  由coze托管的机器人ID
 4. `CHANNEL_ID:119xxxxxx24`  默认频道-(目前版本下该参数仅用来活跃机器人)
-5. `CHANNEL_AUTO_DEL_TIME:60`  [可选]频道自动删除时间(秒) 此参数为每次对话完成后自动删除频道的时间(默认为5s),为0时则不删除,推荐不设置
-6. `PORT:7077`  [可选]端口
-7. `PROXY_SECRET:123456`  [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)(与openai-API-KEY用法一致)
-8. `REQUEST_OUT_TIME:60`  [可选]对话接口非流响应下的请求超时时间,推荐不设置
-9. `STREAM_REQUEST_OUT_TIME:60`  [可选]对话接口流响应下的每次流返回超时时间,推荐不设置
-10. `PROXY_URL:http://127.0.0.1:10801`  [可选]代理
+5. `CHANNEL_AUTO_DEL_TIME:60`  [可选]频道自动删除时间(秒) 此参数为每次对话完成后自动删除频道的时间(默认为5s),为0时则不删除,推荐不使用此环境变量
+6. `COZE_BOT_STAY_ACTIVE_ENABLE:1`  [可选]是否开启每日`24`点活跃coze-bot的定时任务,默认开启,为0时则不开启,推荐不使用此环境变量
+7. `PORT:7077`  [可选]端口,默认为7077
+8. `PROXY_SECRET:123456`  [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)(与openai-API-KEY用法一致)
+9. `REQUEST_OUT_TIME:60`  [可选]对话接口非流响应下的请求超时时间,推荐不使用此环境变量
+10. `STREAM_REQUEST_OUT_TIME:60`  [可选]对话接口流响应下的每次流返回超时时间,推荐不使用此环境变量
+11. `PROXY_URL:http://127.0.0.1:10801`  [可选]代理
 
 ## 进阶配置
 
