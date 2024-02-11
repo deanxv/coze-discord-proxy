@@ -13,6 +13,18 @@ var (
 
 // SetChannelDeleteTimer 设置或重置频道的删除定时器
 func SetChannelDeleteTimer(channelId string, duration time.Duration) {
+
+	// 过滤掉配置中的频道id
+	for _, config := range BotConfigList {
+		if config.ChannelId == channelId {
+			return
+		}
+	}
+
+	if ChannelId == channelId {
+		return
+	}
+
 	// 检查是否已存在定时器
 	if timer, ok := channelTimers.Load(channelId); ok {
 		if timer.(*time.Timer).Stop() {
