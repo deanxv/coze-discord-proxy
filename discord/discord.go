@@ -349,17 +349,16 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 	// 特殊处理
 	content = strings.ReplaceAll(content, "\\n", " \\n ")
 
-	for i, _ := range common.ReverseSegment(content, 2000) {
+	for i, sendContent := range common.ReverseSegment(content, 2000) {
 		//sentMsg, err := Session.ChannelMessageSend(channelID, msg)
 
 		// 4.0.0 版本下 用户端发送消息
-		sentMsgId, err := SendMsgByAuthorization(content, channelID)
+		sentMsgId, err := SendMsgByAuthorization(sendContent, channelID)
 		if err != nil {
 			common.LogError(ctx, fmt.Sprintf("error sending message: %s", err))
 			return nil, fmt.Errorf("error sending message")
 		}
 		if i == len(common.ReverseSegment(content, 2000))-1 {
-
 			return &discordgo.Message{
 				ID: sentMsgId,
 			}, nil
