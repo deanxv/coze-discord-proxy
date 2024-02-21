@@ -30,9 +30,13 @@ func SendMsgByAuthorization(content, channelId string) (string, error) {
 	// 设置请求头-部分请求头不传没问题，但目前仍有被discord检测异常的风险
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", UserAuthorization)
-	//req.Header.Set("Origin", "https://discord.com")
-	//req.Header.Set("Referer", "https://discord.com/channels/1199225704202653796/1209795495820664883")
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36")
+	req.Header.Set("Origin", "https://discord.com")
+	req.Header.Set("Referer", fmt.Sprintf("https://discord.com/channels/%s/%s", GuildId, channelId))
+	if UserAgent != "" {
+		req.Header.Set("User-Agent", UserAgent)
+	} else {
+		req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36")
+	}
 
 	// 发起请求
 	client := &http.Client{}

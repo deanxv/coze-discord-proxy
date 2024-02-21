@@ -32,6 +32,7 @@ var ChannelId = os.Getenv("CHANNEL_ID")
 var ProxyUrl = os.Getenv("PROXY_URL")
 var ChannelAutoDelTime = os.Getenv("CHANNEL_AUTO_DEL_TIME")
 var CozeBotStayActiveEnable = os.Getenv("COZE_BOT_STAY_ACTIVE_ENABLE")
+var UserAgent = os.Getenv("USER_AGENT")
 var UserAuthorization = os.Getenv("USER_AUTHORIZATION")
 var UserId = os.Getenv("USER_ID")
 

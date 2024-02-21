@@ -190,7 +190,8 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 10. `PROXY_SECRET:123456`  [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)(与openai-API-KEY用法一致)
 11. `REQUEST_OUT_TIME:60`  [可选]对话接口非流响应下的请求超时时间,推荐不使用此环境变量
 12. `STREAM_REQUEST_OUT_TIME:60`  [可选]对话接口流响应下的每次流返回超时时间,推荐不使用此环境变量
-13. `PROXY_URL:http://127.0.0.1:10801`  [可选]代理
+13. `USER_AGENT:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36`  [可选]discord用户端Agent,使用自己的可能有效防止被ban，不设置时默认使用作者的 推荐使用此环境变量
+14. `PROXY_URL:http://127.0.0.1:10801`  [可选]代理
 
 ## 进阶配置
 
