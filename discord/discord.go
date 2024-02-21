@@ -184,60 +184,60 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 	}
 
 	// 检查消息是否是对 bot 的回复
-	for _, mention := range m.Mentions {
-		if mention.ID == UserId {
-			replyChan, exists := RepliesChans[m.ReferencedMessage.ID]
+	//for _, mention := range m.Mentions {
+	//if mention.ID == UserId {
+	replyChan, exists := RepliesChans[m.ReferencedMessage.ID]
+	if exists {
+		reply := processMessage(m)
+		replyChan <- reply
+	} else {
+		replyOpenAIChan, exists := RepliesOpenAIChans[m.ReferencedMessage.ID]
+		if exists {
+			reply := processMessageForOpenAI(m)
+			replyOpenAIChan <- reply
+		} else {
+			replyOpenAIImageChan, exists := RepliesOpenAIImageChans[m.ReferencedMessage.ID]
 			if exists {
-				reply := processMessage(m)
-				replyChan <- reply
+				reply := processMessageForOpenAIImage(m)
+				replyOpenAIImageChan <- reply
 			} else {
-				replyOpenAIChan, exists := RepliesOpenAIChans[m.ReferencedMessage.ID]
-				if exists {
-					reply := processMessageForOpenAI(m)
-					replyOpenAIChan <- reply
-				} else {
-					replyOpenAIImageChan, exists := RepliesOpenAIImageChans[m.ReferencedMessage.ID]
-					if exists {
-						reply := processMessageForOpenAIImage(m)
-						replyOpenAIImageChan <- reply
-					} else {
-						return
-					}
-				}
+				return
 			}
-			// data: {"id":"chatcmpl-8lho2xvdDFyBdFkRwWAcMpWWAgymJ","object":"chat.completion.chunk","created":1706380498,"model":"gpt-4-turbo-0613","system_fingerprint":null,"choices":[{"index":0,"delta":{"content":"？"},"logprobs":null,"finish_reason":null}]}
-			// data :{"id":"1200873365351698694","object":"chat.completion.chunk","created":1706380922,"model":"COZE","choices":[{"index":0,"message":{"role":"assistant","content":"你好！有什么我可以帮您的吗？如果有任"},"logprobs":null,"finish_reason":"","delta":{"content":"吗？如果有任"}}],"usage":{"prompt_tokens":13,"completion_tokens":19,"total_tokens":32},"system_fingerprint":null}
-
-			// 如果消息包含组件或嵌入,则发送停止信号
-			if len(m.Message.Components) > 0 {
-				replyOpenAIChan, exists := RepliesOpenAIChans[m.ReferencedMessage.ID]
-				if exists {
-					reply := processMessageForOpenAI(m)
-					stopStr := "stop"
-					reply.Choices[0].FinishReason = &stopStr
-					replyOpenAIChan <- reply
-				}
-
-				if ChannelAutoDelTime != "" {
-					delTime, _ := strconv.Atoi(ChannelAutoDelTime)
-					if delTime == 0 {
-						CancelChannelDeleteTimer(m.ChannelID)
-					} else if delTime > 0 {
-						// 删除该频道
-						SetChannelDeleteTimer(m.ChannelID, time.Duration(delTime)*time.Second)
-					}
-				} else {
-					// 删除该频道
-					SetChannelDeleteTimer(m.ChannelID, 5*time.Second)
-				}
-				stopChan <- model.ChannelStopChan{
-					Id: m.ChannelID,
-				}
-			}
-
-			return
 		}
 	}
+	// data: {"id":"chatcmpl-8lho2xvdDFyBdFkRwWAcMpWWAgymJ","object":"chat.completion.chunk","created":1706380498,"model":"gpt-4-turbo-0613","system_fingerprint":null,"choices":[{"index":0,"delta":{"content":"？"},"logprobs":null,"finish_reason":null}]}
+	// data :{"id":"1200873365351698694","object":"chat.completion.chunk","created":1706380922,"model":"COZE","choices":[{"index":0,"message":{"role":"assistant","content":"你好！有什么我可以帮您的吗？如果有任"},"logprobs":null,"finish_reason":"","delta":{"content":"吗？如果有任"}}],"usage":{"prompt_tokens":13,"completion_tokens":19,"total_tokens":32},"system_fingerprint":null}
+
+	// 如果消息包含组件或嵌入,则发送停止信号
+	if len(m.Message.Components) > 0 {
+		replyOpenAIChan, exists := RepliesOpenAIChans[m.ReferencedMessage.ID]
+		if exists {
+			reply := processMessageForOpenAI(m)
+			stopStr := "stop"
+			reply.Choices[0].FinishReason = &stopStr
+			replyOpenAIChan <- reply
+		}
+
+		if ChannelAutoDelTime != "" {
+			delTime, _ := strconv.Atoi(ChannelAutoDelTime)
+			if delTime == 0 {
+				CancelChannelDeleteTimer(m.ChannelID)
+			} else if delTime > 0 {
+				// 删除该频道
+				SetChannelDeleteTimer(m.ChannelID, time.Duration(delTime)*time.Second)
+			}
+		} else {
+			// 删除该频道
+			SetChannelDeleteTimer(m.ChannelID, 5*time.Second)
+		}
+		stopChan <- model.ChannelStopChan{
+			Id: m.ChannelID,
+		}
+	}
+
+	return
+	//}
+	//}
 }
 
 // processMessage 提取并处理消息内容及其嵌入元素
