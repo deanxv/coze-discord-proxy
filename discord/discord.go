@@ -32,6 +32,8 @@ var ChannelId = os.Getenv("CHANNEL_ID")
 var ProxyUrl = os.Getenv("PROXY_URL")
 var ChannelAutoDelTime = os.Getenv("CHANNEL_AUTO_DEL_TIME")
 var CozeBotStayActiveEnable = os.Getenv("COZE_BOT_STAY_ACTIVE_ENABLE")
+var UserAuthorization = os.Getenv("USER_AUTHORIZATION")
+var UserId = os.Getenv("USER_ID")
 
 var BotConfigList []model.BotConfig
 
@@ -93,6 +95,12 @@ func StartBot(ctx context.Context, token string) {
 }
 
 func checkEnvVariable() {
+	if UserAuthorization == "" {
+		common.FatalLog("环境变量 USER_AUTHORIZATION 未设置")
+	}
+	if UserId == "" {
+		common.FatalLog("环境变量 USER_ID 未设置")
+	}
 	if BotToken == "" {
 		common.FatalLog("环境变量 BOT_TOKEN 未设置")
 	}
@@ -177,7 +185,7 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 
 	// 检查消息是否是对 bot 的回复
 	for _, mention := range m.Mentions {
-		if mention.ID == s.State.User.ID {
+		if mention.ID == UserId {
 			replyChan, exists := RepliesChans[m.ReferencedMessage.ID]
 			if exists {
 				reply := processMessage(m)
@@ -329,7 +337,7 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 		return nil, fmt.Errorf("discord session not initialized")
 	}
 
-	var sentMsg *discordgo.Message
+	//var sentMsg *discordgo.Message
 
 	content := fmt.Sprintf("%s <@%s>", message, cozeBotId)
 
@@ -341,17 +349,23 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 	// 特殊处理
 	content = strings.ReplaceAll(content, "\\n", " \\n ")
 
-	for i, msg := range common.ReverseSegment(content, 2000) {
-		sentMsg, err := Session.ChannelMessageSend(channelID, msg)
+	for i, _ := range common.ReverseSegment(content, 2000) {
+		//sentMsg, err := Session.ChannelMessageSend(channelID, msg)
+
+		// 4.0.0 版本下 用户端发送消息
+		sentMsgId, err := SendMsgByAuthorization(content, channelID)
 		if err != nil {
 			common.LogError(ctx, fmt.Sprintf("error sending message: %s", err))
 			return nil, fmt.Errorf("error sending message")
 		}
 		if i == len(common.ReverseSegment(content, 2000))-1 {
-			return sentMsg, nil
+
+			return &discordgo.Message{
+				ID: sentMsgId,
+			}, nil
 		}
 	}
-	return sentMsg, nil
+	return &discordgo.Message{}, fmt.Errorf("error sending message")
 }
 
 func ChannelCreate(guildID, channelName string, channelType int) (string, error) {
