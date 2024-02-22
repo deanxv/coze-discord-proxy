@@ -87,7 +87,7 @@ services:
       - ./data:/app/coze-discord-proxy/data
     environment:
       - USER_ID=1099*********055  # 必须修改为我们discord用户的ID
-      - USER_AUTHORIZATION=MTA5OTg5N************uIfytxUgJfmaXUBHVI  # 必须修改为我们discord用户的授权密钥
+      - USER_AUTHORIZATION=MTA5OTg5N************uIfytxUgJfmaXUBHVI  # 必须修改为我们discord用户的授权密钥(多个请以,分隔)
       - BOT_TOKEN=MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w  # 必须修改为监听消息的Bot-Token
       - GUILD_ID=119xxxxxxxx796  # 必须修改为两个机器人所在的服务器ID
       - COZE_BOT_ID=119xxxxxxxx7  # 必须修改为由coze托管的机器人ID
@@ -142,7 +142,7 @@ deanxv/coze-discord-proxy
 
    `USER_ID:1099*********055`  主动发送消息的discord用户的ID
 
-   `USER_AUTHORIZATION:MTA5OTg5N************uIfytxUgJfmaXUBHVI`  主动发送消息的discord用户的授权密钥
+   `USER_AUTHORIZATION:MTA5OTg5N************uIfytxUgJfmaXUBHVI`  主动发送消息的discord用户的授权密钥(多个请以,分隔)
 
    `BOT_TOKEN:MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w`  监听消息的Bot-Token
 
@@ -178,7 +178,7 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 
 ### 环境变量
 1. `USER_ID:1099*********055`  主动发送消息的discord用户的ID
-2. `USER_AUTHORIZATION:MTA5OTg5N************uIfytxUgJfmaXUBHVI`  主动发送消息的discord用户的授权密钥
+2. `USER_AUTHORIZATION:MTA5OTg5N************uIfytxUgJfmaXUBHVI`  主动发送消息的discord用户的授权密钥(多个请以,分隔)
 3. `BOT_TOKEN:MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w`  监听消息的Bot-Token
 4. `GUILD_ID:119xxxxxxxx796`  所有Bot所在的服务器ID
 5. `COZE_BOT_ID:119xxxxxxxx7`  由coze托管的Bot-ID

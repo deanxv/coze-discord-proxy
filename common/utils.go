@@ -245,3 +245,13 @@ func ReverseSegment(s string, segLen int) []string {
 	}
 	return result
 }
+
+func FilterSlice(slice []string, filter string) []string {
+	var result []string
+	for _, value := range slice {
+		if value != filter {
+			result = append(result, value)
+		}
+	}
+	return result
+}

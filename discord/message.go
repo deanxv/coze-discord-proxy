@@ -21,19 +21,24 @@ func SendMsgByAuthorization(c *gin.Context, content, channelId string) (string, 
 		"content": content,
 	})
 	if err != nil {
-		fmt.Println("Error encoding request body:", err)
+		common.LogError(c.Request.Context(), fmt.Sprintf("Error encoding request body:%s", err))
 		return "", err
 	}
 
 	req, err := http.NewRequest("POST", fmt.Sprintf(postUrl, channelId), bytes.NewBuffer(requestBody))
 	if err != nil {
-		fmt.Println("Error creating request:", err)
+		common.LogError(c.Request.Context(), fmt.Sprintf("Error creating request:%s", err))
+		return "", err
+	}
+
+	auth, err := common.RandomElement(UserAuthorizations)
+	if err != nil {
 		return "", err
 	}
 
 	// 设置请求头-部分请求头不传没问题，但目前仍有被discord检测异常的风险
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", UserAuthorization)
+	req.Header.Set("Authorization", auth)
 	req.Header.Set("Origin", "https://discord.com")
 	req.Header.Set("Referer", fmt.Sprintf("https://discord.com/channels/%s/%s", GuildId, channelId))
 	if UserAgent != "" {
@@ -56,7 +61,7 @@ func SendMsgByAuthorization(c *gin.Context, content, channelId string) (string, 
 
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println("Error sending request:", err)
+		common.LogError(c.Request.Context(), fmt.Sprintf("Error sending request:%s", err))
 		return "", err
 	}
 	defer resp.Body.Close()
@@ -83,8 +88,21 @@ func SendMsgByAuthorization(c *gin.Context, content, channelId string) (string, 
 	id, ok := result["id"].(string)
 
 	if !ok {
+		// 401
+		if errMessage, ok := result["message"].(string); ok {
+			if errMessage == "401: Unauthorized" {
+				common.LogWarn(c.Request.Context(), fmt.Sprintf("USER_AUTHORIZATION:%s 已失效", auth))
+				UserAuthorizations = common.FilterSlice(UserAuthorizations, auth)
+				if len(UserAuthorizations) == 0 {
+					common.FatalLog(fmt.Sprintf("USER_AUTHORIZATION 无效"))
+					//return "", fmt.Errorf("USER_AUTHORIZATION 无效")
+				}
+				return SendMsgByAuthorization(c, content, channelId)
+			}
+		}
 		common.LogError(c.Request.Context(), fmt.Sprintf("result:%s", bodyString))
 		return "", fmt.Errorf("ID is not a string")
+	} else {
+		return id, nil
 	}
-	return id, nil
 }
