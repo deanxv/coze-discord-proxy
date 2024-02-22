@@ -2,7 +2,7 @@ import os
 import requests
 
 issue_labels = ['no respect']
-github_repo = 'gngpp/ninja'
+github_repo = 'deanxv/coze-discord-proxy'
 github_token = os.getenv("GITHUB_TOKEN")
 headers = {
     'Authorization': 'Bearer ' + github_token,
