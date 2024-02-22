@@ -353,7 +353,7 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 		//sentMsg, err := Session.ChannelMessageSend(channelID, sendContent)
 		//sentMsgId := sentMsg.ID
 		// 4.0.0 版本下 用户端发送消息
-		sendContent = strings.ReplaceAll(sendContent, "\\n", " \n ")
+		sendContent = strings.ReplaceAll(sendContent, "\\n", "\n")
 		sentMsgId, err := SendMsgByAuthorization(c, sendContent, channelID)
 		if err != nil {
 			common.LogError(ctx, fmt.Sprintf("error sending message: %s", err))
