@@ -5,13 +5,15 @@ import (
 	"coze-discord-proxy/common"
 	"encoding/json"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
+	"net/url"
 )
 
 // 用户端发送消息 注意 此为临时解决方案 后续会优化代码
-func SendMsgByAuthorization(content, channelId string) (string, error) {
-	url := "https://discord.com/api/v9/channels/%s/messages"
+func SendMsgByAuthorization(c *gin.Context, content, channelId string) (string, error) {
+	postUrl := "https://discord.com/api/v9/channels/%s/messages"
 	// 构造请求体
 	requestBody, err := json.Marshal(map[string]interface{}{
 		"content": content,
@@ -21,7 +23,7 @@ func SendMsgByAuthorization(content, channelId string) (string, error) {
 		return "", err
 	}
 
-	req, err := http.NewRequest("POST", fmt.Sprintf(url, channelId), bytes.NewBuffer(requestBody))
+	req, err := http.NewRequest("POST", fmt.Sprintf(postUrl, channelId), bytes.NewBuffer(requestBody))
 	if err != nil {
 		fmt.Println("Error creating request:", err)
 		return "", err
@@ -40,6 +42,16 @@ func SendMsgByAuthorization(content, channelId string) (string, error) {
 
 	// 发起请求
 	client := &http.Client{}
+	if ProxyUrl != "" {
+		proxyURL, _ := url.Parse(ProxyUrl)
+		transport := &http.Transport{
+			Proxy: http.ProxyURL(proxyURL),
+		}
+		client = &http.Client{
+			Transport: transport,
+		}
+	}
+
 	resp, err := client.Do(req)
 	if err != nil {
 		fmt.Println("Error sending request:", err)
@@ -67,8 +79,9 @@ func SendMsgByAuthorization(content, channelId string) (string, error) {
 
 	// 类型断言来获取id的值
 	id, ok := result["id"].(string)
+
 	if !ok {
-		common.SysError("ID is not a string")
+		common.LogError(c.Request.Context(), fmt.Sprintf("result:%s", bodyString))
 		return "", fmt.Errorf("ID is not a string")
 	}
 	return id, nil

@@ -351,10 +351,10 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 	content = strings.ReplaceAll(content, "\\n", " \\n ")
 
 	for i, sendContent := range common.ReverseSegment(content, 2000) {
-		//sentMsg, err := Session.ChannelMessageSend(channelID, msg)
-
+		//sentMsg, err := Session.ChannelMessageSend(channelID, sendContent)
+		//sentMsgId := sentMsg.ID
 		// 4.0.0 版本下 用户端发送消息
-		sentMsgId, err := SendMsgByAuthorization(sendContent, channelID)
+		sentMsgId, err := SendMsgByAuthorization(c, sendContent, channelID)
 		if err != nil {
 			common.LogError(ctx, fmt.Sprintf("error sending message: %s", err))
 			return nil, fmt.Errorf("error sending message")
