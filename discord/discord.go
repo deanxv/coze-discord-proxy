@@ -349,7 +349,7 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 
 	// 特殊处理
 
-	for i, sendContent := range common.ReverseSegment(content, 2000) {
+	for i, sendContent := range common.ReverseSegment(content, 1888) {
 		//sentMsg, err := Session.ChannelMessageSend(channelID, sendContent)
 		//sentMsgId := sentMsg.ID
 		// 4.0.0 版本下 用户端发送消息
