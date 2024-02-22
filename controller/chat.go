@@ -135,6 +135,19 @@ import (
 // @Router /v1/chat/completions [post]
 func ChatForOpenAI(c *gin.Context) {
 
+	// 校验有效用户token
+	if len(discord.UserAuthorizations) == 0 {
+		common.LogError(c.Request.Context(), fmt.Sprintf("无可用的 user_auth"))
+		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
+			OpenAIError: model.OpenAIError{
+				Message: "no_available_user_auth",
+				Type:    "invalid_request_error",
+				Code:    "invalid_parameter",
+			},
+		})
+		return
+	}
+
 	var request model.OpenAIChatCompletionRequest
 	err := json.NewDecoder(c.Request.Body).Decode(&request)
 	if err != nil {
@@ -348,6 +361,19 @@ func buildOpenAIGPT4VForImageContent(sendChannelId string, objs []interface{}) (
 // @Success 200 {object} model.OpenAIImagesGenerationResponse "Successful response"
 // @Router /v1/images/generations [post]
 func ImagesForOpenAI(c *gin.Context) {
+
+	// 校验有效用户token
+	if len(discord.UserAuthorizations) == 0 {
+		common.LogError(c.Request.Context(), fmt.Sprintf("无可用的 user_auth"))
+		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
+			OpenAIError: model.OpenAIError{
+				Message: "no_available_user_auth",
+				Type:    "invalid_request_error",
+				Code:    "invalid_parameter",
+			},
+		})
+		return
+	}
 
 	var request model.OpenAIImagesGenerationRequest
 	err := json.NewDecoder(c.Request.Body).Decode(&request)

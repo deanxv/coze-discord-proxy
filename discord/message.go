@@ -94,8 +94,9 @@ func SendMsgByAuthorization(c *gin.Context, content, channelId string) (string, 
 				common.LogWarn(c.Request.Context(), fmt.Sprintf("USER_AUTHORIZATION:%s 已失效", auth))
 				UserAuthorizations = common.FilterSlice(UserAuthorizations, auth)
 				if len(UserAuthorizations) == 0 {
-					common.FatalLog(fmt.Sprintf("USER_AUTHORIZATION 无效"))
-					//return "", fmt.Errorf("USER_AUTHORIZATION 无效")
+					//common.FatalLog(fmt.Sprintf("USER_AUTHORIZATION 无效"))
+					ChannelDel(channelId)
+					return "", fmt.Errorf("USER_AUTHORIZATION 无效")
 				}
 				return SendMsgByAuthorization(c, content, channelId)
 			}
