@@ -340,7 +340,7 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 
 	//var sentMsg *discordgo.Message
 
-	content := fmt.Sprintf("%s <@%s>", message, cozeBotId)
+	content := fmt.Sprintf("%s \n <@%s>", message, cozeBotId)
 
 	if runeCount := len([]rune(content)); runeCount > 50000 {
 		common.LogError(ctx, fmt.Sprintf("prompt已超过限制,请分段发送 [%v] %s", runeCount, content))
@@ -348,12 +348,12 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 	}
 
 	// 特殊处理
-	content = strings.ReplaceAll(content, "\\n", " \\n ")
 
 	for i, sendContent := range common.ReverseSegment(content, 2000) {
 		//sentMsg, err := Session.ChannelMessageSend(channelID, sendContent)
 		//sentMsgId := sentMsg.ID
 		// 4.0.0 版本下 用户端发送消息
+		sendContent = strings.ReplaceAll(sendContent, "\\n", " \n ")
 		sentMsgId, err := SendMsgByAuthorization(c, sendContent, channelID)
 		if err != nil {
 			common.LogError(ctx, fmt.Sprintf("error sending message: %s", err))
