@@ -39,16 +39,12 @@ _觉得有点意思的话 别忘了点个🌟_
 1. 打开 [discord开发者平台](https://discord.com/developers/applications) 。
 2. 创建bot-A,并记录bot专属的`token`和`id(COZE_BOT_ID)`,此bot为被coze托管的bot。
 3. 创建bot-B,并记录bot专属的`token(BOT_TOKEN)`,此bot为我们用来监听discord消息的bot。
-4. 两个bot开通对应权限(`Administrator`)并邀请进服务器,记录服务器ID(`GUILD_ID`) (
-   过程不在此赘述)。
-5. 打开F12发送一次消息,在`https://discord.com/api/v9/channels/1206*******703/messages`
-   接口header中获取`Authorization(USER_AUTHORIZATION)`。
-6. 在discord中打开开发者模式，右键自己的用户名获取`用户Id(USER_ID)`。
-7. 打开 [coze官网](https://www.coze.com) 创建自己bot。
-8. 创建好后推送(`Auto-Suggestion`为`default`),配置discord-bot的`token`,即bot-A的`token`
-   ,点击完成后在discord的服务器中可看到bot-A在线并可以@使用。
-9. 配置环境变量,并启动本项目。
-10. 访问接口地址即可开始调试。
+4. 两个bot开通对应权限(`Administrator`)并邀请进服务器,记录服务器ID(`GUILD_ID`) (过程不在此赘述)。
+5. 打开F12发送一次消息,在`https://discord.com/api/v9/channels/1206*******703/messages` 接口header中获取`Authorization(USER_AUTHORIZATION)`。
+6. 打开 [coze官网](https://www.coze.com) 创建自己bot。
+7. 创建好后推送(`Auto-Suggestion`为`default`),配置discord-bot的`token`,即bot-A的`token`,点击完成后在discord的服务器中可看到bot-A在线并可以@使用。
+8. 配置环境变量,并启动本项目。
+9. 访问接口地址即可开始调试。
 
 ## 如何集成NextChat
 
@@ -87,7 +83,6 @@ services:
     volumes:
       - ./data:/app/coze-discord-proxy/data
     environment:
-      - USER_ID=1099*********055  # 必须修改为我们discord用户的ID
       - USER_AUTHORIZATION=MTA5OTg5N************uIfytxUgJfmaXUBHVI  # 必须修改为我们discord用户的授权密钥(多个请以,分隔)
       - BOT_TOKEN=MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w  # 必须修改为监听消息的Bot-Token
       - GUILD_ID=119xxxxxxxx796  # 必须修改为两个机器人所在的服务器ID
@@ -103,7 +98,6 @@ services:
 docker run --name coze-discord-proxy -d --restart always \
 -p 7077:7077 \
 -v $(pwd)/data:/app/coze-discord-proxy/data \
--e USER_ID="1099*********055"  \
 -e USER_AUTHORIZATION="MTA5OTg5N************uIfytxUgJfmaXUBHVI" \
 -e BOT_TOKEN="MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w" \
 -e GUILD_ID="119xxxxxxxx796" \
@@ -114,7 +108,7 @@ docker run --name coze-discord-proxy -d --restart always \
 deanxv/coze-discord-proxy
 ```
 
-其中,`USER_ID`,`USER_AUTHORIZATION`,`BOT_TOKEN`,`GUILD_ID`,`COZE_BOT_ID`,`PROXY_SECRET`,`CHANNEL_ID`修改为自己的。
+其中`USER_AUTHORIZATION`,`BOT_TOKEN`,`GUILD_ID`,`COZE_BOT_ID`,`PROXY_SECRET`,`CHANNEL_ID`修改为自己的。
 
 如果上面的镜像无法拉取，可以尝试使用 GitHub 的 Docker 镜像，将上面的 `deanxv/coze-discord-proxy`
 替换为 `ghcr.io/deanxv/coze-discord-proxy` 即可。
@@ -131,7 +125,7 @@ deanxv/coze-discord-proxy
 
 [![Deploy on Zeabur](https://zeabur.com/button.svg)](https://zeabur.com/templates/GMU8C8?referralCode=deanxv)
 
-**一键部署后 `USER_ID`,`USER_AUTHORIZATION`,`BOT_TOKEN`,`GUILD_ID`,`COZE_BOT_ID`,`PROXY_SECRET`,`CHANNEL_ID`变量也需要替换！**
+**一键部署后 `USER_AUTHORIZATION`,`BOT_TOKEN`,`GUILD_ID`,`COZE_BOT_ID`,`PROXY_SECRET`,`CHANNEL_ID`变量也需要替换！**
 
 或手动部署:
 
@@ -140,8 +134,6 @@ deanxv/coze-discord-proxy
 3. 在 Service -> Add Service,选择 Git（第一次使用需要先授权）,选择你 fork 的仓库。
 4. Deploy 会自动开始,先取消。
 5. 添加环境变量
-
-   `USER_ID:1099*********055`  主动发送消息的discord用户的ID
 
    `USER_AUTHORIZATION:MTA5OTg5N************uIfytxUgJfmaXUBHVI`  主动发送消息的discord用户的授权密钥(多个请以,分隔)
 
@@ -178,22 +170,20 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 ## 配置
 
 ### 环境变量
-1. `USER_ID:1099*********055`  主动发送消息的discord用户的ID
-2. `USER_AUTHORIZATION:MTA5OTg5N************uIfytxUgJfmaXUBHVI`  主动发送消息的discord用户的授权密钥(多个请以,分隔)
-3. `BOT_TOKEN:MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w`  监听消息的Bot-Token
-4. `GUILD_ID:119xxxxxxxx796`  所有Bot所在的服务器ID
-5. `COZE_BOT_ID:119xxxxxxxx7`  由coze托管的Bot-ID
-6. `CHANNEL_ID:119xxxxxx24`  默认频道-(目前版本下该参数仅用来活跃Bot)
-7. `DEFAULT_CHANNEL_ENABLE:0`  [可选]是否启用默认频道[0:否;1:是] (默认为0) 启用后每次对话都会在默认频道中,**会话隔离会失效**,推荐不使用此环境变量
-8. `CHANNEL_AUTO_DEL_TIME:5`  [可选]频道自动删除时间(秒) 此参数为每次对话完成后自动删除频道的时间(默认为5s)
-   ,为0时则不删除,推荐不使用此环境变量
-9. `COZE_BOT_STAY_ACTIVE_ENABLE:1`  [可选]是否开启每日`24`点活跃coze-bot的定时任务,默认开启,为0时则不开启,推荐不使用此环境变量
-10. `PORT:7077`  [可选]端口,默认为7077
-11. `PROXY_SECRET:123456`  [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)(与openai-API-KEY用法一致)
-12. `REQUEST_OUT_TIME:60`  [可选]对话接口非流响应下的请求超时时间,推荐不使用此环境变量
-13. `STREAM_REQUEST_OUT_TIME:60`  [可选]对话接口流响应下的每次流返回超时时间,推荐不使用此环境变量
-14. `USER_AGENT:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36`  [可选]discord用户端Agent,使用自己的可能有效防止被ban，不设置时默认使用作者的 推荐使用此环境变量
-15. `PROXY_URL:http://127.0.0.1:10801`  [可选]代理
+1. `USER_AUTHORIZATION:MTA5OTg5N************uIfytxUgJfmaXUBHVI`  主动发送消息的discord用户的授权密钥(多个请以,分隔)
+2. `BOT_TOKEN:MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w`  监听消息的Bot-Token
+3. `GUILD_ID:119xxxxxxxx796`  所有Bot所在的服务器ID
+4. `COZE_BOT_ID:119xxxxxxxx7`  由coze托管的Bot-ID
+5. `CHANNEL_ID:119xxxxxx24`  默认频道-(目前版本下该参数仅用来活跃Bot)
+6. `DEFAULT_CHANNEL_ENABLE:0`  [可选]是否启用默认频道[0:否;1:是] (默认为0) 启用后每次对话都会在默认频道中,**会话隔离会失效**,推荐不使用此环境变量
+7. `CHANNEL_AUTO_DEL_TIME:5`  [可选]频道自动删除时间(秒) 此参数为每次对话完成后自动删除频道的时间(默认为5s),为0时则不删除,推荐不使用此环境变量
+8. `COZE_BOT_STAY_ACTIVE_ENABLE:1`  [可选]是否开启每日`24`点活跃coze-bot的定时任务,默认开启,为0时则不开启,推荐不使用此环境变量
+9. `PORT:7077`  [可选]端口,默认为7077
+10. `PROXY_SECRET:123456`  [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)(与openai-API-KEY用法一致)
+11. `REQUEST_OUT_TIME:60`  [可选]对话接口非流响应下的请求超时时间,推荐不使用此环境变量
+12. `STREAM_REQUEST_OUT_TIME:60`  [可选]对话接口流响应下的每次流返回超时时间,推荐不使用此环境变量
+13. `USER_AGENT:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36`  [可选]discord用户端Agent,使用自己的可能有效防止被ban，不设置时默认使用作者的 推荐使用此环境变量
+14. `PROXY_URL:http://127.0.0.1:10801`  [可选]代理
 
 ## 进阶配置
 
