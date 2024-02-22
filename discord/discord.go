@@ -29,6 +29,7 @@ var BotToken = os.Getenv("BOT_TOKEN")
 var CozeBotId = os.Getenv("COZE_BOT_ID")
 var GuildId = os.Getenv("GUILD_ID")
 var ChannelId = os.Getenv("CHANNEL_ID")
+var DefaultChannelEnable = os.Getenv("DEFAULT_CHANNEL_ENABLE")
 var ProxyUrl = os.Getenv("PROXY_URL")
 var ChannelAutoDelTime = os.Getenv("CHANNEL_AUTO_DEL_TIME")
 var CozeBotStayActiveEnable = os.Getenv("COZE_BOT_STAY_ACTIVE_ENABLE")
@@ -157,6 +158,15 @@ func loadBotConfig() {
 		common.FatalLog("Error parsing JSON:", err)
 	}
 
+	// 校验默认频道
+	if DefaultChannelEnable == "1" {
+		for _, botConfig := range BotConfigList {
+			if botConfig.ChannelId == "" {
+				common.FatalLog("默认频道开关开启时,必须为每个Coze-Bot配置ChannelId")
+			}
+		}
+	}
+
 	common.LogInfo(context.Background(), fmt.Sprintf("载入配置文件成功 BotConfigs: %+v", BotConfigList))
 }
 
@@ -170,9 +180,12 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 	// 尝试获取 stopChan
 	stopChan, exists := ReplyStopChans[m.ReferencedMessage.ID]
 	if !exists {
+		channel, err := Session.Channel(m.ChannelID)
 		// 不存在则直接删除频道
-		SetChannelDeleteTimer(m.ChannelID, 5*time.Minute)
-		return
+		if err != nil || strings.HasPrefix(channel.Name, "cdp-对话") {
+			SetChannelDeleteTimer(m.ChannelID, 5*time.Minute)
+			return
+		}
 	}
 
 	// 如果作者为 nil 或消息来自 bot 本身,则发送停止信号
@@ -477,7 +490,7 @@ func scheduleDailyMessage() {
 			var sendChannelId string
 			if config.ChannelId == "" {
 				nextID, _ := common.NextID()
-				sendChannelId, _ = ChannelCreate(GuildId, fmt.Sprintf("对话%s", nextID), 0)
+				sendChannelId, _ = ChannelCreate(GuildId, fmt.Sprintf("cdp-对话%s", nextID), 0)
 				sendChannelList = append(sendChannelList, sendChannelId)
 			} else {
 				sendChannelId = config.ChannelId

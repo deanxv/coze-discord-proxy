@@ -474,17 +474,27 @@ func getSendChannelIdAndCozeBotId(c *gin.Context, model string, isOpenAIAPI bool
 			if err != nil {
 				return "", "", err
 			}
-			var sendChannelId string
-			sendChannelId, _ = discord.ChannelCreate(discord.GuildId, fmt.Sprintf("对话%s", c.Request.Context().Value(common.RequestIdKey)), 0)
-			discord.SetChannelDeleteTimer(sendChannelId, 5*time.Minute)
-			return sendChannelId, botConfig.CozeBotId, nil
+
+			if discord.DefaultChannelEnable == "1" {
+				return botConfig.ChannelId, botConfig.CozeBotId, nil
+			} else {
+				var sendChannelId string
+				sendChannelId, _ = discord.ChannelCreate(discord.GuildId, fmt.Sprintf("cdp-对话%s", c.Request.Context().Value(common.RequestIdKey)), 0)
+				discord.SetChannelDeleteTimer(sendChannelId, 5*time.Minute)
+				return sendChannelId, botConfig.CozeBotId, nil
+			}
+
 		}
 		// 没有值抛出异常
 		return "", "", fmt.Errorf("secret匹配不到有效bot")
 	} else {
-		channelCreateId, _ := discord.ChannelCreate(discord.GuildId, fmt.Sprintf("对话%s", c.Request.Context().Value(common.RequestIdKey)), 0)
-		discord.SetChannelDeleteTimer(channelCreateId, 5*time.Minute)
-		return channelCreateId, discord.CozeBotId, nil
+		if discord.DefaultChannelEnable == "1" {
+			return discord.ChannelId, discord.CozeBotId, nil
+		} else {
+			channelCreateId, _ := discord.ChannelCreate(discord.GuildId, fmt.Sprintf("cdp-对话%s", c.Request.Context().Value(common.RequestIdKey)), 0)
+			discord.SetChannelDeleteTimer(channelCreateId, 5*time.Minute)
+			return channelCreateId, discord.CozeBotId, nil
+		}
 	}
 }
 
