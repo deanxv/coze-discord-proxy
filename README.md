@@ -39,7 +39,7 @@ _觉得有点意思的话 别忘了点个🌟_
 2. 创建bot-A,并记录bot专属的`token`和`id(COZE_BOT_ID)`,此bot为被coze托管的bot。
 3. 创建bot-B,并记录bot专属的`token(BOT_TOKEN)`,此bot为我们用来监听discord消息的bot。
 4. 两个bot开通对应权限(`Administrator`)并邀请进服务器,记录服务器ID(`GUILD_ID`) (过程不在此赘述)。
-5. 打开F12发送一次消息,在`https://discord.com/api/v9/channels/1206*******703/messages` 接口header中获取`Authorization(USER_AUTHORIZATION)`。
+5. 打开discord进入服务器，打开F12后在任一频道内发送一次消息,在`https://discord.com/api/v9/channels/1206*******703/messages` 接口header中获取`Authorization(USER_AUTHORIZATION)`。
 6. 打开 [coze官网](https://www.coze.com) 创建自己bot。
 7. 创建好后推送(`Auto-Suggestion`为`default`),配置discord-bot的`token`,即bot-A的`token`,点击完成后在discord的服务器中可看到bot-A在线并可以@使用。
 8. 配置环境变量,并启动本项目。
@@ -225,12 +225,9 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 
 ## Q&A
 
-Q: 我们如何使用该服务托管多个Bot去请求多个由coze托管的Bot？
+Q: 并发量高时应如何配置？
 
-A: 首先用不同的端口部署多个`coze-discord-proxy`服务,对每个服务都[配置多机器人](#配置多机器人)
-,并对每个服务设置不同的`BOT_TOKEN`,再部署[one-api](https://github.com/songquanpeng/one-api)
-后[添加多个渠道](#如何集成one-api),利用[one-api](https://github.com/songquanpeng/one-api)
-的轮询去请求我们的`coze-discord-proxy`服务。
+A: 首先为服务[配置多机器人](#配置多机器人)用来作响应bot的负载,其次准备多个discord账号用来作请求负载并邀请进同一个服务器,获取每个账号的`Authorization`英文逗号分隔配置在环境变量`USER_AUTHORIZATION`中,此时每次请求都会从多个discord账号中取出一个发起对话,有效实现负载均衡。
 
 ## ⭐ Star History
 
