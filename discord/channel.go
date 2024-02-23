@@ -3,6 +3,7 @@ package discord
 import (
 	"coze-discord-proxy/common"
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 )
@@ -13,6 +14,12 @@ var (
 
 // SetChannelDeleteTimer 设置或重置频道的删除定时器
 func SetChannelDeleteTimer(channelId string, duration time.Duration) {
+
+	channel, err := Session.Channel(channelId)
+	// 非自动生成频道不删除
+	if err == nil && !strings.HasPrefix(channel.Name, "cdp-对话") {
+		return
+	}
 
 	// 过滤掉配置中的频道id
 	for _, config := range BotConfigList {

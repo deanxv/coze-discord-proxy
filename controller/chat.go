@@ -159,16 +159,19 @@ func ChatForOpenAI(c *gin.Context) {
 		if message.Role == "user" {
 			switch contentObj := message.Content.(type) {
 			case string:
-				jsonData, err := json.Marshal(messages)
-				if err != nil {
-					c.JSON(http.StatusOK, gin.H{
-						"success": false,
-						"message": err.Error(),
-					})
-					return
+				if common.AllDialogRecordEnable == "1" {
+					content = contentObj
+				} else {
+					jsonData, err := json.Marshal(messages)
+					if err != nil {
+						c.JSON(http.StatusOK, gin.H{
+							"success": false,
+							"message": err.Error(),
+						})
+						return
+					}
+					content = string(jsonData)
 				}
-				content = string(jsonData)
-				//content = contentObj
 			case []interface{}:
 				content, err = buildOpenAIGPT4VForImageContent(sendChannelId, contentObj)
 				if err != nil {
