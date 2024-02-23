@@ -7,6 +7,7 @@ import (
 	"coze-discord-proxy/model"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"github.com/gin-gonic/gin"
@@ -102,9 +103,6 @@ func checkEnvVariable() {
 	if UserAuthorization == "" {
 		common.FatalLog("环境变量 USER_AUTHORIZATION 未设置")
 	}
-	//if UserId == "" {
-	//	common.FatalLog("环境变量 USER_ID 未设置")
-	//}
 	if BotToken == "" {
 		common.FatalLog("环境变量 BOT_TOKEN 未设置")
 	}
@@ -199,9 +197,6 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 		return
 	}
 
-	// 检查消息是否是对 bot 的回复
-	//for _, mention := range m.Mentions {
-	//if mention.ID == UserId {
 	replyChan, exists := RepliesChans[m.ReferencedMessage.ID]
 	if exists {
 		reply := processMessage(m)
@@ -252,8 +247,6 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 	}
 
 	return
-	//}
-	//}
 }
 
 // processMessage 提取并处理消息内容及其嵌入元素
@@ -362,19 +355,36 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 		return nil, fmt.Errorf("prompt已超过限制,请分段发送 [%v]", runeCount)
 	}
 
-	// 特殊处理
+	if len(UserAuthorizations) == 0 {
+		ChannelDel(channelID)
+		common.LogError(c.Request.Context(), fmt.Sprintf("无可用的 user_auth"))
+		return nil, fmt.Errorf("no_available_user_auth")
+	}
+
+	userAuth, err := common.RandomElement(UserAuthorizations)
+	if err != nil {
+		return nil, err
+	}
 
 	for i, sendContent := range common.ReverseSegment(content, 1888) {
 		//sentMsg, err := Session.ChannelMessageSend(channelID, sendContent)
 		//sentMsgId := sentMsg.ID
 		// 4.0.0 版本下 用户端发送消息
 		sendContent = strings.ReplaceAll(sendContent, "\\n", "\n")
-		sentMsgId, err := SendMsgByAuthorization(c, sendContent, channelID)
+		sentMsgId, err := SendMsgByAuthorization(c, userAuth, sendContent, channelID)
 		if err != nil {
+			var myErr *common.DiscordUnauthorizedError
+			if errors.As(err, &myErr) {
+				// 无效则将此 auth 移除
+				UserAuthorizations = common.FilterSlice(UserAuthorizations, userAuth)
+				return SendMessage(c, channelID, cozeBotId, message)
+			}
 			common.LogError(ctx, fmt.Sprintf("error sending message: %s", err))
 			return nil, fmt.Errorf("error sending message")
 		}
+
 		time.Sleep(1 * time.Second)
+
 		if i == len(common.ReverseSegment(content, 1888))-1 {
 			return &discordgo.Message{
 				ID: sentMsgId,

@@ -17,6 +17,8 @@ definitions:
     type: object
   model.OpenAIChatCompletionRequest:
     properties:
+      channelId:
+        type: string
       messages:
         items:
           $ref: '#/definitions/model.OpenAIChatMessage'
@@ -71,8 +73,9 @@ definitions:
     type: object
   model.OpenAIImagesGenerationRequest:
     properties:
+      channelId:
+        type: string
       model:
-        description: OpenAIChatCompletionExtraRequest
         type: string
       prompt:
         type: string

@@ -13,7 +13,7 @@ import (
 )
 
 // 用户端发送消息 注意 此为临时解决方案 后续会优化代码
-func SendMsgByAuthorization(c *gin.Context, content, channelId string) (string, error) {
+func SendMsgByAuthorization(c *gin.Context, userAuth, content, channelId string) (string, error) {
 	postUrl := "https://discord.com/api/v9/channels/%s/messages"
 	content = strings.Replace(content, `\u0026`, "&", -1)
 	// 构造请求体
@@ -31,14 +31,9 @@ func SendMsgByAuthorization(c *gin.Context, content, channelId string) (string, 
 		return "", err
 	}
 
-	auth, err := common.RandomElement(UserAuthorizations)
-	if err != nil {
-		return "", err
-	}
-
 	// 设置请求头-部分请求头不传没问题，但目前仍有被discord检测异常的风险
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", auth)
+	req.Header.Set("Authorization", userAuth)
 	req.Header.Set("Origin", "https://discord.com")
 	req.Header.Set("Referer", fmt.Sprintf("https://discord.com/channels/%s/%s", GuildId, channelId))
 	if UserAgent != "" {
@@ -91,14 +86,11 @@ func SendMsgByAuthorization(c *gin.Context, content, channelId string) (string, 
 		// 401
 		if errMessage, ok := result["message"].(string); ok {
 			if errMessage == "401: Unauthorized" {
-				common.LogWarn(c.Request.Context(), fmt.Sprintf("USER_AUTHORIZATION:%s 已失效", auth))
-				UserAuthorizations = common.FilterSlice(UserAuthorizations, auth)
-				if len(UserAuthorizations) == 0 {
-					//common.FatalLog(fmt.Sprintf("USER_AUTHORIZATION 无效"))
-					ChannelDel(channelId)
-					return "", fmt.Errorf("USER_AUTHORIZATION 无效")
+				common.LogWarn(c.Request.Context(), fmt.Sprintf("USER_AUTHORIZATION:%s 已失效", userAuth))
+				return "", &common.DiscordUnauthorizedError{
+					ErrCode: 401,
+					Message: "discord 鉴权未通过",
 				}
-				return SendMsgByAuthorization(c, content, channelId)
 			}
 		}
 		common.LogError(c.Request.Context(), fmt.Sprintf("result:%s", bodyString))

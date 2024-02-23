@@ -4,7 +4,7 @@ type OpenAIChatCompletionRequest struct {
 	Model    string              `json:"model"`
 	Stream   bool                `json:"stream"`
 	Messages []OpenAIChatMessage `json:"messages"`
-	//OpenAIChatCompletionExtraRequest
+	OpenAIChatCompletionExtraRequest
 }
 
 type OpenAIChatCompletionExtraRequest struct {
@@ -61,7 +61,7 @@ type OpenAIDelta struct {
 }
 
 type OpenAIImagesGenerationRequest struct {
-	//OpenAIChatCompletionExtraRequest
+	OpenAIChatCompletionExtraRequest
 	Model  string `json:"model"`
 	Prompt string `json:"prompt"`
 }

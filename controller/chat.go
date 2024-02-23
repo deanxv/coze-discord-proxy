@@ -135,19 +135,6 @@ import (
 // @Router /v1/chat/completions [post]
 func ChatForOpenAI(c *gin.Context) {
 
-	// 校验有效用户token
-	if len(discord.UserAuthorizations) == 0 {
-		common.LogError(c.Request.Context(), fmt.Sprintf("无可用的 user_auth"))
-		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
-			OpenAIError: model.OpenAIError{
-				Message: "no_available_user_auth",
-				Type:    "invalid_request_error",
-				Code:    "invalid_parameter",
-			},
-		})
-		return
-	}
-
 	var request model.OpenAIChatCompletionRequest
 	err := json.NewDecoder(c.Request.Body).Decode(&request)
 	if err != nil {
@@ -162,7 +149,7 @@ func ChatForOpenAI(c *gin.Context) {
 		return
 	}
 
-	sendChannelId, calledCozeBotId, err := getSendChannelIdAndCozeBotId(c, request.Model, true)
+	sendChannelId, calledCozeBotId, err := getSendChannelIdAndCozeBotId(c, request.ChannelId, request.Model, true)
 
 	content := "Hi！"
 	messages := request.Messages
@@ -362,19 +349,6 @@ func buildOpenAIGPT4VForImageContent(sendChannelId string, objs []interface{}) (
 // @Router /v1/images/generations [post]
 func ImagesForOpenAI(c *gin.Context) {
 
-	// 校验有效用户token
-	if len(discord.UserAuthorizations) == 0 {
-		common.LogError(c.Request.Context(), fmt.Sprintf("无可用的 user_auth"))
-		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
-			OpenAIError: model.OpenAIError{
-				Message: "no_available_user_auth",
-				Type:    "invalid_request_error",
-				Code:    "invalid_parameter",
-			},
-		})
-		return
-	}
-
 	var request model.OpenAIImagesGenerationRequest
 	err := json.NewDecoder(c.Request.Body).Decode(&request)
 	if err != nil {
@@ -397,7 +371,7 @@ func ImagesForOpenAI(c *gin.Context) {
 		return
 	}
 
-	sendChannelId, calledCozeBotId, err := getSendChannelIdAndCozeBotId(c, request.Model, true)
+	sendChannelId, calledCozeBotId, err := getSendChannelIdAndCozeBotId(c, request.ChannelId, request.Model, true)
 	if err != nil {
 		common.LogError(c.Request.Context(), err.Error())
 		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
@@ -472,7 +446,7 @@ func ImagesForOpenAI(c *gin.Context) {
 
 }
 
-func getSendChannelIdAndCozeBotId(c *gin.Context, model string, isOpenAIAPI bool) (sendChannelId string, calledCozeBotId string, err error) {
+func getSendChannelIdAndCozeBotId(c *gin.Context, channelId *string, model string, isOpenAIAPI bool) (sendChannelId string, calledCozeBotId string, err error) {
 	secret := ""
 	if isOpenAIAPI {
 		if secret = c.Request.Header.Get("Authorization"); secret != "" {
@@ -481,14 +455,6 @@ func getSendChannelIdAndCozeBotId(c *gin.Context, model string, isOpenAIAPI bool
 	} else {
 		secret = c.Request.Header.Get("proxy-secret")
 	}
-
-	//if secret == "" {
-	//	if request.GetChannelId() == nil || *request.GetChannelId() == "" {
-	//		return discord.ChannelId, discord.CozeBotId, nil
-	//	} else {
-	//		return *request.GetChannelId(), discord.CozeBotId, nil
-	//	}
-	//}
 
 	// botConfigs不为空
 	if len(discord.BotConfigList) != 0 {
@@ -499,6 +465,10 @@ func getSendChannelIdAndCozeBotId(c *gin.Context, model string, isOpenAIAPI bool
 			botConfig, err := common.RandomElement(botConfigs)
 			if err != nil {
 				return "", "", err
+			}
+
+			if channelId != nil && *channelId != "" {
+				return *channelId, botConfig.CozeBotId, nil
 			}
 
 			if discord.DefaultChannelEnable == "1" {
@@ -514,6 +484,11 @@ func getSendChannelIdAndCozeBotId(c *gin.Context, model string, isOpenAIAPI bool
 		// 没有值抛出异常
 		return "", "", fmt.Errorf("secret匹配不到有效bot")
 	} else {
+
+		if channelId != nil && *channelId != "" {
+			return *channelId, discord.CozeBotId, nil
+		}
+
 		if discord.DefaultChannelEnable == "1" {
 			return discord.ChannelId, discord.CozeBotId, nil
 		} else {

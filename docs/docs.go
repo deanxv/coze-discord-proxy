@@ -237,6 +237,9 @@ const docTemplate = `{
         "model.OpenAIChatCompletionRequest": {
             "type": "object",
             "properties": {
+                "channelId": {
+                    "type": "string"
+                },
                 "messages": {
                     "type": "array",
                     "items": {
@@ -320,8 +323,10 @@ const docTemplate = `{
         "model.OpenAIImagesGenerationRequest": {
             "type": "object",
             "properties": {
+                "channelId": {
+                    "type": "string"
+                },
                 "model": {
-                    "description": "OpenAIChatCompletionExtraRequest",
                     "type": "string"
                 },
                 "prompt": {
