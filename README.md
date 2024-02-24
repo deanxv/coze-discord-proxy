@@ -200,21 +200,21 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 ```shell
 [
   {
-    "proxySecret": "123", // 接口请求密钥(PROXY_SECRET)
+    "proxySecret": "123", // 接口请求密钥(PROXY_SECRET)(注意:此密钥在环境变量PROXY_SECRET中存在时该Bot才可以被匹配到!)
     "cozeBotId": "12***************31", // coze托管的机器人ID
-    "model": "GPT-3.5-16k", // coze托管的机器人模型名称(与请求参数中的model对应,如请求中的model在该json中未匹配到则会抛出异常)
+    "model": "gpt-3.5", // 模型名称(与请求参数中的model对应,如请求中的model在该json中未匹配到则会抛出异常)
     "channelId": "12***************56"  // [可选]discord频道ID(机器人必须在此频道所在的服务器)(目前版本下该参数仅用来活跃机器人)
   },
   {
     "proxySecret": "456",
     "cozeBotId": "12***************64",
-    "model": "GPT-4-8k", 
+    "model": "gpt-4-8k", 
     "channelId": "12***************78"
   },
   {
     "proxySecret": "789",
     "cozeBotId": "12***************12",
-    "model": "GPT-4-Turbo-128k",
+    "model": "gpt-4-16k",
     "channelId": "12***************24"
   }
 ]
@@ -222,8 +222,7 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 
 3. 重启服务
 
-> 当有此配置时,会通过请求头携带的[请求密钥]+请求体中的[`model`]匹配此配置中的`cozeBotId`
-> ,若匹配到多个则随机选择一个,所以当存在多用户使用时可对每个用户分发独立的请求密钥。配置很灵活,可以根据自己的需求进行配置。
+> 当有此json配置时,会通过请求头携带的[请求密钥]+请求体中的[`model`]联合匹配此配置中的`cozeBotId`若匹配到多个则随机选择一个,所以当存在多用户使用时可对每个用户分发独立的请求密钥。配置很灵活,可以根据自己的需求进行配置。
 
 第三方平台(如: `zeabur`)部署的服务需要[配置多机器人]
 请参考[issue#30](https://github.com/deanxv/coze-discord-proxy/issues/30)
