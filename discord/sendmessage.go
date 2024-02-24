@@ -85,7 +85,8 @@ func SendMsgByAuthorization(c *gin.Context, userAuth, content, channelId string)
 	if !ok {
 		// 401
 		if errMessage, ok := result["message"].(string); ok {
-			if errMessage == "401: Unauthorized" {
+			if strings.Contains(errMessage, "401: Unauthorized") ||
+				strings.Contains(errMessage, "You need to verify your account in order to perform this action.") {
 				common.LogWarn(c.Request.Context(), fmt.Sprintf("USER_AUTHORIZATION:%s 已失效", userAuth))
 				return "", &common.DiscordUnauthorizedError{
 					ErrCode: 401,

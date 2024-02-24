@@ -264,9 +264,17 @@ func ChatForOpenAI(c *gin.Context) {
 				reply.Object = "chat.completion.chunk"
 				bytes, _ := common.Obj2Bytes(reply)
 				c.SSEvent("", " "+string(bytes))
+
+				if reply.Choices[0].Message.Content == common.CozeErrorMsg {
+					discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
+					c.SSEvent("", " [DONE]")
+					return false // 关闭流式连接
+				}
+
 				return true // 继续保持流式连接
 			case <-timer.C:
 				// 定时器到期时,关闭流
+				discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
 				c.SSEvent("", " [DONE]")
 				return false
 			case <-stopChan:
@@ -279,8 +287,20 @@ func ChatForOpenAI(c *gin.Context) {
 		for {
 			select {
 			case reply := <-replyChan:
+				if reply.Choices[0].Message.Content == common.CozeErrorMsg {
+					discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
+					c.JSON(http.StatusOK, model.OpenAIErrorResponse{
+						OpenAIError: model.OpenAIError{
+							Message: common.CozeErrorMsg,
+							Type:    "request_error",
+							Code:    "request_coze_discord_limit",
+						},
+					})
+					return
+				}
 				replyResp = reply
 			case <-timer.C:
+				discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
 				c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 					OpenAIError: model.OpenAIError{
 						Message: "请求超时",
@@ -423,6 +443,7 @@ func ImagesForOpenAI(c *gin.Context) {
 		case reply := <-replyChan:
 			replyResp = reply
 		case <-timer.C:
+			discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
 			c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 				OpenAIError: model.OpenAIError{
 					Message: "请求超时",
@@ -435,7 +456,7 @@ func ImagesForOpenAI(c *gin.Context) {
 			if replyResp.Data == nil {
 				c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 					OpenAIError: model.OpenAIError{
-						Message: "discord未返回URL,检查prompt中是否有敏感内容",
+						Message: "discord未返回URL,检查prompt中是否有敏感内容或达到限制",
 						Type:    "invalid_request_error",
 						Code:    "discord_request_err",
 					},
