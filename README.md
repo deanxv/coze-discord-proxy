@@ -2,11 +2,14 @@
 
 # coze-discord-proxy
 
-_代理`Discord`对话`Coze-Bot`，实现API形式请求GPT4对话模型/微调模型_
+_代理`Discord`对话`Coze-Bot`,实现API形式请求GPT4对话模型/微调模型_
 
 _觉得有点意思的话 别忘了点个🌟_
 
-🐞<a href="https://t.me/+LGKwlC_xa-E5ZDk9" style="font-size: 15px;">COZE-DISCORD-PROXY交流群</a>(群内有详细教程)
+🐞<a href="https://t.me/+LGKwlC_xa-E5ZDk9" style="font-size: 15px;">CDP项目-交流群</a>(群内有详细教程)
+
+📢<a href="https://t.me/+0fYkYY_zUZYzNzRl" style="font-size: 15px;">CDP项目-通知频道</a>(频道内有详细教程)
+
 
 </div>
 
@@ -35,15 +38,17 @@ _觉得有点意思的话 别忘了点个🌟_
 
 ## 如何使用
 
-1. 打开 [discord开发者平台](https://discord.com/developers/applications) 。
-2. 创建bot-A,并记录bot专属的`token`和`id(COZE_BOT_ID)`,此bot为被coze托管的bot。
-3. 创建bot-B,并记录bot专属的`token(BOT_TOKEN)`,此bot为我们用来监听discord消息的bot。
-4. 两个bot开通对应权限(`Administrator`)并邀请进服务器,记录服务器ID(`GUILD_ID`) (过程不在此赘述)。
-5. 打开discord进入服务器，打开F12后在任一频道内发送一次消息,在`https://discord.com/api/v9/channels/1206*******703/messages` 接口header中获取`Authorization(USER_AUTHORIZATION)`。
-6. 打开 [coze官网](https://www.coze.com) 创建自己bot。
-7. 创建好后推送(`Auto-Suggestion`为`default`),配置discord-bot的`token`,即bot-A的`token`,点击完成后在discord的服务器中可看到bot-A在线并可以@使用。
-8. 配置环境变量,并启动本项目。
-9. 访问接口地址即可开始调试。
+1. 打开 [discord官网](https://discord.com/app) ,登陆后点击设置-高级设置-开发者模式-打开。
+2. 创建discord服务器,右键点击此服务器选择`复制服务器ID(GUILD_ID)`并记录,在此服务器中创建默认频道,右键点击此频道选择`复制频道ID(CHANNEL_ID)`并记录。
+3. 打开 [discord开发者平台](https://discord.com/developers/applications) 登陆。
+4. 创建新应用-Bot即`COZE-BOT`,并记录该bot专属的`token`和`id(COZE_BOT_ID)`,此bot为即将被coze托管的bot。
+5. 创建新应用-Bot即`CDP-BOT`,并记录该bot专属的`token(BOT_TOKEN)`,此bot为监听discord消息的bot。
+6. 两个bot开通对应权限(`Administrator`)并邀请进创建好的discord服务器 (过程不在此赘述)。
+7. 打开 [discord官网](https://discord.com/app) 进入服务器,按F12打开开发者工具,在任一频道内发送一次消息,在开发者工具-`Network`中找到请求 `https://discord.com/api/v9/channels/1206*******703/messages` 从该接口header中获取`Authorization(USER_AUTHORIZATION)`并记录。
+8. 打开 [coze官网](https://www.coze.com) 创建bot并进行个性化配置(注意`Auto-Suggestion`为`default`(默认不用改))。
+9. 配置好后选择发布到discord,填写`COZE-BOT`的`token`,发布完成后在discord服务器中可看到`COZE-BOT`在线并可以@使用。
+10. 使用上述记录的参数开始配置[环境变量](#环境变量)并[部署](#部署)本项目。
+11. 访问接口文档地址,即可开始调试或集成其他项目。
 
 ## 如何集成NextChat
 
@@ -109,7 +114,7 @@ deanxv/coze-discord-proxy
 
 其中`USER_AUTHORIZATION`,`BOT_TOKEN`,`GUILD_ID`,`COZE_BOT_ID`,`PROXY_SECRET`,`CHANNEL_ID`修改为自己的。
 
-如果上面的镜像无法拉取，可以尝试使用 GitHub 的 Docker 镜像，将上面的 `deanxv/coze-discord-proxy`
+如果上面的镜像无法拉取,可以尝试使用 GitHub 的 Docker 镜像,将上面的 `deanxv/coze-discord-proxy`
 替换为 `ghcr.io/deanxv/coze-discord-proxy` 即可。
 
 ### 部署到第三方平台
@@ -182,7 +187,7 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 11. `PROXY_SECRET:123456`  [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)(与openai-API-KEY用法一致)
 12. `REQUEST_OUT_TIME:60`  [可选]对话接口非流响应下的请求超时时间,推荐不使用此环境变量
 13. `STREAM_REQUEST_OUT_TIME:60`  [可选]对话接口流响应下的每次流返回超时时间,推荐不使用此环境变量
-14. `USER_AGENT:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36`  [可选]discord用户端Agent,使用自己的可能有效防止被ban，不设置时默认使用作者的 推荐使用此环境变量
+14. `USER_AGENT:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36`  [可选]discord用户端Agent,使用自己的可能有效防止被ban,不设置时默认使用作者的 推荐使用此环境变量
 15. `PROXY_URL:http://127.0.0.1:10801`  [可选]代理
 
 ## 进阶配置
