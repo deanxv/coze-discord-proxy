@@ -23,8 +23,8 @@ _觉得有点意思的话 别忘了点个🌟_
 - [x] 支持和`openai`对齐的图/文件生文接口(`v1/chat/completions`)(按照`GPT4V`图/文件生文接口的请求格式 [ 支持`url`或`base64` ])(支持指定`discord-channel`)。
 - [x] 支持和`openai`对齐的`dall-e-3`文生图接口(`v1/images/generations`)。
 - [x] 支持每日`24`点定时任务自动活跃机器人。
-- [x] 支持配置多用户`Authorization`负载。
-- [x] 支持配置多机器人负载 (通过`PROXY_SECRET`/`model`指定) 详细请看[进阶配置](#进阶配置)。
+- [x] 支持配置多discord用户`Authorization`作请求负载均衡(**目前每个discord用户调用coze-bot在24h内有次数上限,可配置多用户来实现叠加请求次数及请求负载均衡**)。
+- [x] 支持配置多coze机器人作响应负载均衡 (通过`PROXY_SECRET`/`model`指定) 详细请看[进阶配置](#进阶配置)。
 
 ### 接口文档:
 
