@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+var ProxySecret = os.Getenv("PROXY_SECRET")
 var ProxySecrets = strings.Split(os.Getenv("PROXY_SECRET"), ",")
 var AllDialogRecordEnable = os.Getenv("ALL_DIALOG_RECORD_ENABLE")
 var RequestOutTime = os.Getenv("REQUEST_OUT_TIME")
@@ -13,7 +14,7 @@ var StreamRequestOutTime = os.Getenv("STREAM_REQUEST_OUT_TIME")
 
 var DebugEnabled = os.Getenv("DEBUG") == "true"
 
-var Version = "v4.1.7" // this hard coding will be replaced automatically when building, no need to manually change
+var Version = "v4.1.8" // this hard coding will be replaced automatically when building, no need to manually change
 
 const (
 	RequestIdKey = "X-Request-Id"

@@ -9,7 +9,7 @@ import (
 )
 
 func isValidSecret(secret string) bool {
-	return len(common.ProxySecrets) > 0 && !common.SliceContains(common.ProxySecrets, secret)
+	return common.ProxySecret != "" && !common.SliceContains(common.ProxySecrets, secret)
 }
 
 func authHelper(c *gin.Context) {
