@@ -206,7 +206,7 @@ loop:
 		}
 	}
 
-	if common.AllDialogRecordEnable == "1" {
+	if common.AllDialogRecordEnable == "1" || common.AllDialogRecordEnable == "" {
 		jsonData, err := json.Marshal(messages)
 		if err != nil {
 			c.JSON(http.StatusOK, gin.H{
