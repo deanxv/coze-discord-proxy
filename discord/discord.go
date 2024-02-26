@@ -14,6 +14,7 @@ import (
 	"github.com/h2non/filetype"
 	"golang.org/x/net/proxy"
 	"log"
+	"math/rand"
 	"net"
 	"net/http"
 	"net/url"
@@ -351,7 +352,7 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 	}
 
 	if len(UserAuthorizations) == 0 {
-		ChannelDel(channelID)
+		SetChannelDeleteTimer(channelID, 5*time.Second)
 		common.LogError(c.Request.Context(), fmt.Sprintf("无可用的 user_auth"))
 		return nil, fmt.Errorf("no_available_user_auth")
 	}
@@ -473,7 +474,11 @@ func NewProxyClient(proxyUrl string) (proxyParse *url.URL, client *http.Client, 
 }
 
 func scheduleDailyMessage() {
+
 	for {
+		source := rand.NewSource(time.Now().UnixNano())
+		randomNumber := rand.New(source).Intn(60) // 生成0到10之间的随机整数
+
 		// 计算距离下一个晚上12点的时间间隔
 		now := time.Now()
 		next := now.Add(time.Hour * 24)
@@ -481,7 +486,7 @@ func scheduleDailyMessage() {
 		delay := next.Sub(now)
 
 		// 等待直到下一个间隔
-		time.Sleep(delay)
+		time.Sleep(delay + time.Duration(randomNumber)*time.Second)
 
 		var taskBotConfigs = BotConfigList
 
@@ -503,7 +508,12 @@ func scheduleDailyMessage() {
 			} else {
 				sendChannelId = config.ChannelId
 			}
-			_, err := SendMessage(nil, sendChannelId, config.CozeBotId, "CDP Scheduled Task Job Send Msg Success！")
+			nextID, err := common.NextID()
+			if err != nil {
+				common.SysError(fmt.Sprintf("ChannelId{%s} BotId{%s} 活跃机器人任务消息发送异常!雪花Id生成失败!", sendChannelId, config.CozeBotId))
+				continue
+			}
+			_, err = SendMessage(nil, sendChannelId, config.CozeBotId, fmt.Sprintf("【%v】 %s", nextID, "CDP Scheduled Task Job Send Msg Success!"))
 			if err != nil {
 				common.SysError(fmt.Sprintf("ChannelId{%s} BotId{%s} 活跃机器人任务消息发送异常!", sendChannelId, config.CozeBotId))
 			} else {
@@ -570,7 +580,7 @@ func FilterConfigs(configs []model.BotConfig, secret, gptModel string, channelId
 	var filteredConfigs []model.BotConfig
 	for _, config := range configs {
 		matchSecret := secret == "" || config.ProxySecret == secret
-		matchGptModel := gptModel == "" || config.Model == gptModel
+		matchGptModel := gptModel == "" || common.SliceContains(config.Model, gptModel)
 		matchChannelId := channelId == nil || *channelId == "" || config.ChannelId == *channelId
 		if matchSecret && matchChannelId && matchGptModel {
 			filteredConfigs = append(filteredConfigs, config)

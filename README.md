@@ -180,7 +180,7 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 4. `COZE_BOT_ID:119xxxxxxxx7`  由coze托管的Bot-ID
 5. `CHANNEL_ID:119xxxxxx24`  默认频道-(目前版本下该参数仅用来活跃Bot)
 6. `DEFAULT_CHANNEL_ENABLE:0`  [可选]是否启用默认频道[0:否;1:是] (默认为0) 启用后每次对话都会在默认频道中,**会话隔离会失效**,推荐不使用此环境变量
-7. `ALL_DIALOG_RECORD_ENABLE:0`  [可选]是否启用全量上下文[0:否;1:是] (默认为0) 启用后每次对话只会发送`messages`中最后一个`role`为`user`的`content`,推荐不使用此环境变量
+7. `ALL_DIALOG_RECORD_ENABLE:1`  [可选]是否启用全量上下文[0:否;1:是] (默认为1) 关闭后每次对话只会发送`messages`中最后一个`role`为`user`的`content`,推荐不使用此环境变量
 8. `CHANNEL_AUTO_DEL_TIME:5`  [可选]频道自动删除时间(秒) 此参数为每次对话完成后自动删除频道的时间(默认为5s),为0时则不删除,推荐不使用此环境变量
 9. `COZE_BOT_STAY_ACTIVE_ENABLE:1`  [可选]是否开启每日`24`点活跃coze-bot的定时任务,默认开启,为0时则不开启,推荐不使用此环境变量
 10. `PORT:7077`  [可选]端口,默认为7077
@@ -202,19 +202,19 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
   {
     "proxySecret": "123", // 接口请求密钥(PROXY_SECRET)(注意:此密钥在环境变量PROXY_SECRET中存在时该Bot才可以被匹配到!)
     "cozeBotId": "12***************31", // coze托管的机器人ID
-    "model": "gpt-3.5", // 模型名称(与请求参数中的model对应,如请求中的model在该json中未匹配到则会抛出异常)
+    "model": ["gpt-3.5","gpt-3.5-16k"], // 模型名称(数组格式)(与请求参数中的model对应,如请求中的model在该json中未匹配到则会抛出异常)
     "channelId": "12***************56"  // [可选]discord频道ID(机器人必须在此频道所在的服务器)(目前版本下该参数仅用来活跃机器人)
   },
   {
     "proxySecret": "456",
     "cozeBotId": "12***************64",
-    "model": "gpt-4-8k", 
+    "model": ["gpt-4","gpt-4-16k"],
     "channelId": "12***************78"
   },
   {
     "proxySecret": "789",
     "cozeBotId": "12***************12",
-    "model": "gpt-4-16k",
+    "model": ["dall-e-3"],
     "channelId": "12***************24"
   }
 ]

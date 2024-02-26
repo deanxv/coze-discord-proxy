@@ -154,23 +154,20 @@ func ChatForOpenAI(c *gin.Context) {
 	content := "Hi！"
 	messages := request.Messages
 
+loop:
 	for i := len(messages) - 1; i >= 0; i-- {
 		message := messages[i]
 		if message.Role == "user" {
 			switch contentObj := message.Content.(type) {
 			case string:
-				if common.AllDialogRecordEnable == "1" {
+				if common.AllDialogRecordEnable != "1" {
 					content = contentObj
+					break loop
 				} else {
-					jsonData, err := json.Marshal(messages)
-					if err != nil {
-						c.JSON(http.StatusOK, gin.H{
-							"success": false,
-							"message": err.Error(),
-						})
-						return
+					messages[i] = model.OpenAIChatMessage{
+						Role:    "user",
+						Content: contentObj,
 					}
-					content = string(jsonData)
 				}
 			case []interface{}:
 				content, err = buildOpenAIGPT4VForImageContent(sendChannelId, contentObj)
@@ -180,6 +177,14 @@ func ChatForOpenAI(c *gin.Context) {
 						"message": err.Error(),
 					})
 					return
+				}
+				if common.AllDialogRecordEnable != "1" {
+					break loop
+				} else {
+					messages[i] = model.OpenAIChatMessage{
+						Role:    "user",
+						Content: content,
+					}
 				}
 			default:
 				c.JSON(http.StatusOK, model.OpenAIErrorResponse{
@@ -192,21 +197,68 @@ func ChatForOpenAI(c *gin.Context) {
 				return
 
 			}
-			break
+			//break
+		} else {
+			messages[i] = model.OpenAIChatMessage{
+				Role:    message.Role,
+				Content: message.Content,
+			}
 		}
 	}
 
-	if err != nil {
-		common.LogError(c.Request.Context(), err.Error())
-		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
-			OpenAIError: model.OpenAIError{
-				Message: "配置异常",
-				Type:    "invalid_request_error",
-				Code:    "discord_request_err",
-			},
-		})
-		return
+	if common.AllDialogRecordEnable == "1" {
+		jsonData, err := json.Marshal(messages)
+		if err != nil {
+			c.JSON(http.StatusOK, gin.H{
+				"success": false,
+				"message": err.Error(),
+			})
+			return
+		}
+		content = string(jsonData)
 	}
+
+	//for i := len(messages) - 1; i >= 0; i-- {
+	//	message := messages[i]
+	//	if message.Role == "user" {
+	//		switch contentObj := message.Content.(type) {
+	//		case string:
+	//			if common.AllDialogRecordEnable == "1" {
+	//				content = contentObj
+	//			} else {
+	//				jsonData, err := json.Marshal(messages)
+	//				if err != nil {
+	//					c.JSON(http.StatusOK, gin.H{
+	//						"success": false,
+	//						"message": err.Error(),
+	//					})
+	//					return
+	//				}
+	//				content = string(jsonData)
+	//			}
+	//		case []interface{}:
+	//			content, err = buildOpenAIGPT4VForImageContent(sendChannelId, contentObj)
+	//			if err != nil {
+	//				c.JSON(http.StatusOK, gin.H{
+	//					"success": false,
+	//					"message": err.Error(),
+	//				})
+	//				return
+	//			}
+	//		default:
+	//			c.JSON(http.StatusOK, model.OpenAIErrorResponse{
+	//				OpenAIError: model.OpenAIError{
+	//					Message: "消息格式异常",
+	//					Type:    "invalid_request_error",
+	//					Code:    "discord_request_err",
+	//				},
+	//			})
+	//			return
+	//
+	//		}
+	//		break
+	//	}
+	//}
 
 	sentMsg, err := discord.SendMessage(c, sendChannelId, calledCozeBotId, content)
 	if err != nil {
@@ -338,13 +390,13 @@ func buildOpenAIGPT4VForImageContent(sendChannelId string, objs []interface{}) (
 			continue
 		} else if i == 1 && req.Type == "image_url" {
 			if common.IsURL(req.ImageURL.URL) {
-				content += fmt.Sprintf("\n%s", req.ImageURL.URL)
+				content += fmt.Sprintf("\n%s ", req.ImageURL.URL)
 			} else if common.IsImageBase64(req.ImageURL.URL) {
-				_, err := discord.UploadToDiscordAndGetURL(sendChannelId, req.ImageURL.URL)
+				url, err := discord.UploadToDiscordAndGetURL(sendChannelId, req.ImageURL.URL)
 				if err != nil {
 					return "", fmt.Errorf("文件上传异常")
 				}
-				//content += fmt.Sprintf("\n%s", url)
+				content += fmt.Sprintf("\n%s ", url)
 			} else {
 				return "", fmt.Errorf("文件格式有误")
 			}
