@@ -346,6 +346,10 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 
 	content := fmt.Sprintf("%s \n <@%s>", message, cozeBotId)
 
+	content = strings.Replace(content, `\u0026`, "&", -1)
+	content = strings.Replace(content, `\u003c`, "<", -1)
+	content = strings.Replace(content, `\u003e`, ">", -1)
+
 	if runeCount := len([]rune(content)); runeCount > 50000 {
 		common.LogError(ctx, fmt.Sprintf("prompt已超过限制,请分段发送 [%v] %s", runeCount, content))
 		return nil, fmt.Errorf("prompt已超过限制,请分段发送 [%v]", runeCount)

@@ -15,7 +15,7 @@ import (
 // 用户端发送消息 注意 此为临时解决方案 后续会优化代码
 func SendMsgByAuthorization(c *gin.Context, userAuth, content, channelId string) (string, error) {
 	postUrl := "https://discord.com/api/v9/channels/%s/messages"
-	content = strings.Replace(content, `\u0026`, "&", -1)
+
 	// 构造请求体
 	requestBody, err := json.Marshal(map[string]interface{}{
 		"content": content,
