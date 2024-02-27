@@ -388,7 +388,7 @@ func buildOpenAIGPT4VForImageContent(sendChannelId string, objs []interface{}) (
 		if i == 0 && req.Type == "text" {
 			content += req.Text
 			continue
-		} else if i == 1 && req.Type == "image_url" {
+		} else if i != 0 && req.Type == "image_url" {
 			if common.IsURL(req.ImageURL.URL) {
 				content += fmt.Sprintf("\n%s ", req.ImageURL.URL)
 			} else if common.IsImageBase64(req.ImageURL.URL) {
