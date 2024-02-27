@@ -317,7 +317,7 @@ loop:
 				bytes, _ := common.Obj2Bytes(reply)
 				c.SSEvent("", " "+string(bytes))
 
-				if reply.Choices[0].Message.Content == common.CozeErrorMsg {
+				if common.SliceContains(common.CozeErrorMessages, reply.Choices[0].Message.Content) {
 					discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
 					c.SSEvent("", " [DONE]")
 					return false // 关闭流式连接
@@ -339,11 +339,11 @@ loop:
 		for {
 			select {
 			case reply := <-replyChan:
-				if reply.Choices[0].Message.Content == common.CozeErrorMsg {
+				if common.SliceContains(common.CozeErrorMessages, reply.Choices[0].Message.Content) {
 					discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
 					c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 						OpenAIError: model.OpenAIError{
-							Message: common.CozeErrorMsg,
+							Message: reply.Choices[0].Message.Content,
 							Type:    "request_error",
 							Code:    "request_coze_discord_limit",
 						},
