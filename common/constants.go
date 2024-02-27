@@ -14,7 +14,7 @@ var StreamRequestOutTime = os.Getenv("STREAM_REQUEST_OUT_TIME")
 
 var DebugEnabled = os.Getenv("DEBUG") == "true"
 
-var Version = "v4.2.1" // this hard coding will be replaced automatically when building, no need to manually change
+var Version = "v4.2.2" // this hard coding will be replaced automatically when building, no need to manually change
 
 const (
 	RequestIdKey = "X-Request-Id"
