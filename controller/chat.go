@@ -141,9 +141,9 @@ func ChatForOpenAI(c *gin.Context) {
 		common.LogError(c.Request.Context(), err.Error())
 		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 			OpenAIError: model.OpenAIError{
-				Message: "无效的参数",
-				Type:    "invalid_request_error",
-				Code:    "invalid_parameter",
+				Message: "Invalid request parameters",
+				Type:    "request_error",
+				Code:    "500",
 			},
 		})
 		return
@@ -172,9 +172,12 @@ loop:
 			case []interface{}:
 				content, err = buildOpenAIGPT4VForImageContent(sendChannelId, contentObj)
 				if err != nil {
-					c.JSON(http.StatusOK, gin.H{
-						"success": false,
-						"message": err.Error(),
+					c.JSON(http.StatusOK, model.OpenAIErrorResponse{
+						OpenAIError: model.OpenAIError{
+							Message: "Image URL parsing error",
+							Type:    "request_error",
+							Code:    "500",
+						},
 					})
 					return
 				}
@@ -189,9 +192,9 @@ loop:
 			default:
 				c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 					OpenAIError: model.OpenAIError{
-						Message: "消息格式异常",
-						Type:    "invalid_request_error",
-						Code:    "discord_request_err",
+						Message: "Message format error",
+						Type:    "request_error",
+						Code:    "500",
 					},
 				})
 				return
@@ -265,8 +268,8 @@ loop:
 		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 			OpenAIError: model.OpenAIError{
 				Message: err.Error(),
-				Type:    "invalid_request_error",
-				Code:    "discord_request_err",
+				Type:    "request_error",
+				Code:    "500",
 			},
 		})
 		return
@@ -345,7 +348,7 @@ loop:
 						OpenAIError: model.OpenAIError{
 							Message: reply.Choices[0].Message.Content,
 							Type:    "request_error",
-							Code:    "request_coze_discord_limit",
+							Code:    "500",
 						},
 					})
 					return
@@ -355,9 +358,9 @@ loop:
 				discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
 				c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 					OpenAIError: model.OpenAIError{
-						Message: "请求超时",
+						Message: "Request timeout",
 						Type:    "request_error",
-						Code:    "request_out_time",
+						Code:    "500",
 					},
 				})
 				return
@@ -430,9 +433,9 @@ func ImagesForOpenAI(c *gin.Context) {
 		common.LogError(c.Request.Context(), err.Error())
 		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 			OpenAIError: model.OpenAIError{
-				Message: "无效的参数",
-				Type:    "invalid_request_error",
-				Code:    "invalid_parameter",
+				Message: "Invalid request parameters",
+				Type:    "request_error",
+				Code:    "500",
 			},
 		})
 		return
@@ -451,9 +454,9 @@ func ImagesForOpenAI(c *gin.Context) {
 		common.LogError(c.Request.Context(), err.Error())
 		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 			OpenAIError: model.OpenAIError{
-				Message: "配置异常",
-				Type:    "invalid_request_error",
-				Code:    "discord_request_err",
+				Message: "config error",
+				Type:    "request_error",
+				Code:    "500",
 			},
 		})
 		return
@@ -464,8 +467,8 @@ func ImagesForOpenAI(c *gin.Context) {
 		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 			OpenAIError: model.OpenAIError{
 				Message: err.Error(),
-				Type:    "invalid_request_error",
-				Code:    "discord_request_err",
+				Type:    "request_error",
+				Code:    "500",
 			},
 		})
 		return
@@ -488,7 +491,6 @@ func ImagesForOpenAI(c *gin.Context) {
 		})
 		return
 	}
-
 	var replyResp model.OpenAIImagesGenerationResponse
 	for {
 		select {
@@ -498,9 +500,9 @@ func ImagesForOpenAI(c *gin.Context) {
 			discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
 			c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 				OpenAIError: model.OpenAIError{
-					Message: "请求超时",
+					Message: "Request timed out, please try again later.",
 					Type:    "request_error",
-					Code:    "request_out_time",
+					Code:    "500",
 				},
 			})
 			return
@@ -508,9 +510,9 @@ func ImagesForOpenAI(c *gin.Context) {
 			if replyResp.Data == nil {
 				c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 					OpenAIError: model.OpenAIError{
-						Message: "discord未返回URL,检查prompt中是否有敏感内容或达到限制",
-						Type:    "invalid_request_error",
-						Code:    "discord_request_err",
+						Message: "Failed to fetch image URL, please try again later.",
+						Type:    "request_error",
+						Code:    "500",
 					},
 				})
 				return
@@ -558,7 +560,7 @@ func getSendChannelIdAndCozeBotId(c *gin.Context, channelId *string, model strin
 
 		}
 		// 没有值抛出异常
-		return "", "", fmt.Errorf("secret匹配不到有效bot")
+		return "", "", fmt.Errorf("[proxy-secret]+[model]未匹配到有效bot")
 	} else {
 
 		if channelId != nil && *channelId != "" {
