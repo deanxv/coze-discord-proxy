@@ -87,15 +87,15 @@ func SendMsgByAuthorization(c *gin.Context, userAuth, content, channelId string)
 		if errMessage, ok := result["message"].(string); ok {
 			if strings.Contains(errMessage, "401: Unauthorized") ||
 				strings.Contains(errMessage, "You need to verify your account in order to perform this action.") {
-				common.LogWarn(c.Request.Context(), fmt.Sprintf("USER_AUTHORIZATION:%s 已失效", userAuth))
+				common.LogWarn(c.Request.Context(), fmt.Sprintf("USER_AUTHORIZATION:%s EXPIRED", userAuth))
 				return "", &common.DiscordUnauthorizedError{
 					ErrCode: 401,
 					Message: "discord 鉴权未通过",
 				}
 			}
 		}
-		common.LogError(c.Request.Context(), fmt.Sprintf("result:%s", bodyString))
-		return "", fmt.Errorf("ID is not a string")
+		common.LogError(c.Request.Context(), fmt.Sprintf("user_auth:%s result:%s", userAuth, bodyString))
+		return "", fmt.Errorf("/api/v9/channels/%s/messages response err")
 	} else {
 		return id, nil
 	}
