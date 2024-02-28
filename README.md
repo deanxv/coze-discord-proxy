@@ -24,12 +24,10 @@ _觉得有点意思的话 别忘了点个🌟_
 - [x] 对话接口支持流式返回。
 - [x] 支持创建 `discord`分类/频道/线程。
 - [x] 支持和`openai`对齐的对话接口(`v1/chat/completions`)(也支持`dall-e-3`文生图)(支持指定`discord-channel`)。
-- [x] 支持和`openai`对齐的图生文/图改图/文件生文接口(`v1/chat/completions`)(按照`GPT4V`
-  接口的请求格式 [ 支持`url`或`base64` ])(支持指定`discord-channel`)。
+- [x] 支持和`openai`对齐的图生文/图改图/文件生文接口(`v1/chat/completions`)(按照`GPT4V`接口的请求格式 [ 支持`url`或`base64` ])(支持指定`discord-channel`)。
 - [x] 支持和`openai`对齐的`dall-e-3`文生图接口(`v1/images/generations`)。
 - [x] 支持每日`9`点定时任务自动活跃机器人。
-- [x] 支持配置多discord用户`Authorization`(环境变量`USER_AUTHORIZATION`)作请求负载均衡(*
-  *目前每个discord用户调用coze-bot在24h内有次数上限,可配置多用户来实现叠加请求次数及请求负载均衡**)。
+- [x] 支持配置多discord用户`Authorization`(环境变量`USER_AUTHORIZATION`)作请求负载均衡(**目前每个discord用户调用coze-bot在24h内有次数上限,可配置多用户来实现叠加请求次数及请求负载均衡**)。
 - [x] 支持配置多coze机器人作响应负载均衡 (通过`PROXY_SECRET`/`model`指定) 详细请看[进阶配置](#进阶配置)。
 
 ### 接口文档:
@@ -45,16 +43,12 @@ _觉得有点意思的话 别忘了点个🌟_
 ## 如何使用
 
 1. 打开 [discord官网](https://discord.com/app) ,登陆后点击设置-高级设置-开发者模式-打开。
-2. 创建discord服务器,右键点击此服务器选择`复制服务器ID(GUILD_ID)`
-   并记录,在此服务器中创建默认频道,右键点击此频道选择`复制频道ID(CHANNEL_ID)`并记录。
+2. 创建discord服务器,右键点击此服务器选择`复制服务器ID(GUILD_ID)`并记录,在此服务器中创建默认频道,右键点击此频道选择`复制频道ID(CHANNEL_ID)`并记录。
 3. 打开 [discord开发者平台](https://discord.com/developers/applications) 登陆。
 4. 创建新应用-Bot即`COZE-BOT`,并记录该bot专属的`token`和`id(COZE_BOT_ID)`,此bot为即将被coze托管的bot。
 5. 创建新应用-Bot即`CDP-BOT`,并记录该bot专属的`token(BOT_TOKEN)`,此bot为监听discord消息的bot。
 6. 两个bot开通对应权限(`Administrator`)并邀请进创建好的discord服务器 (过程不在此赘述)。
-7. 打开 [discord官网](https://discord.com/app)
-   进入服务器,按F12打开开发者工具,在任一频道内发送一次消息,在开发者工具-`Network`
-   中找到请求 `https://discord.com/api/v9/channels/1206*******703/messages`
-   从该接口header中获取`Authorization(USER_AUTHORIZATION)`并记录。
+7. 打开 [discord官网](https://discord.com/app)进入服务器,按F12打开开发者工具,在任一频道内发送一次消息,在开发者工具-`Network`中找到请求 `https://discord.com/api/v9/channels/1206*******703/messages`从该接口header中获取`Authorization(USER_AUTHORIZATION)`并记录。
 8. 打开 [coze官网](https://www.coze.com) 创建bot并进行个性化配置(注意`Auto-Suggestion`为`default`(默认不用改))。
 9. 配置好后选择发布到discord,填写`COZE-BOT`的`token`,发布完成后在discord服务器中可看到`COZE-BOT`在线并可以@使用。
 10. 使用上述记录的参数开始配置[环境变量](#环境变量)并[部署](#部署)本项目。
@@ -124,8 +118,7 @@ deanxv/coze-discord-proxy
 
 其中`USER_AUTHORIZATION`,`BOT_TOKEN`,`GUILD_ID`,`COZE_BOT_ID`,`PROXY_SECRET`,`CHANNEL_ID`修改为自己的。
 
-如果上面的镜像无法拉取,可以尝试使用 GitHub 的 Docker 镜像,将上面的 `deanxv/coze-discord-proxy`
-替换为 `ghcr.io/deanxv/coze-discord-proxy` 即可。
+如果上面的镜像无法拉取,可以尝试使用 GitHub 的 Docker 镜像,将上面的 `deanxv/coze-discord-proxy`替换为 `ghcr.io/deanxv/coze-discord-proxy` 即可。
 
 ### 部署到第三方平台
 
@@ -190,21 +183,15 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 3. `GUILD_ID:119xxxxxxxx796`  所有Bot所在的服务器ID
 4. `COZE_BOT_ID:119xxxxxxxx7`  由coze托管的Bot-ID
 5. `CHANNEL_ID:119xxxxxx24`  默认频道-(目前版本下该参数仅用来活跃Bot)
-6. `PROXY_SECRET:123456`  [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)(与openai-API-KEY用法一致),**推荐使用此环境变量
-   **
-7. `DEFAULT_CHANNEL_ENABLE:0`  [可选]是否启用默认频道[0:否;1:是] (默认为0) 启用后每次对话都会在默认频道中,**会话隔离会失效
-   **,**推荐不使用此环境变量**
-8. `ALL_DIALOG_RECORD_ENABLE:1`  [可选]是否启用全量上下文[0:否;1:是] (默认为1) 关闭后每次对话只会发送`messages`
-   中最后一个`role`为`user`的`content`,**推荐不使用此环境变量**
-9. `CHANNEL_AUTO_DEL_TIME:5`  [可选]频道自动删除时间(秒) 此参数为每次对话完成后自动删除频道的时间(默认为5s),为0时则不删除,
-   **推荐不使用此环境变量**
-10. `COZE_BOT_STAY_ACTIVE_ENABLE:1`  [可选]是否开启每日`9`点活跃coze-bot的定时任务[0:否;1:是] (默认为1),**推荐不使用此环境变量
-    **
+6. `PROXY_SECRET:123456`  [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)(与openai-API-KEY用法一致),**推荐使用此环境变量**
+7. `DEFAULT_CHANNEL_ENABLE:0`  [可选]是否启用默认频道[0:否;1:是] (默认为0) 启用后每次对话都会在默认频道中,**会话隔离会失效**,**推荐不使用此环境变量**
+8. `ALL_DIALOG_RECORD_ENABLE:1`  [可选]是否启用全量上下文[0:否;1:是] (默认为1) 关闭后每次对话只会发送`messages`中最后一个`role`为`user`的`content`,**推荐不使用此环境变量**
+9. `CHANNEL_AUTO_DEL_TIME:5`  [可选]频道自动删除时间(秒) 此参数为每次对话完成后自动删除频道的时间(默认为5s),为0时则不删除,**推荐不使用此环境变量**
+10. `COZE_BOT_STAY_ACTIVE_ENABLE:1`  [可选]是否开启每日`9`点活跃coze-bot的定时任务[0:否;1:是] (默认为1),**推荐不使用此环境变量**
 11. `PORT:7077`  [可选]端口,默认为7077
 12. `REQUEST_OUT_TIME:60`  [可选]对话接口非流响应下的请求超时时间,**推荐不使用此环境变量**
 13. `STREAM_REQUEST_OUT_TIME:60`  [可选]对话接口流响应下的每次流返回超时时间,**推荐不使用此环境变量**
-14. `USER_AGENT:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36`  [可选]
-    discord用户端Agent,使用自己的可能有效防止被ban,不设置时默认使用作者的 推荐使用此环境变量
+14. `USER_AGENT:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36`  [可选]discord用户端Agent,使用自己的可能有效防止被ban,不设置时默认使用作者的 推荐使用此环境变量
 15. `PROXY_URL:http://127.0.0.1:10801`  [可选]代理
 
 ## 进阶配置
@@ -242,16 +229,13 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 > 当有此json配置时,会通过请求头携带的[请求密钥]+请求体中的[`model`]联合匹配此配置中的`cozeBotId`
 > 若匹配到多个则随机选择一个。配置很灵活,可以根据自己的需求进行配置。
 
-第三方平台(如: `zeabur`)部署的服务需要[配置多机器人]
-请参考[issue#30](https://github.com/deanxv/coze-discord-proxy/issues/30)
+第三方平台(如: `zeabur`)部署的服务需要[配置多机器人]请参考[issue#30](https://github.com/deanxv/coze-discord-proxy/issues/30)
 
 ## Q&A
 
 Q: 并发量高时应如何配置？
 
-A: 首先为服务[配置多机器人](#配置多机器人)
-用来作响应bot的负载,其次准备多个discord账号用来作请求负载并邀请进同一个服务器,获取每个账号的`Authorization`
-英文逗号分隔配置在环境变量`USER_AUTHORIZATION`中,此时每次请求都会从多个discord账号中取出一个发起对话,有效实现负载均衡。
+A: 首先为服务[配置多机器人](#配置多机器人)用来作响应bot的负载,其次准备多个discord账号用来作请求负载并邀请进同一个服务器,获取每个账号的`Authorization`英文逗号分隔配置在环境变量`USER_AUTHORIZATION`中,此时每次请求都会从多个discord账号中取出一个发起对话,有效实现负载均衡。
 
 ## ⭐ Star History
 
