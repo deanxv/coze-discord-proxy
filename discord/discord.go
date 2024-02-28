@@ -83,7 +83,7 @@ func StartBot(ctx context.Context, token string) {
 	checkEnvVariable()
 	common.SysLog("Bot is now running. Enjoy It.")
 
-	if CozeBotStayActiveEnable != "0" {
+	if CozeBotStayActiveEnable == "1" {
 		go scheduleDailyMessage()
 	}
 
@@ -486,7 +486,7 @@ func scheduleDailyMessage() {
 		// 计算距离下一个晚上12点的时间间隔
 		now := time.Now()
 		next := now.Add(time.Hour * 24)
-		next = time.Date(next.Year(), next.Month(), next.Day(), 0, 0, 0, 0, next.Location())
+		next = time.Date(next.Year(), next.Month(), next.Day(), 9, 0, 0, 0, next.Location())
 		delay := next.Sub(now)
 
 		// 等待直到下一个间隔

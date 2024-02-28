@@ -22,7 +22,7 @@ _觉得有点意思的话 别忘了点个🌟_
 - [x] 支持和`openai`对齐的对话接口(`v1/chat/completions`)(也支持`dall-e-3`文生图)(支持指定`discord-channel`)。
 - [x] 支持和`openai`对齐的图生文/图改图/文件生文接口(`v1/chat/completions`)(按照`GPT4V`接口的请求格式 [ 支持`url`或`base64` ])(支持指定`discord-channel`)。
 - [x] 支持和`openai`对齐的`dall-e-3`文生图接口(`v1/images/generations`)。
-- [x] 支持每日`24`点定时任务自动活跃机器人。
+- [x] 支持每日`9`点定时任务自动活跃机器人。
 - [x] 支持配置多discord用户`Authorization`(环境变量`USER_AUTHORIZATION`)作请求负载均衡(**目前每个discord用户调用coze-bot在24h内有次数上限,可配置多用户来实现叠加请求次数及请求负载均衡**)。
 - [x] 支持配置多coze机器人作响应负载均衡 (通过`PROXY_SECRET`/`model`指定) 详细请看[进阶配置](#进阶配置)。
 
@@ -179,14 +179,14 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 3. `GUILD_ID:119xxxxxxxx796`  所有Bot所在的服务器ID
 4. `COZE_BOT_ID:119xxxxxxxx7`  由coze托管的Bot-ID
 5. `CHANNEL_ID:119xxxxxx24`  默认频道-(目前版本下该参数仅用来活跃Bot)
-6. `DEFAULT_CHANNEL_ENABLE:0`  [可选]是否启用默认频道[0:否;1:是] (默认为0) 启用后每次对话都会在默认频道中,**会话隔离会失效**,推荐不使用此环境变量
-7. `ALL_DIALOG_RECORD_ENABLE:1`  [可选]是否启用全量上下文[0:否;1:是] (默认为1) 关闭后每次对话只会发送`messages`中最后一个`role`为`user`的`content`,推荐不使用此环境变量
-8. `CHANNEL_AUTO_DEL_TIME:5`  [可选]频道自动删除时间(秒) 此参数为每次对话完成后自动删除频道的时间(默认为5s),为0时则不删除,推荐不使用此环境变量
-9. `COZE_BOT_STAY_ACTIVE_ENABLE:1`  [可选]是否开启每日`24`点活跃coze-bot的定时任务,默认开启,为0时则不开启,推荐不使用此环境变量
-10. `PORT:7077`  [可选]端口,默认为7077
-11. `PROXY_SECRET:123456`  [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)(与openai-API-KEY用法一致)
-12. `REQUEST_OUT_TIME:60`  [可选]对话接口非流响应下的请求超时时间,推荐不使用此环境变量
-13. `STREAM_REQUEST_OUT_TIME:60`  [可选]对话接口流响应下的每次流返回超时时间,推荐不使用此环境变量
+6. `PROXY_SECRET:123456`  [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)(与openai-API-KEY用法一致),**推荐使用此环境变量**
+7. `DEFAULT_CHANNEL_ENABLE:0`  [可选]是否启用默认频道[0:否;1:是] (默认为0) 启用后每次对话都会在默认频道中,**会话隔离会失效**,**推荐不使用此环境变量**
+8. `ALL_DIALOG_RECORD_ENABLE:1`  [可选]是否启用全量上下文[0:否;1:是] (默认为1) 关闭后每次对话只会发送`messages`中最后一个`role`为`user`的`content`,**推荐不使用此环境变量**
+9. `CHANNEL_AUTO_DEL_TIME:5`  [可选]频道自动删除时间(秒) 此参数为每次对话完成后自动删除频道的时间(默认为5s),为0时则不删除,**推荐不使用此环境变量**
+10. `COZE_BOT_STAY_ACTIVE_ENABLE:1`  [可选]是否开启每日`9`点活跃coze-bot的定时任务[0:否;1:是] (默认为1),**推荐不使用此环境变量**
+11. `PORT:7077`  [可选]端口,默认为7077
+12. `REQUEST_OUT_TIME:60`  [可选]对话接口非流响应下的请求超时时间,**推荐不使用此环境变量**
+13. `STREAM_REQUEST_OUT_TIME:60`  [可选]对话接口流响应下的每次流返回超时时间,**推荐不使用此环境变量**
 14. `USER_AGENT:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36`  [可选]discord用户端Agent,使用自己的可能有效防止被ban,不设置时默认使用作者的 推荐使用此环境变量
 15. `PROXY_URL:http://127.0.0.1:10801`  [可选]代理
 
