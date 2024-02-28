@@ -83,7 +83,7 @@ func StartBot(ctx context.Context, token string) {
 	checkEnvVariable()
 	common.SysLog("Bot is now running. Enjoy It.")
 
-	if CozeBotStayActiveEnable == "1" {
+	if CozeBotStayActiveEnable == "1" || CozeBotStayActiveEnable == "" {
 		go scheduleDailyMessage()
 	}
 
@@ -478,7 +478,6 @@ func NewProxyClient(proxyUrl string) (proxyParse *url.URL, client *http.Client, 
 }
 
 func scheduleDailyMessage() {
-
 	for {
 		source := rand.NewSource(time.Now().UnixNano())
 		randomNumber := rand.New(source).Intn(60) // 生成0到10之间的随机整数
