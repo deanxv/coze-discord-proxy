@@ -95,7 +95,7 @@ func SendMsgByAuthorization(c *gin.Context, userAuth, content, channelId string)
 			}
 		}
 		common.LogError(c.Request.Context(), fmt.Sprintf("user_auth:%s result:%s", userAuth, bodyString))
-		return "", fmt.Errorf("/api/v9/channels/%s/messages response err")
+		return "", fmt.Errorf("/api/v9/channels/%s/messages response err", channelId)
 	} else {
 		return id, nil
 	}
