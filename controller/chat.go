@@ -507,6 +507,17 @@ func ImagesForOpenAI(c *gin.Context) {
 	for {
 		select {
 		case reply := <-replyChan:
+			if reply.DailyLimit {
+				discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
+				c.JSON(http.StatusOK, model.OpenAIErrorResponse{
+					OpenAIError: model.OpenAIError{
+						Message: "daily limit for sending messages",
+						Type:    "request_error",
+						Code:    "500",
+					},
+				})
+				return
+			}
 			replyResp = reply
 		case <-timer.C:
 			discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)

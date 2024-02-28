@@ -67,8 +67,9 @@ type OpenAIImagesGenerationRequest struct {
 }
 
 type OpenAIImagesGenerationResponse struct {
-	Created int64 `json:"created"`
-	Data    []struct {
+	Created    int64 `json:"created"`
+	DailyLimit bool  `json:"dailyLimit"`
+	Data       []struct {
 		URL string `json:"url"`
 	} `json:"data"`
 }

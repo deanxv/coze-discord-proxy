@@ -66,6 +66,14 @@ func processMessageUpdateForOpenAI(m *discordgo.MessageUpdate) model.OpenAIChatC
 func processMessageUpdateForOpenAIImage(m *discordgo.MessageUpdate) model.OpenAIImagesGenerationResponse {
 	var response model.OpenAIImagesGenerationResponse
 
+	if common.SliceContains(common.CozeErrorMessages, m.Content) {
+		return model.OpenAIImagesGenerationResponse{
+			Created:    time.Now().Unix(),
+			Data:       response.Data,
+			DailyLimit: true,
+		}
+	}
+
 	re := regexp.MustCompile(`]\((https?://\S+)\)`)
 	submatches := re.FindAllStringSubmatch(m.Content, -1)
 
@@ -149,6 +157,14 @@ func processMessageCreateForOpenAI(m *discordgo.MessageCreate) model.OpenAIChatC
 
 func processMessageCreateForOpenAIImage(m *discordgo.MessageCreate) model.OpenAIImagesGenerationResponse {
 	var response model.OpenAIImagesGenerationResponse
+
+	if common.SliceContains(common.CozeErrorMessages, m.Content) {
+		return model.OpenAIImagesGenerationResponse{
+			Created:    time.Now().Unix(),
+			Data:       response.Data,
+			DailyLimit: true,
+		}
+	}
 
 	re := regexp.MustCompile(`]\((https?://\S+)\)`)
 	submatches := re.FindAllStringSubmatch(m.Content, -1)
