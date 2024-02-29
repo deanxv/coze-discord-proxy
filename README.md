@@ -102,7 +102,7 @@ services:
 
 ### 基于 Docker 进行部署
 
-```shell
+```docker
 docker run --name coze-discord-proxy -d --restart always \
 -p 7077:7077 \
 -v $(pwd)/data:/app/coze-discord-proxy/data \
@@ -230,6 +230,17 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 > 若匹配到多个则随机选择一个。配置很灵活,可以根据自己的需求进行配置。
 
 第三方平台(如: `zeabur`)部署的服务需要[配置多机器人]请参考[issue#30](https://github.com/deanxv/coze-discord-proxy/issues/30)
+
+## 限制
+
+目前的coze对每个discord用户做了标识,在discord中每个用户对不同的模型的调用有次数限制,具体如下:
+
+```
+GPT-4 Turbo (128k) - 50次/天
+GPT-4 (8k) - 100次/天
+GPT-3.5 (16k) - 500次/天
+```
+可配置多discord用户`Authorization`(参考环境变量`USER_AUTHORIZATION`)实现叠加请求次数及请求负载均衡。
 
 ## Q&A
 
