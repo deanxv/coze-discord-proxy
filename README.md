@@ -245,7 +245,7 @@ A: 首先为服务[配置多机器人](#配置多机器人)用来作响应bot的
 
 **开源不易,若你参考此项目或基于此项目二开可否麻烦在你的项目文档中标识此项目呢？谢谢你！♥♥♥**
 
-Java: https://github.com/oddfar/coze-discord
+Java: https://github.com/oddfar/coze-discord (目前不可用)
 
 ## 其他引用
 
