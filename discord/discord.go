@@ -83,8 +83,11 @@ func StartBot(ctx context.Context, token string) {
 	checkEnvVariable()
 	common.SysLog("Bot is now running. Enjoy It.")
 
+	// 每日9点 重新加载userAuth
+	go loadUserAuthTask()
+
 	if CozeBotStayActiveEnable == "1" || CozeBotStayActiveEnable == "" {
-		go scheduleDailyMessage()
+		go stayActiveMessageTask()
 	}
 
 	go func() {
@@ -98,6 +101,28 @@ func StartBot(ctx context.Context, token string) {
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
+}
+
+func loadUserAuthTask() {
+	for {
+		source := rand.NewSource(time.Now().UnixNano())
+		randomNumber := rand.New(source).Intn(60) // 生成0到60之间的随机整数
+
+		// 计算距离下一个时间间隔
+		now := time.Now()
+		next := now.Add(time.Hour * 24)
+		next = time.Date(next.Year(), next.Month(), next.Day(), 9, 0, 0, 0, next.Location())
+		delay := next.Sub(now)
+
+		// 等待直到下一个间隔
+		time.Sleep(delay + time.Duration(randomNumber)*time.Second)
+
+		common.SysLog("CDP Scheduled loadUserAuth Task Job Start!")
+		UserAuthorizations = strings.Split(UserAuthorization, ",")
+		common.LogInfo(context.Background(), fmt.Sprintf("UserAuths: %+v", UserAuthorizations))
+		common.SysLog("CDP Scheduled loadUserAuth Task Job  End!")
+
+	}
 }
 
 func checkEnvVariable() {
@@ -477,7 +502,7 @@ func NewProxyClient(proxyUrl string) (proxyParse *url.URL, client *http.Client, 
 
 }
 
-func scheduleDailyMessage() {
+func stayActiveMessageTask() {
 	for {
 		source := rand.NewSource(time.Now().UnixNano())
 		randomNumber := rand.New(source).Intn(60) // 生成0到10之间的随机整数
