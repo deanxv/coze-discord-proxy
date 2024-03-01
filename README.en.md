@@ -6,7 +6,7 @@
 
 # coze-discord-proxy
 
-_Proxy `Discord` conversation `Coze-Bot`, implement API request GPT4 conversation model/fine-tuned model_
+_Act as a proxy for the Discord conversation Coze-Bot, implementing the GPT-4 model request in the form of an API, providing functionalities such as dialogue, text-to-image, image-to-text, and knowledge base retrieval_
 
 _If you find it interesting, don't forget to hit the 🌟_
 
