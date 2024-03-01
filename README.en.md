@@ -95,10 +95,10 @@ services:
       - ./data:/app/coze-discord-proxy/data
     environment:
       - USER_AUTHORIZATION=MTA5OTg5N************uIfytxUgJfmaXUBHVI  # Must be modified to our discord user's authorization key (multiple please separate by ,)
-      - BOT_TOKEN=MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w  # Must be modified to the Bot-Token that listens to messages
-      - GUILD_ID=119xxxxxxxx796  # Must be modified to the server ID where the two robots are located
-      - COZE_BOT_ID=119xxxxxxxx7  # Must be modified to the robot ID managed by coze
-      - CHANNEL_ID=119xxxxxx24  # Default channel-(This parameter is only used to activate the robot in the current version)
+      - BOT_TOKEN=MTE5OTk2************wUrUWNbG63w  # Must be modified to the Bot-Token that listens to messages
+      - GUILD_ID=11************96  # Must be modified to the server ID where the two robots are located
+      - COZE_BOT_ID=11************97  # Must be modified to the robot ID managed by coze
+      - CHANNEL_ID=11************24  # Default channel-(This parameter is only used to activate the robot in the current version)
       - PROXY_SECRET=123456  # [Optional] Interface key-Modify this line to the value of the request header check (multiple please separate by ,)
       - TZ=Asia/Shanghai
 ```
@@ -110,11 +110,11 @@ docker run --name coze-discord-proxy -d --restart always \
 -p 7077:7077 \
 -v $(pwd)/data:/app/coze-discord-proxy/data \
 -e USER_AUTHORIZATION="MTA5OTg5N************uIfytxUgJfmaXUBHVI" \
--e BOT_TOKEN="MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w" \
--e GUILD_ID="119xxxxxxxx796" \
--e COZE_BOT_ID="119xxxxxxxx7" \
+-e BOT_TOKEN="MTE5OTk2************rUWNbG63w" \
+-e GUILD_ID="11************96" \
+-e COZE_BOT_ID="11************97" \
 -e PROXY_SECRET="123456" \
--e CHANNEL_ID="119xxxxxx24" \
+-e CHANNEL_ID="11************24" \
 -e TZ=Asia/Shanghai \
 deanxv/coze-discord-proxy
 ```
@@ -148,13 +148,13 @@ Or manual deployment:
 
    `USER_AUTHORIZATION:MTA5OTg5N************uIfytxUgJfmaXUBHVI`  The authorization key of the discord user who actively sends messages (multiple please separate by ,)
 
-   `BOT_TOKEN:MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w`  Bot-Token that listens to messages
+   `BOT_TOKEN:MTE5OTk2************rwUrUWNbG63w`  Bot-Token that listens to messages
 
-   `GUILD_ID:119xxxxxxxx796`  Server ID where the two robots are located
+   `GUILD_ID:11************96`  Server ID where the two robots are located
 
-   `COZE_BOT_ID:119xxxxxxxx7` Robot ID managed by coze
+   `COZE_BOT_ID:11************97` Robot ID managed by coze
 
-   `CHANNEL_ID:119xxxxxx24`  # Default channel-(This parameter is only used to activate the robot in the current version)
+   `CHANNEL_ID:11************24`  # Default channel-(This parameter is only used to activate the robot in the current version)
 
    `PROXY_SECRET:123456` [Optional] Interface key-Modify this line to the value of the request header check (multiple please separate by ,) (Same usage as openai-API-KEY)
 
@@ -183,10 +183,10 @@ Render can directly deploy docker images, no need to fork the repository: [Rende
 ### Environment Variables
 
 1. `USER_AUTHORIZATION:MTA5OTg5N************uIfytxUgJfmaXUBHVI`  The authorization key of the discord user who actively sends messages (multiple please separate by ,)
-2. `BOT_TOKEN:MTE5OTk2xxxxxxxxxxxxxxrwUrUWNbG63w`  Bot-Token that listens to messages
-3. `GUILD_ID:119xxxxxxxx796`  Server ID where all bots are located
-4. `COZE_BOT_ID:119xxxxxxxx7`  Bot-ID managed by coze
-5. `CHANNEL_ID:119xxxxxx24`  Default channel-(This parameter is only used to activate the bot in the current version)
+2. `BOT_TOKEN:MTE5OTk2************wUrUWNbG63w`  Bot-Token that listens to messages
+3. `GUILD_ID:11************96`  Server ID where all bots are located
+4. `COZE_BOT_ID:11************97`  Bot-ID managed by coze
+5. `CHANNEL_ID:11************24`  Default channel-(This parameter is only used to activate the bot in the current version)
 6. `PROXY_SECRET:123456`  [Optional] Interface key-Modify this line to the value of the request header check (multiple please separate by ,) (Same usage as openai-API-KEY), **it is recommended to use this environment variable**
 7. `DEFAULT_CHANNEL_ENABLE:0`  [Optional] Whether to enable the default channel [0: No; 1: Yes] (default is 0) After enabling, each conversation will be in the default channel, **dialogue isolation will fail**, **it is not recommended to use this environment variable**
 8. `ALL_DIALOG_RECORD_ENABLE:1`  [Optional] Whether to enable full context [0: No; 1: Yes] (default is 1) After closing, each conversation will only send the `content` of the last `role` as `user` in `messages`, **it is not recommended to use this environment variable**

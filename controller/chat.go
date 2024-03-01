@@ -275,7 +275,7 @@ loop:
 	//	}
 	//}
 
-	sentMsg, err := discord.SendMessage(c, sendChannelId, calledCozeBotId, content)
+	sentMsg, userAuth, err := discord.SendMessage(c, sendChannelId, calledCozeBotId, content)
 	if err != nil {
 		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 			OpenAIError: model.OpenAIError{
@@ -333,6 +333,10 @@ loop:
 				c.SSEvent("", " "+string(bytes))
 
 				if common.SliceContains(common.CozeErrorMessages, reply.Choices[0].Message.Content) {
+					if common.SliceContains(common.CozeDailyLimitErrorMessages, reply.Choices[0].Message.Content) {
+						common.LogWarn(c, fmt.Sprintf("USER_AUTHORIZATION:%s DAILY LIMIT", userAuth))
+						discord.UserAuthorizations = common.FilterSlice(discord.UserAuthorizations, userAuth)
+					}
 					discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
 					c.SSEvent("", " [DONE]")
 					return false // 关闭流式连接
@@ -355,6 +359,10 @@ loop:
 			select {
 			case reply := <-replyChan:
 				if common.SliceContains(common.CozeErrorMessages, reply.Choices[0].Message.Content) {
+					if common.SliceContains(common.CozeDailyLimitErrorMessages, reply.Choices[0].Message.Content) {
+						common.LogWarn(c, fmt.Sprintf("USER_AUTHORIZATION:%s DAILY LIMIT", userAuth))
+						discord.UserAuthorizations = common.FilterSlice(discord.UserAuthorizations, userAuth)
+					}
 					discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
 					c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 						OpenAIError: model.OpenAIError{
@@ -474,7 +482,7 @@ func ImagesForOpenAI(c *gin.Context) {
 		return
 	}
 
-	sentMsg, err := discord.SendMessage(c, sendChannelId, calledCozeBotId, request.Prompt)
+	sentMsg, userAuth, err := discord.SendMessage(c, sendChannelId, calledCozeBotId, request.Prompt)
 	if err != nil {
 		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 			OpenAIError: model.OpenAIError{
@@ -508,6 +516,8 @@ func ImagesForOpenAI(c *gin.Context) {
 		select {
 		case reply := <-replyChan:
 			if reply.DailyLimit {
+				common.LogWarn(c, fmt.Sprintf("USER_AUTHORIZATION:%s DAILY LIMIT", userAuth))
+				discord.UserAuthorizations = common.FilterSlice(discord.UserAuthorizations, userAuth)
 				discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
 				c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 					OpenAIError: model.OpenAIError{

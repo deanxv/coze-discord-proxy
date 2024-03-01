@@ -66,7 +66,7 @@ func processMessageUpdateForOpenAI(m *discordgo.MessageUpdate) model.OpenAIChatC
 func processMessageUpdateForOpenAIImage(m *discordgo.MessageUpdate) model.OpenAIImagesGenerationResponse {
 	var response model.OpenAIImagesGenerationResponse
 
-	if common.SliceContains(common.CozeErrorMessages, m.Content) {
+	if common.SliceContains(common.CozeDailyLimitErrorMessages, m.Content) {
 		return model.OpenAIImagesGenerationResponse{
 			Created:    time.Now().Unix(),
 			Data:       response.Data,
@@ -158,7 +158,7 @@ func processMessageCreateForOpenAI(m *discordgo.MessageCreate) model.OpenAIChatC
 func processMessageCreateForOpenAIImage(m *discordgo.MessageCreate) model.OpenAIImagesGenerationResponse {
 	var response model.OpenAIImagesGenerationResponse
 
-	if common.SliceContains(common.CozeErrorMessages, m.Content) {
+	if common.SliceContains(common.CozeDailyLimitErrorMessages, m.Content) {
 		return model.OpenAIImagesGenerationResponse{
 			Created:    time.Now().Unix(),
 			Data:       response.Data,
