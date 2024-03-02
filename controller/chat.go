@@ -149,7 +149,7 @@ func ChatForOpenAI(c *gin.Context) {
 		return
 	}
 
-	sendChannelId, calledCozeBotId, err := getSendChannelIdAndCozeBotId(c, request.ChannelId, request.Model, true)
+	sendChannelId, calledCozeBotId, isNewChannel, err := getSendChannelIdAndCozeBotId(c, request.ChannelId, request.Model, true)
 
 	if err != nil {
 		common.LogError(c.Request.Context(), err.Error())
@@ -161,6 +161,23 @@ func ChatForOpenAI(c *gin.Context) {
 			},
 		})
 		return
+	}
+
+	if isNewChannel {
+		defer func() {
+			if discord.ChannelAutoDelTime != "" {
+				delTime, _ := strconv.Atoi(discord.ChannelAutoDelTime)
+				if delTime == 0 {
+					discord.CancelChannelDeleteTimer(sendChannelId)
+				} else if delTime > 0 {
+					// 删除该频道
+					discord.SetChannelDeleteTimer(sendChannelId, time.Duration(delTime)*time.Second)
+				}
+			} else {
+				// 删除该频道
+				discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
+			}
+		}()
 	}
 
 	content := "Hi！"
@@ -337,7 +354,7 @@ loop:
 						common.LogWarn(c, fmt.Sprintf("USER_AUTHORIZATION:%s DAILY LIMIT", userAuth))
 						discord.UserAuthorizations = common.FilterSlice(discord.UserAuthorizations, userAuth)
 					}
-					discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
+					//discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
 					c.SSEvent("", " [DONE]")
 					return false // 关闭流式连接
 				}
@@ -345,7 +362,7 @@ loop:
 				return true // 继续保持流式连接
 			case <-timer.C:
 				// 定时器到期时,关闭流
-				discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
+				//discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
 				c.SSEvent("", " [DONE]")
 				return false
 			case <-stopChan:
@@ -363,7 +380,7 @@ loop:
 						common.LogWarn(c, fmt.Sprintf("USER_AUTHORIZATION:%s DAILY LIMIT", userAuth))
 						discord.UserAuthorizations = common.FilterSlice(discord.UserAuthorizations, userAuth)
 					}
-					discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
+					//discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
 					c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 						OpenAIError: model.OpenAIError{
 							Message: reply.Choices[0].Message.Content,
@@ -375,7 +392,7 @@ loop:
 				}
 				replyResp = reply
 			case <-timer.C:
-				discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
+				//discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
 				c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 					OpenAIError: model.OpenAIError{
 						Message: "Request timeout",
@@ -469,7 +486,7 @@ func ImagesForOpenAI(c *gin.Context) {
 		return
 	}
 
-	sendChannelId, calledCozeBotId, err := getSendChannelIdAndCozeBotId(c, request.ChannelId, request.Model, true)
+	sendChannelId, calledCozeBotId, isNewChannel, err := getSendChannelIdAndCozeBotId(c, request.ChannelId, request.Model, true)
 	if err != nil {
 		common.LogError(c.Request.Context(), err.Error())
 		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
@@ -480,6 +497,23 @@ func ImagesForOpenAI(c *gin.Context) {
 			},
 		})
 		return
+	}
+
+	if isNewChannel {
+		defer func() {
+			if discord.ChannelAutoDelTime != "" {
+				delTime, _ := strconv.Atoi(discord.ChannelAutoDelTime)
+				if delTime == 0 {
+					discord.CancelChannelDeleteTimer(sendChannelId)
+				} else if delTime > 0 {
+					// 删除该频道
+					discord.SetChannelDeleteTimer(sendChannelId, time.Duration(delTime)*time.Second)
+				}
+			} else {
+				// 删除该频道
+				discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
+			}
+		}()
 	}
 
 	sentMsg, userAuth, err := discord.SendMessage(c, sendChannelId, calledCozeBotId, request.Prompt)
@@ -518,7 +552,7 @@ func ImagesForOpenAI(c *gin.Context) {
 			if reply.DailyLimit {
 				common.LogWarn(c, fmt.Sprintf("USER_AUTHORIZATION:%s DAILY LIMIT", userAuth))
 				discord.UserAuthorizations = common.FilterSlice(discord.UserAuthorizations, userAuth)
-				discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
+				//discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
 				c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 					OpenAIError: model.OpenAIError{
 						Message: "daily limit for sending messages",
@@ -530,7 +564,7 @@ func ImagesForOpenAI(c *gin.Context) {
 			}
 			replyResp = reply
 		case <-timer.C:
-			discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
+			//discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
 			c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 				OpenAIError: model.OpenAIError{
 					Message: "Request timed out, please try again later.",
@@ -557,7 +591,7 @@ func ImagesForOpenAI(c *gin.Context) {
 
 }
 
-func getSendChannelIdAndCozeBotId(c *gin.Context, channelId *string, model string, isOpenAIAPI bool) (sendChannelId string, calledCozeBotId string, err error) {
+func getSendChannelIdAndCozeBotId(c *gin.Context, channelId *string, model string, isOpenAIAPI bool) (sendChannelId string, calledCozeBotId string, isNewChannel bool, err error) {
 	secret := ""
 	if isOpenAIAPI {
 		if secret = c.Request.Header.Get("Authorization"); secret != "" {
@@ -575,37 +609,37 @@ func getSendChannelIdAndCozeBotId(c *gin.Context, channelId *string, model strin
 			// 有值则随机一个
 			botConfig, err := common.RandomElement(botConfigs)
 			if err != nil {
-				return "", "", err
+				return "", "", false, err
 			}
 
 			if channelId != nil && *channelId != "" {
-				return *channelId, botConfig.CozeBotId, nil
+				return *channelId, botConfig.CozeBotId, false, nil
 			}
 
 			if discord.DefaultChannelEnable == "1" {
-				return botConfig.ChannelId, botConfig.CozeBotId, nil
+				return botConfig.ChannelId, botConfig.CozeBotId, false, nil
 			} else {
 				var sendChannelId string
 				sendChannelId, _ = discord.ChannelCreate(discord.GuildId, fmt.Sprintf("cdp-对话%s", c.Request.Context().Value(common.RequestIdKey)), 0)
-				discord.SetChannelDeleteTimer(sendChannelId, 5*time.Minute)
-				return sendChannelId, botConfig.CozeBotId, nil
+				//discord.SetChannelDeleteTimer(sendChannelId, 5*time.Minute)
+				return sendChannelId, botConfig.CozeBotId, true, nil
 			}
 
 		}
 		// 没有值抛出异常
-		return "", "", fmt.Errorf("[proxy-secret]+[model]未匹配到有效bot")
+		return "", "", false, fmt.Errorf("[proxy-secret]+[model]未匹配到有效bot")
 	} else {
 
 		if channelId != nil && *channelId != "" {
-			return *channelId, discord.CozeBotId, nil
+			return *channelId, discord.CozeBotId, false, nil
 		}
 
 		if discord.DefaultChannelEnable == "1" {
-			return discord.ChannelId, discord.CozeBotId, nil
+			return discord.ChannelId, discord.CozeBotId, false, nil
 		} else {
 			channelCreateId, _ := discord.ChannelCreate(discord.GuildId, fmt.Sprintf("cdp-对话%s", c.Request.Context().Value(common.RequestIdKey)), 0)
-			discord.SetChannelDeleteTimer(channelCreateId, 5*time.Minute)
-			return channelCreateId, discord.CozeBotId, nil
+			//discord.SetChannelDeleteTimer(channelCreateId, 5*time.Minute)
+			return channelCreateId, discord.CozeBotId, true, nil
 		}
 	}
 }

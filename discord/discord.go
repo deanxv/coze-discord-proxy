@@ -135,7 +135,7 @@ func checkEnvVariable() {
 	if GuildId == "" {
 		common.FatalLog("环境变量 GUILD_ID 未设置")
 	}
-	if ChannelId == "" {
+	if DefaultChannelEnable == "1" && ChannelId == "" {
 		common.FatalLog("环境变量 CHANNEL_ID 未设置")
 	}
 	if CozeBotId == "" {
@@ -206,17 +206,17 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// 尝试获取 stopChan
 	stopChan, exists := ReplyStopChans[m.ReferencedMessage.ID]
 	if !exists {
-		channel, err := Session.Channel(m.ChannelID)
+		//channel, err := Session.Channel(m.ChannelID)
 		// 不存在则直接删除频道
-		if err != nil || strings.HasPrefix(channel.Name, "cdp-对话") {
-			SetChannelDeleteTimer(m.ChannelID, 5*time.Minute)
-			return
-		}
+		//if err != nil || strings.HasPrefix(channel.Name, "cdp-对话") {
+		//SetChannelDeleteTimer(m.ChannelID, 5*time.Minute)
+		return
+		//}
 	}
 
 	// 如果作者为 nil 或消息来自 bot 本身,则发送停止信号
 	if m.Author == nil || m.Author.ID == s.State.User.ID {
-		SetChannelDeleteTimer(m.ChannelID, 5*time.Minute)
+		//SetChannelDeleteTimer(m.ChannelID, 5*time.Minute)
 		stopChan <- model.ChannelStopChan{
 			Id: m.ChannelID,
 		}
@@ -255,18 +255,18 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			replyOpenAIChan <- reply
 		}
 
-		if ChannelAutoDelTime != "" {
-			delTime, _ := strconv.Atoi(ChannelAutoDelTime)
-			if delTime == 0 {
-				CancelChannelDeleteTimer(m.ChannelID)
-			} else if delTime > 0 {
-				// 删除该频道
-				SetChannelDeleteTimer(m.ChannelID, time.Duration(delTime)*time.Second)
-			}
-		} else {
-			// 删除该频道
-			SetChannelDeleteTimer(m.ChannelID, 5*time.Second)
-		}
+		//if ChannelAutoDelTime != "" {
+		//	delTime, _ := strconv.Atoi(ChannelAutoDelTime)
+		//	if delTime == 0 {
+		//		CancelChannelDeleteTimer(m.ChannelID)
+		//	} else if delTime > 0 {
+		//		// 删除该频道
+		//		SetChannelDeleteTimer(m.ChannelID, time.Duration(delTime)*time.Second)
+		//	}
+		//} else {
+		//	// 删除该频道
+		//	SetChannelDeleteTimer(m.ChannelID, 5*time.Second)
+		//}
 		stopChan <- model.ChannelStopChan{
 			Id: m.ChannelID,
 		}
@@ -288,14 +288,14 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 		channel, err := Session.Channel(m.ChannelID)
 		// 不存在则直接删除频道
 		if err != nil || strings.HasPrefix(channel.Name, "cdp-对话") {
-			SetChannelDeleteTimer(m.ChannelID, 5*time.Minute)
+			//SetChannelDeleteTimer(m.ChannelID, 5*time.Minute)
 			return
 		}
 	}
 
 	// 如果作者为 nil 或消息来自 bot 本身,则发送停止信号
 	if m.Author == nil || m.Author.ID == s.State.User.ID {
-		SetChannelDeleteTimer(m.ChannelID, 5*time.Minute)
+		//SetChannelDeleteTimer(m.ChannelID, 5*time.Minute)
 		stopChan <- model.ChannelStopChan{
 			Id: m.ChannelID,
 		}
@@ -334,18 +334,18 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 			replyOpenAIChan <- reply
 		}
 
-		if ChannelAutoDelTime != "" {
-			delTime, _ := strconv.Atoi(ChannelAutoDelTime)
-			if delTime == 0 {
-				CancelChannelDeleteTimer(m.ChannelID)
-			} else if delTime > 0 {
-				// 删除该频道
-				SetChannelDeleteTimer(m.ChannelID, time.Duration(delTime)*time.Second)
-			}
-		} else {
-			// 删除该频道
-			SetChannelDeleteTimer(m.ChannelID, 5*time.Second)
-		}
+		//if ChannelAutoDelTime != "" {
+		//	delTime, _ := strconv.Atoi(ChannelAutoDelTime)
+		//	if delTime == 0 {
+		//		CancelChannelDeleteTimer(m.ChannelID)
+		//	} else if delTime > 0 {
+		//		// 删除该频道
+		//		SetChannelDeleteTimer(m.ChannelID, time.Duration(delTime)*time.Second)
+		//	}
+		//} else {
+		//	// 删除该频道
+		//	SetChannelDeleteTimer(m.ChannelID, 5*time.Second)
+		//}
 		stopChan <- model.ChannelStopChan{
 			Id: m.ChannelID,
 		}
@@ -381,7 +381,7 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 	}
 
 	if len(UserAuthorizations) == 0 {
-		SetChannelDeleteTimer(channelID, 5*time.Second)
+		//SetChannelDeleteTimer(channelID, 5*time.Second)
 		common.LogError(c.Request.Context(), fmt.Sprintf("无可用的 user_auth"))
 		return nil, "", fmt.Errorf("no_available_user_auth")
 	}
