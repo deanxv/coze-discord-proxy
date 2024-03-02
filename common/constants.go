@@ -14,7 +14,7 @@ var StreamRequestOutTime = os.Getenv("STREAM_REQUEST_OUT_TIME")
 
 var DebugEnabled = os.Getenv("DEBUG") == "true"
 
-var Version = "v4.3.2" // this hard coding will be replaced automatically when building, no need to manually change
+var Version = "v4.3.3" // this hard coding will be replaced automatically when building, no need to manually change
 
 const (
 	RequestIdKey = "X-Request-Id"
@@ -43,6 +43,8 @@ var RateLimitKeyExpirationDuration = 20 * time.Minute
 
 var RequestOutTimeDuration = 5 * time.Minute
 
-var CozeErrorMessages = []string{"You have exceeded the daily limit for sending messages to the bot. Please try again later.", "Something wrong occurs, please retry. If the error persists, please contact the support team."}
+var CozeErrorMessages = []string{"You have exceeded the daily limit for sending messages to the bot. Please try again later.",
+	"Something wrong occurs, please retry. If the error persists, please contact the support team.",
+	"There are too many users now. Please try again a bit later."}
 
 var CozeDailyLimitErrorMessages = []string{"You have exceeded the daily limit for sending messages to the bot. Please try again later."}
