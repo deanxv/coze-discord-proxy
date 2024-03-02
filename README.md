@@ -95,7 +95,7 @@ services:
       - BOT_TOKEN=MTE5OT************UrUWNbG63w  # 必须修改为监听消息的Bot-Token
       - GUILD_ID=11************96  # 必须修改为两个机器人所在的服务器ID
       - COZE_BOT_ID=11************97  # 必须修改为由coze托管的机器人ID
-      - CHANNEL_ID=11************94  # 默认频道-(目前版本下该参数仅用来活跃机器人)
+      - CHANNEL_ID=11************94  # [可选]默认频道-(目前版本下该参数仅用来活跃机器人)
       - PROXY_SECRET=123456  # [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)
       - TZ=Asia/Shanghai
 ```
@@ -150,7 +150,7 @@ deanxv/coze-discord-proxy
 
    `COZE_BOT_ID:11************97` 由coze托管的机器人ID
 
-   `CHANNEL_ID:11************24`  # 默认频道-(目前版本下该参数仅用来活跃机器人)
+   `CHANNEL_ID:11************24`  # [可选]默认频道-(目前版本下该参数仅用来活跃机器人)
 
    `PROXY_SECRET:123456` [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)(与openai-API-KEY用法一致)
 
@@ -182,7 +182,7 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 2. `BOT_TOKEN:MTE5OTk2************rUWNbG63w`  监听消息的Bot-Token
 3. `GUILD_ID:11************96`  所有Bot所在的服务器ID
 4. `COZE_BOT_ID:11************97`  由coze托管的Bot-ID
-5. `CHANNEL_ID:11************24`  默认频道-(目前版本下该参数仅用来活跃Bot)
+5. `CHANNEL_ID:11************24`  [可选]默认频道-(目前版本下该参数仅用来活跃Bot)
 6. `PROXY_SECRET:123456`  [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)(与openai-API-KEY用法一致),**推荐使用此环境变量**
 7. `DEFAULT_CHANNEL_ENABLE:0`  [可选]是否启用默认频道[0:否;1:是] (默认为0) 启用后每次对话都会在默认频道中,**会话隔离会失效**,**推荐不使用此环境变量**
 8. `ALL_DIALOG_RECORD_ENABLE:1`  [可选]是否启用全量上下文[0:否;1:是] (默认为1) 关闭后每次对话只会发送`messages`中最后一个`role`为`user`的`content`,**推荐不使用此环境变量**
