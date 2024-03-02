@@ -1,6 +1,7 @@
 package router
 
 import (
+	"coze-discord-proxy/common"
 	"coze-discord-proxy/controller"
 	_ "coze-discord-proxy/docs"
 	"coze-discord-proxy/middleware"
@@ -12,20 +13,24 @@ import (
 func SetApiRouter(router *gin.Engine) {
 	router.Use(middleware.CORS())
 
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	if common.SwaggerEnable == "" || common.SwaggerEnable == "1" {
+		router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	}
 
-	apiRouter := router.Group("/api")
-	apiRouter.Use(middleware.Auth())
-	{
-		//chatRoute := apiRouter.Group("/chat")
-		//chatRoute.POST("", controller.Chat)
+	if common.OnlyOpenaiApi != "1" {
+		apiRouter := router.Group("/api")
+		apiRouter.Use(middleware.Auth())
+		{
+			//chatRoute := apiRouter.Group("/chat")
+			//chatRoute.POST("", controller.Chat)
 
-		channelRoute := apiRouter.Group("/channel")
-		channelRoute.POST("/create", controller.ChannelCreate)
-		channelRoute.GET("/del/:id", controller.ChannelDel)
+			channelRoute := apiRouter.Group("/channel")
+			channelRoute.POST("/create", controller.ChannelCreate)
+			channelRoute.GET("/del/:id", controller.ChannelDel)
 
-		threadRoute := apiRouter.Group("/thread")
-		threadRoute.POST("/create", controller.ThreadCreate)
+			threadRoute := apiRouter.Group("/thread")
+			threadRoute.POST("/create", controller.ThreadCreate)
+		}
 	}
 
 	//https://api.openai.com/v1/images/generations
