@@ -110,8 +110,13 @@ func loadUserAuthTask() {
 
 		// 计算距离下一个时间间隔
 		now := time.Now()
-		next := now.Add(time.Hour * 24)
-		next = time.Date(next.Year(), next.Month(), next.Day(), 9, 0, 0, 0, next.Location())
+		next := time.Date(now.Year(), now.Month(), now.Day(), 9, 0, 0, 0, now.Location())
+
+		// 如果当前时间已经超过9点，那么等待到第二天的9点
+		if now.After(next) {
+			next = next.Add(24 * time.Hour)
+		}
+
 		delay := next.Sub(now)
 
 		// 等待直到下一个间隔
@@ -505,12 +510,17 @@ func NewProxyClient(proxyUrl string) (proxyParse *url.URL, client *http.Client, 
 func stayActiveMessageTask() {
 	for {
 		source := rand.NewSource(time.Now().UnixNano())
-		randomNumber := rand.New(source).Intn(60) // 生成0到10之间的随机整数
+		randomNumber := rand.New(source).Intn(60) // 生成0到60之间的随机整数
 
-		// 计算距离下一个晚上12点的时间间隔
+		// 计算距离下一个时间间隔
 		now := time.Now()
-		next := now.Add(time.Hour * 24)
-		next = time.Date(next.Year(), next.Month(), next.Day(), 9, 0, 0, 0, next.Location())
+		next := time.Date(now.Year(), now.Month(), now.Day(), 9, 0, 0, 0, now.Location())
+
+		// 如果当前时间已经超过9点，那么等待到第二天的9点
+		if now.After(next) {
+			next = next.Add(24 * time.Hour)
+		}
+
 		delay := next.Sub(now)
 
 		// 等待直到下一个间隔
