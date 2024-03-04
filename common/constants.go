@@ -16,7 +16,7 @@ var OnlyOpenaiApi = os.Getenv("ONLY_OPENAI_API")
 
 var DebugEnabled = os.Getenv("DEBUG") == "true"
 
-var Version = "v4.3.5" // this hard coding will be replaced automatically when building, no need to manually change
+var Version = "v4.3.6" // this hard coding will be replaced automatically when building, no need to manually change
 
 const (
 	RequestIdKey = "X-Request-Id"
