@@ -182,23 +182,23 @@ Render can directly deploy docker images, no need to fork the repository: [Rende
 
 ### Environment Variables
 
-1. `USER_AUTHORIZATION:MTA5OTg5N************uIfytxUgJfmaXUBHVI` - Authorization keys of the Discord users who initiate messages (for multiple keys, please separate with commas)
-2. `BOT_TOKEN:MTE5OTk2************rUWNbG63w` - Bot-Token for listening to messages
-3. `GUILD_ID:11************96` - Server ID where all Bots are located
-4. `COZE_BOT_ID:11************97` - Bot-ID managed by Coze
-5. `PORT:7077` - [Optional] Port number, default is 7077
-6. `SWAGGER_ENABLE` - [Optional] Enable Swagger API documentation [0: No; 1: Yes] (default is 1)
-7. `ONLY_OPENAI_API` - [Optional] Expose only those APIs that align with OpenAI [0: No; 1: Yes] (default is 0)
-8. `CHANNEL_ID:11************24` - [Optional] Default channel - (In the current version, this parameter is only used to keep the Bot active)
-9. `PROXY_SECRET:123456` - [Optional] Interface key - modify this line to validate the request header value (for multiple keys, please separate with commas) (consistent with the usage of OpenAI-API-KEY), **recommended to use this environment variable**
-10. `DEFAULT_CHANNEL_ENABLE:0` - [Optional] Enable default channel [0: No; 1: Yes] (default is 0). Once enabled, each conversation will take place in the default channel, **session isolation will be ineffective**, **not recommended to use this environment variable**
-11. `ALL_DIALOG_RECORD_ENABLE:1` - [Optional] Enable full context recording [0: No; 1: Yes] (default is 1). If turned off, only the last `content` with `role` as `user` in `messages` will be sent each time, **not recommended to use this environment variable**
-12. `CHANNEL_AUTO_DEL_TIME:5` - [Optional] Automatic channel deletion time (seconds). This parameter determines the time to automatically delete the channel after each conversation (default is 5s). If set to 0, the channel will not be deleted, **not recommended to use this environment variable**
-13. `COZE_BOT_STAY_ACTIVE_ENABLE:1` - [Optional] Enable the daily task of keeping the Coze-bot active at `9` o'clock [0: No; 1: Yes] (default is 1), **not recommended to use this environment variable**
-14. `REQUEST_OUT_TIME:60` - [Optional] Request timeout for non-stream response in dialogue interface, **not recommended to use this environment variable**
-15. `STREAM_REQUEST_OUT_TIME:60` - [Optional] Stream return timeout for each stream response in dialogue interface, **not recommended to use this environment variable**
-16. `USER_AGENT:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36` - [Optional] Discord user agent. Using your own may effectively prevent being banned. If not set, the author's default will be used. It is recommended to use this environment variable.
-17. `PROXY_URL:http://127.0.0.1:10801` - [Optional] Proxy (only supports http)
+1. `USER_AUTHORIZATION=MTA5OTg5N************uIfytxUgJfmaXUBHVI` - Authorization keys of the Discord users who initiate messages (for multiple keys, please separate with commas)
+2. `BOT_TOKEN=MTE5OTk2************rUWNbG63w` - Bot-Token for listening to messages
+3. `GUILD_ID=11************96` - Server ID where all Bots are located
+4. `COZE_BOT_ID=11************97` - Bot-ID managed by Coze
+5. `PORT=7077` - [Optional] Port number, default is 7077
+6. `SWAGGER_ENABLE=1` - [Optional] Enable Swagger API documentation [0: No; 1: Yes] (default is 1)
+7. `ONLY_OPENAI_API=0` - [Optional] Expose only those APIs that align with OpenAI [0: No; 1: Yes] (default is 0)
+8. `CHANNEL_ID=11************24` - [Optional] Default channel - (In the current version, this parameter is only used to keep the Bot active)
+9. `PROXY_SECRET=123456` - [Optional] Interface key - modify this line to validate the request header value (for multiple keys, please separate with commas) (consistent with the usage of OpenAI-API-KEY), **recommended to use this environment variable**
+10. `DEFAULT_CHANNEL_ENABLE=0` - [Optional] Enable default channel [0: No; 1: Yes] (default is 0). Once enabled, each conversation will take place in the default channel, **session isolation will be ineffective**, **not recommended to use this environment variable**
+11. `ALL_DIALOG_RECORD_ENABLE=1` - [Optional] Enable full context recording [0: No; 1: Yes] (default is 1). If turned off, only the last `content` with `role` as `user` in `messages` will be sent each time, **not recommended to use this environment variable**
+12. `CHANNEL_AUTO_DEL_TIME=5` - [Optional] Automatic channel deletion time (seconds). This parameter determines the time to automatically delete the channel after each conversation (default is 5s). If set to 0, the channel will not be deleted, **not recommended to use this environment variable**
+13. `COZE_BOT_STAY_ACTIVE_ENABLE=1` - [Optional] Enable the daily task of keeping the Coze-bot active at `9` o'clock [0: No; 1: Yes] (default is 1), **not recommended to use this environment variable**
+14. `REQUEST_OUT_TIME=60` - [Optional] Request timeout for non-stream response in dialogue interface, **not recommended to use this environment variable**
+15. `STREAM_REQUEST_OUT_TIME=60` - [Optional] Stream return timeout for each stream response in dialogue interface, **not recommended to use this environment variable**
+16. `USER_AGENT=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36` - [Optional] Discord user agent. Using your own may effectively prevent being banned. If not set, the author's default will be used. It is recommended to use this environment variable.
+17. `PROXY_URL=http://127.0.0.1:10801` - [Optional] Proxy (only supports http)
 
 ## Advanced Configuration
 

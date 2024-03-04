@@ -178,23 +178,23 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 
 ### 环境变量
 
-1. `USER_AUTHORIZATION:MTA5OTg5N************uIfytxUgJfmaXUBHVI`  主动发送消息的discord用户的授权密钥(多个请以,分隔)
-2. `BOT_TOKEN:MTE5OTk2************rUWNbG63w`  监听消息的Bot-Token
-3. `GUILD_ID:11************96`  所有Bot所在的服务器ID
-4. `COZE_BOT_ID:11************97`  由coze托管的Bot-ID
-5. `PORT:7077`  [可选]端口,默认为7077
-6. `SWAGGER_ENABLE`  [可选]是否启用Swagger接口文档[0:否;1:是] (默认为1)
-7. `ONLY_OPENAI_API`  [可选]是否只暴露与openai对齐的接口[0:否;1:是] (默认为0)
-8. `CHANNEL_ID:11************24`  [可选]默认频道-(目前版本下该参数仅用来活跃Bot)
-9. `PROXY_SECRET:123456`  [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)(与openai-API-KEY用法一致),**推荐使用此环境变量**
-10. `DEFAULT_CHANNEL_ENABLE:0`  [可选]是否启用默认频道[0:否;1:是] (默认为0) 启用后每次对话都会在默认频道中,**会话隔离会失效**,**推荐不使用此环境变量**
-11. `ALL_DIALOG_RECORD_ENABLE:1`  [可选]是否启用全量上下文[0:否;1:是] (默认为1) 关闭后每次对话只会发送`messages`中最后一个`role`为`user`的`content`,**推荐不使用此环境变量**
-12. `CHANNEL_AUTO_DEL_TIME:5`  [可选]频道自动删除时间(秒) 此参数为每次对话完成后自动删除频道的时间(默认为5s),为0时则不删除,**推荐不使用此环境变量**
-13. `COZE_BOT_STAY_ACTIVE_ENABLE:1`  [可选]是否开启每日`9`点活跃coze-bot的定时任务[0:否;1:是] (默认为1),**推荐不使用此环境变量**
-14. `REQUEST_OUT_TIME:60`  [可选]对话接口非流响应下的请求超时时间,**推荐不使用此环境变量**
-15. `STREAM_REQUEST_OUT_TIME:60`  [可选]对话接口流响应下的每次流返回超时时间,**推荐不使用此环境变量**
-16. `USER_AGENT:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36`  [可选]discord用户端Agent,使用自己的可能有效防止被ban,不设置时默认使用作者的 推荐使用此环境变量
-17. `PROXY_URL:http://127.0.0.1:10801`  [可选]代理(仅支持http)
+1. `USER_AUTHORIZATION=MTA5OTg5N************uIfytxUgJfmaXUBHVI`  主动发送消息的discord用户的授权密钥(多个请以,分隔)
+2. `BOT_TOKEN=MTE5OTk2************rUWNbG63w`  监听消息的Bot-Token
+3. `GUILD_ID=11************96`  所有Bot所在的服务器ID
+4. `COZE_BOT_ID=11************97`  由coze托管的Bot-ID
+5. `PORT=7077`  [可选]端口,默认为7077
+6. `SWAGGER_ENABLE=1`  [可选]是否启用Swagger接口文档[0:否;1:是] (默认为1)
+7. `ONLY_OPENAI_API=0`  [可选]是否只暴露与openai对齐的接口[0:否;1:是] (默认为0)
+8. `CHANNEL_ID=11************24`  [可选]默认频道-(目前版本下该参数仅用来活跃Bot)
+9. `PROXY_SECRET=123456`  [可选]接口密钥-修改此行为请求头校验的值(多个请以,分隔)(与openai-API-KEY用法一致),**推荐使用此环境变量**
+10. `DEFAULT_CHANNEL_ENABLE=0`  [可选]是否启用默认频道[0:否;1:是] (默认为0) 启用后每次对话都会在默认频道中,**会话隔离会失效**,**推荐不使用此环境变量**
+11. `ALL_DIALOG_RECORD_ENABLE=1`  [可选]是否启用全量上下文[0:否;1:是] (默认为1) 关闭后每次对话只会发送`messages`中最后一个`role`为`user`的`content`,**推荐不使用此环境变量**
+12. `CHANNEL_AUTO_DEL_TIME=5`  [可选]频道自动删除时间(秒) 此参数为每次对话完成后自动删除频道的时间(默认为5s),为0时则不删除,**推荐不使用此环境变量**
+13. `COZE_BOT_STAY_ACTIVE_ENABLE=1`  [可选]是否开启每日`9`点活跃coze-bot的定时任务[0:否;1:是] (默认为1),**推荐不使用此环境变量**
+14. `REQUEST_OUT_TIME=60`  [可选]对话接口非流响应下的请求超时时间,**推荐不使用此环境变量**
+15. `STREAM_REQUEST_OUT_TIME=60`  [可选]对话接口流响应下的每次流返回超时时间,**推荐不使用此环境变量**
+16. `USER_AGENT=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36`  [可选]discord用户端Agent,使用自己的可能有效防止被ban,不设置时默认使用作者的 推荐使用此环境变量
+17. `PROXY_URL=http://127.0.0.1:10801`  [可选]代理(仅支持http)
 
 ## 进阶配置
 
