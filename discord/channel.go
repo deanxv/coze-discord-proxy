@@ -3,6 +3,7 @@ package discord
 import (
 	"context"
 	"coze-discord-proxy/common"
+	"errors"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"github.com/gin-gonic/gin"
@@ -103,34 +104,34 @@ func ChannelCreateComplex(guildID, parentId, channelName string, channelType int
 	return st.ID, nil
 }
 
-func CreateChannelWithRetry(c *gin.Context, guildID, channelName string, channelType int) (string, error) {
-	var err error
-	var channelID string
+type channelCreateResult struct {
+	ID  string
+	Err error
+}
 
+func CreateChannelWithRetry(c *gin.Context, guildID, channelName string, channelType int) (string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
 	for i := 0; i < 3; i++ {
-		done := make(chan bool)
+		resultCh := make(chan channelCreateResult)
 
 		go func() {
-			channelID, err = ChannelCreate(guildID, channelName, channelType)
-			done <- true
+			channelID, err := ChannelCreate(guildID, channelName, channelType)
+			resultCh <- channelCreateResult{ID: channelID, Err: err}
 		}()
 
 		select {
-		case <-done:
-			// 如果ChannelCreate成功返回，我们将直接返回结果
-			if err != nil {
-				return "", err
+		case result := <-resultCh:
+			if result.Err != nil {
+				common.LogWarn(c, fmt.Sprintf("Failed to create channel, error: %v", result.Err))
+				continue
 			}
-			return channelID, nil
+			return result.ID, nil
 		case <-ctx.Done():
-			// 如果60秒超时，我们将尝试再次调用ChannelCreate
-			common.LogWarn(c, fmt.Sprintf("create channel time out,retrying.."))
+			common.LogWarn(c, "Create channel timed out, retrying...")
 		}
 	}
 
-	// 如果尝试了3次仍然失败，我们将返回错误
-	return "", fmt.Errorf("Failed to create channel after 3 attempts")
+	return "", errors.New("failed to create channel after 3 attempts, please reset BOT_TOKEN")
 }

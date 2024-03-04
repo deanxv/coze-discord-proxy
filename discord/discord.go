@@ -510,7 +510,7 @@ func stayActiveMessageTask() {
 				nextID, _ := common.NextID()
 				sendChannelId, err = CreateChannelWithRetry(nil, GuildId, fmt.Sprintf("cdp-对话%s", nextID), 0)
 				if err != nil {
-					common.LogError(nil, fmt.Sprintf("Failed to create channel after 3 attempts,Please reset BOT_TOKEN."))
+					common.LogError(nil, err.Error())
 					break
 				}
 				sendChannelList = append(sendChannelList, sendChannelId)
