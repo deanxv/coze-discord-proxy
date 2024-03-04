@@ -424,40 +424,6 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 	return &discordgo.Message{}, "", fmt.Errorf("error sending message")
 }
 
-func ChannelCreate(guildID, channelName string, channelType int) (string, error) {
-	// 创建新的频道
-	st, err := Session.GuildChannelCreate(guildID, channelName, discordgo.ChannelType(channelType))
-	if err != nil {
-		common.LogError(context.Background(), fmt.Sprintf("创建频道时异常 %s", err.Error()))
-		return "", err
-	}
-	return st.ID, nil
-}
-
-func ChannelDel(channelId string) (string, error) {
-	// 删除频道
-	st, err := Session.ChannelDelete(channelId)
-	if err != nil {
-		common.LogError(context.Background(), fmt.Sprintf("删除频道时异常 %s", err.Error()))
-		return "", err
-	}
-	return st.ID, nil
-}
-
-func ChannelCreateComplex(guildID, parentId, channelName string, channelType int) (string, error) {
-	// 创建新的子频道
-	st, err := Session.GuildChannelCreateComplex(guildID, discordgo.GuildChannelCreateData{
-		Name:     channelName,
-		Type:     discordgo.ChannelType(channelType),
-		ParentID: parentId,
-	})
-	if err != nil {
-		common.LogError(context.Background(), fmt.Sprintf("创建子频道时异常 %s", err.Error()))
-		return "", err
-	}
-	return st.ID, nil
-}
-
 func ThreadStart(channelId, threadName string, archiveDuration int) (string, error) {
 	// 创建新的线程
 	th, err := Session.ThreadStart(channelId, threadName, discordgo.ChannelTypeGuildText, archiveDuration)
@@ -539,9 +505,14 @@ func stayActiveMessageTask() {
 		var sendChannelList []string
 		for _, config := range taskBotConfigs {
 			var sendChannelId string
+			var err error
 			if config.ChannelId == "" {
 				nextID, _ := common.NextID()
-				sendChannelId, _ = ChannelCreate(GuildId, fmt.Sprintf("cdp-对话%s", nextID), 0)
+				sendChannelId, err = CreateChannelWithRetry(nil, GuildId, fmt.Sprintf("cdp-对话%s", nextID), 0)
+				if err != nil {
+					common.LogError(nil, fmt.Sprintf("Failed to create channel after 3 attempts,Please reset BOT_TOKEN."))
+					break
+				}
 				sendChannelList = append(sendChannelList, sendChannelId)
 			} else {
 				sendChannelId = config.ChannelId

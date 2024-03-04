@@ -1,8 +1,11 @@
 package discord
 
 import (
+	"context"
 	"coze-discord-proxy/common"
 	"fmt"
+	"github.com/bwmarrin/discordgo"
+	"github.com/gin-gonic/gin"
 	"strings"
 	"sync"
 	"time"
@@ -64,4 +67,70 @@ func CancelChannelDeleteTimer(channelId string) {
 	} else {
 		common.SysError(fmt.Sprintf("频道无定时删除:%s", channelId))
 	}
+}
+
+func ChannelCreate(guildID, channelName string, channelType int) (string, error) {
+	// 创建新的频道
+	st, err := Session.GuildChannelCreate(guildID, channelName, discordgo.ChannelType(channelType))
+	if err != nil {
+		common.LogError(context.Background(), fmt.Sprintf("创建频道时异常 %s", err.Error()))
+		return "", err
+	}
+	return st.ID, nil
+}
+
+func ChannelDel(channelId string) (string, error) {
+	// 删除频道
+	st, err := Session.ChannelDelete(channelId)
+	if err != nil {
+		common.LogError(context.Background(), fmt.Sprintf("删除频道时异常 %s", err.Error()))
+		return "", err
+	}
+	return st.ID, nil
+}
+
+func ChannelCreateComplex(guildID, parentId, channelName string, channelType int) (string, error) {
+	// 创建新的子频道
+	st, err := Session.GuildChannelCreateComplex(guildID, discordgo.GuildChannelCreateData{
+		Name:     channelName,
+		Type:     discordgo.ChannelType(channelType),
+		ParentID: parentId,
+	})
+	if err != nil {
+		common.LogError(context.Background(), fmt.Sprintf("创建子频道时异常 %s", err.Error()))
+		return "", err
+	}
+	return st.ID, nil
+}
+
+func CreateChannelWithRetry(c *gin.Context, guildID, channelName string, channelType int) (string, error) {
+	var err error
+	var channelID string
+
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	for i := 0; i < 3; i++ {
+		done := make(chan bool)
+
+		go func() {
+			channelID, err = ChannelCreate(guildID, channelName, channelType)
+			done <- true
+		}()
+
+		select {
+		case <-done:
+			// 如果ChannelCreate成功返回，我们将直接返回结果
+			if err != nil {
+				return "", err
+			}
+			return channelID, nil
+		case <-ctx.Done():
+			// 如果60秒超时，我们将尝试再次调用ChannelCreate
+			common.LogWarn(c, fmt.Sprintf("create channel time out,retrying.."))
+		}
+	}
+
+	// 如果尝试了3次仍然失败，我们将返回错误
+	return "", fmt.Errorf("Failed to create channel after 3 attempts")
 }

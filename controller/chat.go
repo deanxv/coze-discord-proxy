@@ -155,7 +155,7 @@ func ChatForOpenAI(c *gin.Context) {
 		common.LogError(c.Request.Context(), err.Error())
 		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 			OpenAIError: model.OpenAIError{
-				Message: "config error",
+				Message: "config error,check logs",
 				Type:    "request_error",
 				Code:    "500",
 			},
@@ -620,8 +620,11 @@ func getSendChannelIdAndCozeBotId(c *gin.Context, channelId *string, model strin
 				return botConfig.ChannelId, botConfig.CozeBotId, false, nil
 			} else {
 				var sendChannelId string
-				sendChannelId, _ = discord.ChannelCreate(discord.GuildId, fmt.Sprintf("cdp-对话%s", c.Request.Context().Value(common.RequestIdKey)), 0)
-				//discord.SetChannelDeleteTimer(sendChannelId, 5*time.Minute)
+				sendChannelId, err := discord.CreateChannelWithRetry(c, discord.GuildId, fmt.Sprintf("cdp-对话%s", c.Request.Context().Value(common.RequestIdKey)), 0)
+				if err != nil {
+					common.LogError(c, fmt.Sprintf("Failed to create channel after 3 attempts,Please reset BOT_TOKEN."))
+					return "", "", false, err
+				}
 				return sendChannelId, botConfig.CozeBotId, true, nil
 			}
 
@@ -637,9 +640,12 @@ func getSendChannelIdAndCozeBotId(c *gin.Context, channelId *string, model strin
 		if discord.DefaultChannelEnable == "1" {
 			return discord.ChannelId, discord.CozeBotId, false, nil
 		} else {
-			channelCreateId, _ := discord.ChannelCreate(discord.GuildId, fmt.Sprintf("cdp-对话%s", c.Request.Context().Value(common.RequestIdKey)), 0)
-			//discord.SetChannelDeleteTimer(channelCreateId, 5*time.Minute)
-			return channelCreateId, discord.CozeBotId, true, nil
+			sendChannelId, err := discord.CreateChannelWithRetry(c, discord.GuildId, fmt.Sprintf("cdp-对话%s", c.Request.Context().Value(common.RequestIdKey)), 0)
+			if err != nil {
+				common.LogError(c, fmt.Sprintf("Failed to create channel after 3 attempts,Please reset BOT_TOKEN."))
+				return "", "", false, err
+			}
+			return sendChannelId, discord.CozeBotId, true, nil
 		}
 	}
 }
