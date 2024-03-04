@@ -74,7 +74,7 @@ func logHelper(ctx context.Context, level string, msg string) {
 	}
 	id := ctx.Value(RequestIdKey)
 	if id == nil {
-		id = "unknown"
+		id = "UNKNOWN"
 	}
 	now := time.Now()
 	_, _ = fmt.Fprintf(writer, "[%s] %v | %s | %s \n", level, now.Format("2006/01/02 - 15:04:05"), id, msg)

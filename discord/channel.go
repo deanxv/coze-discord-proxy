@@ -3,6 +3,7 @@ package discord
 import (
 	"context"
 	"coze-discord-proxy/common"
+	"coze-discord-proxy/telegram"
 	"errors"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
@@ -132,6 +133,11 @@ func CreateChannelWithRetry(c *gin.Context, guildID, channelName string, channel
 			common.LogWarn(c, "Create channel timed out, retrying...")
 		}
 	}
-
+	// tg发送通知
+	if telegram.NotifyTelegramBotToken != "" && telegram.TgBot != nil {
+		go func() {
+			CreateChannelRiskChan <- "stop"
+		}()
+	}
 	return "", errors.New("failed to create channel after 3 attempts, please reset BOT_TOKEN")
 }

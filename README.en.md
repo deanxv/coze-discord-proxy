@@ -198,7 +198,9 @@ Render can directly deploy docker images, no need to fork the repository: [Rende
 14. `REQUEST_OUT_TIME=60` - [Optional] Request timeout for non-stream response in dialogue interface, **not recommended to use this environment variable**
 15. `STREAM_REQUEST_OUT_TIME=60` - [Optional] Stream return timeout for each stream response in dialogue interface, **not recommended to use this environment variable**
 16. `USER_AGENT=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36` - [Optional] Discord user agent. Using your own may effectively prevent being banned. If not set, the author's default will be used. It is recommended to use this environment variable.
-17. `PROXY_URL=http://127.0.0.1:10801` - [Optional] Proxy (only supports http)
+17. `NOTIFY_TELEGRAM_BOT_TOKEN=6232***********Niz9c` [Optional] Functions as the token for the TelegramBot notification (Notification events include: 1. Unavailability of user_authorization; 2. Risk control trigger by the BOT associated with BOT_TOKEN)
+18. `NOTIFY_TELEGRAM_USER_ID=10******35` [Optional] The Telegram-Bot linked with NOTIFY_TELEGRAM_BOT_TOKEN forwards notifications to the Telegram-User associated with this variable (This variable must not be empty when NOTIFY_TELEGRAM_BOT_TOKEN is populated)
+19. `PROXY_URL=http://127.0.0.1:10801` - [Optional] Proxy (only supports http)
 
 ## Advanced Configuration
 

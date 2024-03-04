@@ -5,12 +5,14 @@ import (
 	"context"
 	"coze-discord-proxy/common"
 	"coze-discord-proxy/model"
+	"coze-discord-proxy/telegram"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"github.com/gin-gonic/gin"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/h2non/filetype"
 	"golang.org/x/net/proxy"
 	"log"
@@ -38,7 +40,8 @@ var UserAgent = os.Getenv("USER_AGENT")
 var UserAuthorization = os.Getenv("USER_AUTHORIZATION")
 var UserAuthorizations = strings.Split(UserAuthorization, ",")
 
-//var UserId = os.Getenv("USER_ID")
+var NoAvailableUserAuthChan = make(chan string)
+var CreateChannelRiskChan = make(chan string)
 
 var BotConfigList []model.BotConfig
 
@@ -87,7 +90,13 @@ func StartBot(ctx context.Context, token string) {
 	go loadUserAuthTask()
 
 	if CozeBotStayActiveEnable == "1" || CozeBotStayActiveEnable == "" {
+		// 开启coze保活任务
 		go stayActiveMessageTask()
+	}
+
+	if telegram.NotifyTelegramBotToken != "" && telegram.TgBot != nil {
+		// 开启tgbot消息推送任务
+		go telegramNotifyMsgTask()
 	}
 
 	go func() {
@@ -101,6 +110,38 @@ func StartBot(ctx context.Context, token string) {
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
+}
+
+func telegramNotifyMsgTask() {
+	for NoAvailableUserAuthChan != nil || CreateChannelRiskChan != nil {
+		select {
+		case msg, ok := <-NoAvailableUserAuthChan:
+			if ok && msg == "stop" {
+				tgMsgConfig := tgbotapi.NewMessage(telegram.NotifyTelegramUserIdInt64, fmt.Sprintf("⚠️【CDP-服务通知】\n服务已无可用USER_AUTHORIZATION,请及时更换!"))
+				err := telegram.SendMessage(&tgMsgConfig)
+				if err != nil {
+					common.LogWarn(nil, fmt.Sprintf("Telegram 推送消息异常 error:%s", err.Error()))
+				} else {
+					NoAvailableUserAuthChan = nil // 停止监听ch1
+				}
+			} else if !ok {
+				NoAvailableUserAuthChan = nil // 如果ch1已关闭，停止监听
+			}
+		case msg, ok := <-CreateChannelRiskChan:
+			if ok && msg == "stop" {
+				tgMsgConfig := tgbotapi.NewMessage(telegram.NotifyTelegramUserIdInt64, fmt.Sprintf("⚠️【CDP-服务通知】\n服务BOT_TOKEN关联的BOT已被风控,请及时ResetToken并更换!"))
+				err := telegram.SendMessage(&tgMsgConfig)
+				if err != nil {
+					common.LogWarn(nil, fmt.Sprintf("Telegram 推送消息异常 error:%s", err.Error()))
+				} else {
+					CreateChannelRiskChan = nil
+				}
+			} else if !ok {
+				CreateChannelRiskChan = nil
+			}
+		}
+	}
+
 }
 
 func loadUserAuthTask() {
@@ -156,11 +197,28 @@ func checkEnvVariable() {
 		}
 	}
 	if ChannelAutoDelTime != "" {
-		_, _err := strconv.Atoi(ChannelAutoDelTime)
-		if _err != nil {
+		_, err := strconv.Atoi(ChannelAutoDelTime)
+		if err != nil {
 			common.FatalLog("环境变量 CHANNEL_AUTO_DEL_TIME 设置有误")
 		}
 	}
+
+	if telegram.NotifyTelegramBotToken != "" {
+		err := telegram.InitTelegramBot()
+		if err != nil {
+			common.FatalLog(fmt.Sprintf("环境变量 NotifyTelegramBotToken 设置有误 error:%s", err.Error()))
+		}
+
+		if telegram.NotifyTelegramUserId == "" {
+			common.FatalLog("环境变量 NOTIFY_TELEGRAM_USER_ID 未设置")
+		} else {
+			telegram.NotifyTelegramUserIdInt64, err = strconv.ParseInt(telegram.NotifyTelegramUserId, 10, 64)
+			if err != nil {
+				common.FatalLog(fmt.Sprintf("环境变量 NOTIFY_TELEGRAM_USER_ID 设置有误 error:%s", err.Error()))
+			}
+		}
+	}
+
 	common.SysLog("Environment variable check passed.")
 }
 
@@ -388,6 +446,14 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 	if len(UserAuthorizations) == 0 {
 		//SetChannelDeleteTimer(channelID, 5*time.Second)
 		common.LogError(c.Request.Context(), fmt.Sprintf("无可用的 user_auth"))
+
+		// tg发送通知
+		if telegram.NotifyTelegramBotToken != "" && telegram.TgBot != nil {
+			go func() {
+				NoAvailableUserAuthChan <- "stop"
+			}()
+		}
+
 		return nil, "", fmt.Errorf("no_available_user_auth")
 	}
 
