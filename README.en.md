@@ -29,7 +29,7 @@ tutorial in the channel)
 - [x] Supports the picture-to-text/image-to-image/file-to-text interface aligned with `openai` (`v1/chat/completions`) (according to the request format of `GPT4V` interface [supports `url` or `base64`]) (supports specifying `discord-channel`).
 - [x] Supports the `dall-e-3` text-to-image interface aligned with `openai` (`v1/images/generations`).
 - [x] Supports the daily `9` o'clock scheduled task to automatically activate the bot.
-- [x] Supports configuring multiple discord user `Authorization` (environment variable `USER_AUTHORIZATION`) for request load balancing (**Currently each discord user calling coze-bot has a limit within 24h, you can configure multiple users to achieve superimposed request times and request load balancing**).
+- [x] Supports configuring multiple discord user `Authorization` (environment variable `USER_AUTHORIZATION`) for request load balancing (**Currently each discord user calling coze-bot has a [limit](#Limitations) within 24h, you can configure multiple users to achieve superimposed request times and request load balancing**).
 - [x] Supports configuring multiple coze bots for response load balancing (specified by `PROXY_SECRET`/`model`) For details, see [Advanced Configuration](#Advanced-Configuration).
 
 ### API Documentation:
@@ -248,7 +248,7 @@ GPT-4 (8k) - 100 times/day
 GPT-3.5 (16k) - 500 times/day
 ```
 
-Multiple Discord user `Authorization` can be configured (refer to the environment variable `USER_AUTHORIZATION`) to achieve cumulative request times and load balancing for requests.
+Multiple Discord user `Authorization` can be configured (refer to the [environment variable](#Environment-Variables) `USER_AUTHORIZATION`) to achieve cumulative request times and load balancing for requests.
 
 ## Q&A
 
