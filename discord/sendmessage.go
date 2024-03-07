@@ -2,6 +2,7 @@ package discord
 
 import (
 	"bytes"
+	"context"
 	"coze-discord-proxy/common"
 	"encoding/json"
 	"fmt"
@@ -14,6 +15,13 @@ import (
 
 // 用户端发送消息 注意 此为临时解决方案 后续会优化代码
 func SendMsgByAuthorization(c *gin.Context, userAuth, content, channelId string) (string, error) {
+	var ctx context.Context
+	if c == nil {
+		ctx = context.Background()
+	} else {
+		ctx = c.Request.Context()
+	}
+
 	postUrl := "https://discord.com/api/v9/channels/%s/messages"
 
 	// 构造请求体
@@ -21,13 +29,13 @@ func SendMsgByAuthorization(c *gin.Context, userAuth, content, channelId string)
 		"content": content,
 	})
 	if err != nil {
-		common.LogError(c.Request.Context(), fmt.Sprintf("Error encoding request body:%s", err))
+		common.LogError(ctx, fmt.Sprintf("Error encoding request body:%s", err))
 		return "", err
 	}
 
 	req, err := http.NewRequest("POST", fmt.Sprintf(postUrl, channelId), bytes.NewBuffer(requestBody))
 	if err != nil {
-		common.LogError(c.Request.Context(), fmt.Sprintf("Error creating request:%s", err))
+		common.LogError(ctx, fmt.Sprintf("Error creating request:%s", err))
 		return "", err
 	}
 
@@ -56,7 +64,7 @@ func SendMsgByAuthorization(c *gin.Context, userAuth, content, channelId string)
 
 	resp, err := client.Do(req)
 	if err != nil {
-		common.LogError(c.Request.Context(), fmt.Sprintf("Error sending request:%s", err))
+		common.LogError(ctx, fmt.Sprintf("Error sending request:%s", err))
 		return "", err
 	}
 	defer resp.Body.Close()
@@ -87,14 +95,14 @@ func SendMsgByAuthorization(c *gin.Context, userAuth, content, channelId string)
 		if errMessage, ok := result["message"].(string); ok {
 			if strings.Contains(errMessage, "401: Unauthorized") ||
 				strings.Contains(errMessage, "You need to verify your account in order to perform this action.") {
-				common.LogWarn(c.Request.Context(), fmt.Sprintf("USER_AUTHORIZATION:%s EXPIRED", userAuth))
+				common.LogWarn(ctx, fmt.Sprintf("USER_AUTHORIZATION:%s EXPIRED", userAuth))
 				return "", &common.DiscordUnauthorizedError{
 					ErrCode: 401,
 					Message: "discord 鉴权未通过",
 				}
 			}
 		}
-		common.LogError(c.Request.Context(), fmt.Sprintf("user_auth:%s result:%s", userAuth, bodyString))
+		common.LogError(ctx, fmt.Sprintf("user_auth:%s result:%s", userAuth, bodyString))
 		return "", fmt.Errorf("/api/v9/channels/%s/messages response err", channelId)
 	} else {
 		return id, nil

@@ -445,7 +445,7 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 
 	if len(UserAuthorizations) == 0 {
 		//SetChannelDeleteTimer(channelID, 5*time.Second)
-		common.LogError(c.Request.Context(), fmt.Sprintf("无可用的 user_auth"))
+		common.LogError(ctx, fmt.Sprintf("无可用的 user_auth"))
 
 		// tg发送通知
 		if telegram.NotifyTelegramBotToken != "" && telegram.TgBot != nil {
