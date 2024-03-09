@@ -642,7 +642,7 @@ func getSendChannelIdAndCozeBotId(c *gin.Context, channelId *string, model strin
 		} else {
 			sendChannelId, err := discord.CreateChannelWithRetry(c, discord.GuildId, fmt.Sprintf("cdp-对话%s", c.Request.Context().Value(common.RequestIdKey)), 0)
 			if err != nil {
-				common.LogError(c, err.Error())
+				//common.LogError(c, err.Error())
 				return "", "", false, err
 			}
 			return sendChannelId, discord.CozeBotId, true, nil

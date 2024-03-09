@@ -4,7 +4,6 @@ import (
 	"context"
 	"coze-discord-proxy/common"
 	"coze-discord-proxy/telegram"
-	"errors"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"github.com/gin-gonic/gin"
@@ -110,26 +109,60 @@ type channelCreateResult struct {
 	Err error
 }
 
-func CreateChannelWithRetry(c *gin.Context, guildID, channelName string, channelType int) (string, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
+//func CreateChannelWithRetry(c *gin.Context, guildID, channelName string, channelType int) (string, error) {
+//	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+//	defer cancel()
+//
+//	for i := 0; i < 3; i++ {
+//		resultCh := make(chan channelCreateResult)
+//
+//		go func() {
+//			channelID, err := ChannelCreate(guildID, channelName, channelType)
+//			resultCh <- channelCreateResult{ID: channelID, Err: err}
+//		}()
+//
+//		select {
+//		case result := <-resultCh:
+//			if result.Err != nil {
+//				common.LogWarn(c, fmt.Sprintf("Failed to create channel, error: %v", result.Err))
+//				continue
+//			}
+//			return result.ID, nil
+//		case <-ctx.Done():
+//			common.LogWarn(c, "Create channel timed out, retrying...")
+//		}
+//	}
+//	// tg发送通知
+//	if telegram.NotifyTelegramBotToken != "" && telegram.TgBot != nil {
+//		go func() {
+//			CreateChannelRiskChan <- "stop"
+//		}()
+//	}
+//	return "", errors.New("failed to create channel after 3 attempts, please reset BOT_TOKEN")
+//}
 
-	for i := 0; i < 3; i++ {
-		resultCh := make(chan channelCreateResult)
+func CreateChannelWithRetry(c *gin.Context, guildID, channelName string, channelType int) (string, error) {
+
+	for attempt := 0; attempt < 3; attempt++ {
+		resultChan := make(chan channelCreateResult, 1)
 
 		go func() {
-			channelID, err := ChannelCreate(guildID, channelName, channelType)
-			resultCh <- channelCreateResult{ID: channelID, Err: err}
+			id, err := ChannelCreate(guildID, channelName, channelType)
+			resultChan <- channelCreateResult{
+				ID:  id,
+				Err: err,
+			}
 		}()
 
+		// 设置超时时间为10秒
 		select {
-		case result := <-resultCh:
+		case result := <-resultChan:
 			if result.Err != nil {
-				common.LogWarn(c, fmt.Sprintf("Failed to create channel, error: %v", result.Err))
-				continue
+				return "", result.Err
 			}
+			// 成功创建频道，返回结果
 			return result.ID, nil
-		case <-ctx.Done():
+		case <-time.After(10 * time.Second):
 			common.LogWarn(c, "Create channel timed out, retrying...")
 		}
 	}
@@ -139,5 +172,6 @@ func CreateChannelWithRetry(c *gin.Context, guildID, channelName string, channel
 			CreateChannelRiskChan <- "stop"
 		}()
 	}
-	return "", errors.New("failed to create channel after 3 attempts, please reset BOT_TOKEN")
+	// 所有尝试后仍失败，返回最后的错误
+	return "", fmt.Errorf("failed after 3 attempts due to timeout, please reset BOT_TOKEN")
 }
