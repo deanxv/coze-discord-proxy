@@ -162,7 +162,7 @@ func CreateChannelWithRetry(c *gin.Context, guildID, channelName string, channel
 			}
 			// 成功创建频道，返回结果
 			return result.ID, nil
-		case <-time.After(10 * time.Second):
+		case <-time.After(60 * time.Second):
 			common.LogWarn(c, "Create channel timed out, retrying...")
 		}
 	}
