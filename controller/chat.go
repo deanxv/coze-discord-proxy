@@ -5,6 +5,7 @@ import (
 	"coze-discord-proxy/common/config"
 	"coze-discord-proxy/discord"
 	"coze-discord-proxy/model"
+	"coze-discord-proxy/telegram"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -150,6 +151,17 @@ func ChatForOpenAI(c *gin.Context) {
 		return
 	}
 
+	if err := checkUserAuths(c); err != nil {
+		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
+			OpenAIError: model.OpenAIError{
+				Message: err.Error(),
+				Type:    "request_error",
+				Code:    "500",
+			},
+		})
+		return
+	}
+
 	sendChannelId, calledCozeBotId, isNewChannel, err := getSendChannelIdAndCozeBotId(c, request.ChannelId, request.Model, true)
 
 	if err != nil {
@@ -250,48 +262,6 @@ loop:
 		}
 		content = string(jsonData)
 	}
-
-	//for i := len(messages) - 1; i >= 0; i-- {
-	//	message := messages[i]
-	//	if message.Role == "user" {
-	//		switch contentObj := message.Content.(type) {
-	//		case string:
-	//			if config.AllDialogRecordEnable == "1" {
-	//				content = contentObj
-	//			} else {
-	//				jsonData, err := json.Marshal(messages)
-	//				if err != nil {
-	//					c.JSON(http.StatusOK, gin.H{
-	//						"success": false,
-	//						"message": err.Error(),
-	//					})
-	//					return
-	//				}
-	//				content = string(jsonData)
-	//			}
-	//		case []interface{}:
-	//			content, err = buildOpenAIGPT4VForImageContent(sendChannelId, contentObj)
-	//			if err != nil {
-	//				c.JSON(http.StatusOK, gin.H{
-	//					"success": false,
-	//					"message": err.Error(),
-	//				})
-	//				return
-	//			}
-	//		default:
-	//			c.JSON(http.StatusOK, model.OpenAIErrorResponse{
-	//				OpenAIError: model.OpenAIError{
-	//					Message: "消息格式异常",
-	//					Type:    "invalid_request_error",
-	//					Code:    "discord_request_err",
-	//				},
-	//			})
-	//			return
-	//
-	//		}
-	//		break
-	//	}
-	//}
 
 	sentMsg, userAuth, err := discord.SendMessage(c, sendChannelId, calledCozeBotId, content)
 	if err != nil {
@@ -483,6 +453,17 @@ func ImagesForOpenAI(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
 			"message": fmt.Sprintf("prompt最大为2000字符 [%v]", runeCount),
+		})
+		return
+	}
+
+	if err := checkUserAuths(c); err != nil {
+		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
+			OpenAIError: model.OpenAIError{
+				Message: err.Error(),
+				Type:    "request_error",
+				Code:    "500",
+			},
 		})
 		return
 	}
@@ -692,5 +673,19 @@ func timerReset(c *gin.Context, isStream bool, timer *time.Timer, defaultTimeout
 		return nil
 	}
 	timer.Reset(defaultTimeout)
+	return nil
+}
+
+func checkUserAuths(c *gin.Context) error {
+	if len(discord.UserAuthorizations) == 0 {
+		common.LogError(c, fmt.Sprintf("无可用的 user_auth"))
+		// tg发送通知
+		if telegram.NotifyTelegramBotToken != "" && telegram.TgBot != nil {
+			go func() {
+				discord.NoAvailableUserAuthChan <- "stop"
+			}()
+		}
+		return fmt.Errorf("no_available_user_auth")
+	}
 	return nil
 }
