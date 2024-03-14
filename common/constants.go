@@ -1,6 +1,6 @@
 package common
 
-var Version = "v4.3.11" // this hard coding will be replaced automatically when building, no need to manually change
+var Version = "v4.3.12" // this hard coding will be replaced automatically when building, no need to manually change
 
 const (
 	RequestIdKey = "X-Request-Id"

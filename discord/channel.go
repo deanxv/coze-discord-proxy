@@ -66,7 +66,7 @@ func CancelChannelDeleteTimer(channelId string) {
 			common.SysError(fmt.Sprintf("定时器无法停止或已触发，频道可能已被删除:%s", channelId))
 		}
 	} else {
-		common.SysError(fmt.Sprintf("频道无定时删除:%s", channelId))
+		//common.SysError(fmt.Sprintf("频道无定时删除:%s", channelId))
 	}
 }
 

@@ -5,7 +5,6 @@ import (
 	"coze-discord-proxy/controller"
 	_ "coze-discord-proxy/docs"
 	"coze-discord-proxy/middleware"
-	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -13,7 +12,7 @@ import (
 
 func SetApiRouter(router *gin.Engine) {
 	router.Use(middleware.CORS())
-	router.Use(gzip.Gzip(gzip.DefaultCompression))
+	//router.Use(gzip.Gzip(gzip.DefaultCompression))
 	router.Use(middleware.RequestRateLimit())
 	if config.SwaggerEnable == "" || config.SwaggerEnable == "1" {
 		router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
