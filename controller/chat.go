@@ -2,6 +2,7 @@ package controller
 
 import (
 	"coze-discord-proxy/common"
+	"coze-discord-proxy/common/config"
 	"coze-discord-proxy/discord"
 	"coze-discord-proxy/model"
 	"encoding/json"
@@ -68,7 +69,7 @@ import (
 //	discord.ReplyStopChans[sentMsg.ID] = stopChan
 //	defer delete(discord.ReplyStopChans, sentMsg.ID)
 //
-//	timer, err := setTimerWithHeader(c, chatModel.Stream, common.RequestOutTimeDuration)
+//	timer, err := setTimerWithHeader(c, chatModel.Stream, config.RequestOutTimeDuration)
 //	if err != nil {
 //		common.LogError(c.Request.Context(), err.Error())
 //		c.JSON(http.StatusBadRequest, gin.H{
@@ -82,7 +83,7 @@ import (
 //		c.Stream(func(w io.Writer) bool {
 //			select {
 //			case reply := <-replyChan:
-//				timerReset(c, chatModel.Stream, timer, common.RequestOutTimeDuration)
+//				timerReset(c, chatModel.Stream, timer, config.RequestOutTimeDuration)
 //				urls := ""
 //				if len(reply.EmbedUrls) > 0 {
 //					for _, url := range reply.EmbedUrls {
@@ -189,7 +190,7 @@ loop:
 		if message.Role == "user" {
 			switch contentObj := message.Content.(type) {
 			case string:
-				if common.AllDialogRecordEnable == "1" || common.AllDialogRecordEnable == "" {
+				if config.AllDialogRecordEnable == "1" || config.AllDialogRecordEnable == "" {
 					messages[i] = model.OpenAIChatMessage{
 						Role:    "user",
 						Content: contentObj,
@@ -210,7 +211,7 @@ loop:
 					})
 					return
 				}
-				if common.AllDialogRecordEnable == "1" || common.AllDialogRecordEnable == "" {
+				if config.AllDialogRecordEnable == "1" || config.AllDialogRecordEnable == "" {
 					messages[i] = model.OpenAIChatMessage{
 						Role:    "user",
 						Content: content,
@@ -238,7 +239,7 @@ loop:
 		}
 	}
 
-	if common.AllDialogRecordEnable == "1" || common.AllDialogRecordEnable == "" {
+	if config.AllDialogRecordEnable == "1" || config.AllDialogRecordEnable == "" {
 		jsonData, err := json.Marshal(messages)
 		if err != nil {
 			c.JSON(http.StatusOK, gin.H{
@@ -255,7 +256,7 @@ loop:
 	//	if message.Role == "user" {
 	//		switch contentObj := message.Content.(type) {
 	//		case string:
-	//			if common.AllDialogRecordEnable == "1" {
+	//			if config.AllDialogRecordEnable == "1" {
 	//				content = contentObj
 	//			} else {
 	//				jsonData, err := json.Marshal(messages)
@@ -312,7 +313,7 @@ loop:
 	discord.ReplyStopChans[sentMsg.ID] = stopChan
 	defer delete(discord.ReplyStopChans, sentMsg.ID)
 
-	timer, err := setTimerWithHeader(c, request.Stream, common.RequestOutTimeDuration)
+	timer, err := setTimerWithHeader(c, request.Stream, config.RequestOutTimeDuration)
 	if err != nil {
 		common.LogError(c.Request.Context(), err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -327,7 +328,7 @@ loop:
 		c.Stream(func(w io.Writer) bool {
 			select {
 			case reply := <-replyChan:
-				timerReset(c, request.Stream, timer, common.RequestOutTimeDuration)
+				timerReset(c, request.Stream, timer, config.RequestOutTimeDuration)
 
 				// TODO 多张图片问题
 				if !strings.HasPrefix(reply.Choices[0].Message.Content, strLen) {
@@ -536,7 +537,7 @@ func ImagesForOpenAI(c *gin.Context) {
 	discord.ReplyStopChans[sentMsg.ID] = stopChan
 	defer delete(discord.ReplyStopChans, sentMsg.ID)
 
-	timer, err := setTimerWithHeader(c, false, common.RequestOutTimeDuration)
+	timer, err := setTimerWithHeader(c, false, config.RequestOutTimeDuration)
 	if err != nil {
 		common.LogError(c.Request.Context(), err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -670,9 +671,9 @@ func getOutTimeStr(c *gin.Context, isStream bool) string {
 		outTimeStr = outTime
 	} else {
 		if isStream {
-			outTimeStr = common.StreamRequestOutTime
+			outTimeStr = config.StreamRequestOutTime
 		} else {
-			outTimeStr = common.RequestOutTime
+			outTimeStr = config.RequestOutTime
 		}
 	}
 	return outTimeStr

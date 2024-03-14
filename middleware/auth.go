@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"coze-discord-proxy/common"
+	"coze-discord-proxy/common/config"
 	"coze-discord-proxy/model"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -9,7 +10,7 @@ import (
 )
 
 func isValidSecret(secret string) bool {
-	return common.ProxySecret != "" && !common.SliceContains(common.ProxySecrets, secret)
+	return config.ProxySecret != "" && !common.SliceContains(config.ProxySecrets, secret)
 }
 
 func authHelper(c *gin.Context) {

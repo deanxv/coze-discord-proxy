@@ -7,6 +7,7 @@ package main
 import (
 	"context"
 	"coze-discord-proxy/common"
+	"coze-discord-proxy/common/config"
 	"coze-discord-proxy/discord"
 	"coze-discord-proxy/middleware"
 	"coze-discord-proxy/router"
@@ -31,7 +32,7 @@ func main() {
 	if os.Getenv("GIN_MODE") != "debug" {
 		gin.SetMode(gin.ReleaseMode)
 	}
-	if common.DebugEnabled {
+	if config.DebugEnabled {
 		common.SysLog("running in debug mode")
 	}
 

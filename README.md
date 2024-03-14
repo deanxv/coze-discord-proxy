@@ -193,10 +193,11 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 13. `COZE_BOT_STAY_ACTIVE_ENABLE=1`  [可选]是否开启每日`9`点活跃coze-bot的定时任务[0:否;1:是] (默认为1),**推荐不使用此环境变量**
 14. `REQUEST_OUT_TIME=60`  [可选]对话接口非流响应下的请求超时时间,**推荐不使用此环境变量**
 15. `STREAM_REQUEST_OUT_TIME=60`  [可选]对话接口流响应下的每次流返回超时时间,**推荐不使用此环境变量**
-16. `USER_AGENT=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36`  [可选]discord用户端Agent,使用自己的可能有效防止被ban,不设置时默认使用作者的 推荐使用此环境变量
-17. `NOTIFY_TELEGRAM_BOT_TOKEN=6232***********Niz9c`  [可选]作为通知TelegramBot的Token(通知事件:1.无可用`user_authorization`;2.`BOT_TOKEN`关联的BOT触发风控)
-18. `NOTIFY_TELEGRAM_USER_ID=10******35`  [可选]`NOTIFY_TELEGRAM_BOT_TOKEN`关联的`Telegram-Bot`推送至该变量关联的`Telegram-User`(**`NOTIFY_TELEGRAM_BOT_TOKEN`不为空时该变量也不可为空**)
-19. `PROXY_URL=http://127.0.0.1:10801`  [可选]代理(仅支持http)
+16. `REQUEST_RATE_LIMIT=60`  [可选]每分钟下的请求速率限制,默认:60次/min
+17. `USER_AGENT=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36`  [可选]discord用户端Agent,使用自己的可能有效防止被ban,不设置时默认使用作者的 推荐使用此环境变量
+18. `NOTIFY_TELEGRAM_BOT_TOKEN=6232***********Niz9c`  [可选]作为通知TelegramBot的Token(通知事件:1.无可用`user_authorization`;2.`BOT_TOKEN`关联的BOT触发风控)
+19. `NOTIFY_TELEGRAM_USER_ID=10******35`  [可选]`NOTIFY_TELEGRAM_BOT_TOKEN`关联的`Telegram-Bot`推送至该变量关联的`Telegram-User`(**`NOTIFY_TELEGRAM_BOT_TOKEN`不为空时该变量也不可为空**)
+20. `PROXY_URL=http://127.0.0.1:10801`  [可选]代理(仅支持http)
 
 ## 进阶配置
 

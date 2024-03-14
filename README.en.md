@@ -197,10 +197,11 @@ Render can directly deploy docker images, no need to fork the repository: [Rende
 13. `COZE_BOT_STAY_ACTIVE_ENABLE=1` - [Optional] Enable the daily task of keeping the Coze-bot active at `9` o'clock [0: No; 1: Yes] (default is 1), **not recommended to use this environment variable**
 14. `REQUEST_OUT_TIME=60` - [Optional] Request timeout for non-stream response in dialogue interface, **not recommended to use this environment variable**
 15. `STREAM_REQUEST_OUT_TIME=60` - [Optional] Stream return timeout for each stream response in dialogue interface, **not recommended to use this environment variable**
-16. `USER_AGENT=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36` - [Optional] Discord user agent. Using your own may effectively prevent being banned. If not set, the author's default will be used. It is recommended to use this environment variable.
-17. `NOTIFY_TELEGRAM_BOT_TOKEN=6232***********Niz9c` [Optional] Functions as the token for the TelegramBot notification (Notification events include: 1. Unavailability of user_authorization; 2. Risk control trigger by the BOT associated with BOT_TOKEN)
-18. `NOTIFY_TELEGRAM_USER_ID=10******35` [Optional] The Telegram-Bot linked with NOTIFY_TELEGRAM_BOT_TOKEN forwards notifications to the Telegram-User associated with this variable (This variable must not be empty when NOTIFY_TELEGRAM_BOT_TOKEN is populated)
-19. `PROXY_URL=http://127.0.0.1:10801` - [Optional] Proxy (only supports http)
+16. `REQUEST_RATE_LIMIT=60` - [Optional] Request rate limit per minute, default: 60 requests/min
+17. `USER_AGENT=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36` - [Optional] Discord user agent. Using your own may effectively prevent being banned. If not set, the author's default will be used. It is recommended to use this environment variable.
+18. `NOTIFY_TELEGRAM_BOT_TOKEN=6232***********Niz9c` [Optional] Functions as the token for the TelegramBot notification (Notification events include: 1. Unavailability of user_authorization; 2. Risk control trigger by the BOT associated with BOT_TOKEN)
+19. `NOTIFY_TELEGRAM_USER_ID=10******35` [Optional] The Telegram-Bot linked with NOTIFY_TELEGRAM_BOT_TOKEN forwards notifications to the Telegram-User associated with this variable (This variable must not be empty when NOTIFY_TELEGRAM_BOT_TOKEN is populated)
+20. `PROXY_URL=http://127.0.0.1:10801` - [Optional] Proxy (only supports http)
 
 ## Advanced Configuration
 
