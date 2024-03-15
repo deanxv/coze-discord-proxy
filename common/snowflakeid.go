@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/sony/sonyflake"
+	"github.com/sony/sonyflake/awsutil"
 )
 
 // snowflakeGenerator 单例
@@ -36,7 +37,12 @@ func initGenerator() {
 	}
 	flake := sonyflake.NewSonyflake(st)
 	if flake == nil {
-		FatalLog("sonyflake not created")
+		// fix: no private ip address, use AmazonEC2MachineID as Settings.MachineID
+		st.MachineID = awsutil.AmazonEC2MachineID
+		flake = sonyflake.NewSonyflake(st)
+		if flake == nil {
+			FatalLog("sonyflake not created")
+		}
 	}
 	generator = &SnowflakeGenerator{
 		flake: flake,
