@@ -84,6 +84,8 @@ definitions:
     properties:
       created:
         type: integer
+      dailyLimit:
+        type: boolean
       data:
         items:
           properties:
@@ -130,6 +132,21 @@ info:
   title: COZE-DISCORD-PROXY
   version: 1.0.0
 paths:
+  /api/channel/cdp/del:
+    get:
+      consumes:
+      - application/json
+      description: 删除全部CDP临时频道[谨慎调用]
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            type: string
+      summary: 删除全部CDP临时频道[谨慎调用]
+      tags:
+      - channel
   /api/channel/create:
     post:
       consumes:

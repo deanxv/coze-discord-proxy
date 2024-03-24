@@ -351,7 +351,6 @@ loop:
 						common.LogWarn(c, fmt.Sprintf("USER_AUTHORIZATION:%s DAILY LIMIT", userAuth))
 						discord.UserAuthorizations = common.FilterSlice(discord.UserAuthorizations, userAuth)
 					}
-					//discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
 					c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 						OpenAIError: model.OpenAIError{
 							Message: reply.Choices[0].Message.Content,
@@ -363,14 +362,7 @@ loop:
 				}
 				replyResp = reply
 			case <-timer.C:
-				//discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
-				c.JSON(http.StatusOK, model.OpenAIErrorResponse{
-					OpenAIError: model.OpenAIError{
-						Message: "Request timeout",
-						Type:    "request_error",
-						Code:    "500",
-					},
-				})
+				c.JSON(http.StatusOK, replyResp)
 				return
 			case <-stopChan:
 				c.JSON(http.StatusOK, replyResp)
@@ -534,7 +526,6 @@ func ImagesForOpenAI(c *gin.Context) {
 			if reply.DailyLimit {
 				common.LogWarn(c, fmt.Sprintf("USER_AUTHORIZATION:%s DAILY LIMIT", userAuth))
 				discord.UserAuthorizations = common.FilterSlice(discord.UserAuthorizations, userAuth)
-				//discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
 				c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 					OpenAIError: model.OpenAIError{
 						Message: "daily limit for sending messages",
@@ -546,14 +537,17 @@ func ImagesForOpenAI(c *gin.Context) {
 			}
 			replyResp = reply
 		case <-timer.C:
-			//discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
-			c.JSON(http.StatusOK, model.OpenAIErrorResponse{
-				OpenAIError: model.OpenAIError{
-					Message: "Request timed out, please try again later.",
-					Type:    "request_error",
-					Code:    "500",
-				},
-			})
+			if replyResp.Data == nil {
+				c.JSON(http.StatusOK, model.OpenAIErrorResponse{
+					OpenAIError: model.OpenAIError{
+						Message: "Failed to fetch image URL, please try again later.",
+						Type:    "request_error",
+						Code:    "500",
+					},
+				})
+				return
+			}
+			c.JSON(http.StatusOK, replyResp)
 			return
 		case <-stopChan:
 			if replyResp.Data == nil {

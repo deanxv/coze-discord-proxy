@@ -90,3 +90,28 @@ func ChannelDel(c *gin.Context) {
 	}
 	return
 }
+
+// ChannelDelAllCdp 删除全部CDP临时频道[谨慎调用]
+// @Summary 删除全部CDP临时频道[谨慎调用]
+// @Description 删除全部CDP临时频道[谨慎调用]
+// @Tags channel
+// @Accept json
+// @Produce json
+// @Success 200 {object} string "Successful response"
+// @Router /api/channel/cdp/del [get]
+func ChannelDelAllCdp(c *gin.Context) {
+	err := discord.ChannelDelAllForCdp()
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"success": false,
+			"message": "discord删除频道异常",
+		})
+	} else {
+
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"message": "discord删除频道成功",
+		})
+	}
+	return
+}

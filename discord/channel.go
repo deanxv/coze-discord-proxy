@@ -109,38 +109,6 @@ type channelCreateResult struct {
 	Err error
 }
 
-//func CreateChannelWithRetry(c *gin.Context, guildID, channelName string, channelType int) (string, error) {
-//	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-//	defer cancel()
-//
-//	for i := 0; i < 3; i++ {
-//		resultCh := make(chan channelCreateResult)
-//
-//		go func() {
-//			channelID, err := ChannelCreate(guildID, channelName, channelType)
-//			resultCh <- channelCreateResult{ID: channelID, Err: err}
-//		}()
-//
-//		select {
-//		case result := <-resultCh:
-//			if result.Err != nil {
-//				common.LogWarn(c, fmt.Sprintf("Failed to create channel, error: %v", result.Err))
-//				continue
-//			}
-//			return result.ID, nil
-//		case <-ctx.Done():
-//			common.LogWarn(c, "Create channel timed out, retrying...")
-//		}
-//	}
-//	// tg发送通知
-//	if telegram.NotifyTelegramBotToken != "" && telegram.TgBot != nil {
-//		go func() {
-//			CreateChannelRiskChan <- "stop"
-//		}()
-//	}
-//	return "", errors.New("failed to create channel after 3 attempts, please reset BOT_TOKEN")
-//}
-
 func CreateChannelWithRetry(c *gin.Context, guildID, channelName string, channelType int) (string, error) {
 
 	for attempt := 0; attempt < 3; attempt++ {
@@ -174,4 +142,39 @@ func CreateChannelWithRetry(c *gin.Context, guildID, channelName string, channel
 	}
 	// 所有尝试后仍失败，返回最后的错误
 	return "", fmt.Errorf("failed after 3 attempts due to timeout, please reset BOT_TOKEN")
+}
+
+func ChannelDelAllForCdp() error {
+	// 获取服务器内所有频道的信息
+	channels, err := Session.GuildChannels(GuildId)
+	if err != nil {
+		common.LogError(context.Background(), fmt.Sprintf("服务器Id查询频道失败 %s", err.Error()))
+		return err
+	}
+
+	// 遍历所有频道
+	for _, channel := range channels {
+
+		// 过滤掉配置中的频道id
+		for _, config := range BotConfigList {
+			if config.ChannelId == channel.ID {
+				continue
+			}
+		}
+
+		if ChannelId == channel.ID {
+			continue
+		}
+
+		// 检查频道名是否以"cdp-"开头
+		if strings.HasPrefix(channel.Name, "cdp-对话") {
+			// 删除该频道
+			_, err := Session.ChannelDelete(channel.ID)
+			if err != nil {
+				common.LogError(context.Background(), fmt.Sprintf("删除频道失败 %s", err.Error()))
+				return err
+			}
+		}
+	}
+	return nil
 }
