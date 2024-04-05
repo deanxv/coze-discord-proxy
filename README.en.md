@@ -51,7 +51,7 @@ tutorial in the channel)
 5. Create a new application-Bot, which is `CDP-BOT`, and record the `token (BOT_TOKEN)` specific to this bot. This bot is the bot that listens to discord messages.
 6. Both bots open corresponding permissions (`Administrator`) and invite them into the created discord server (the process is not detailed here).
 7. Open [Discord official website](https://discord.com/app), enter the server, press F12 to open the developer tool, send a message in any channel, find the request `https://discord.com/api/v9/channels/1206*******703/messages` in Developer Tools-`Network`, get `Authorization(USER_AUTHORIZATION)` from the header of this interface and record it.
-8. Open [Coze official website](https://www.coze.com) to create a bot and make personalized settings (note `Auto-Suggestion` is `default` (default does not need to be changed)).
+8. Open [Coze official website](https://www.coze.com) to create a bot and make personalized settings (note `Auto-Suggestion` is `on` (default does not need to be changed)).
 9. After the configuration is completed, choose to publish to discord, fill in the `token` of `COZE-BOT`, after the publication is completed, you can see `COZE-BOT` online and can be used in the discord server.
 10. Use the parameters recorded above to start configuring [environment variables](#Environment Variables)and [deploy](#Deployment) this project.
 11. Visit the API documentation address, you can start debugging or integrating other projects.
