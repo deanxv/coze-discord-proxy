@@ -15,29 +15,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/channel/cdp/del": {
-            "get": {
-                "description": "删除全部CDP临时频道[谨慎调用]",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "channel"
-                ],
-                "summary": "删除全部CDP临时频道[谨慎调用]",
-                "responses": {
-                    "200": {
-                        "description": "Successful response",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
         "/api/channel/create": {
             "post": {
                 "description": "创建频道",
@@ -94,6 +71,29 @@ const docTemplate = `{
                         "required": true
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/del/all/cdp": {
+            "get": {
+                "description": "删除全部CDP临时频道[谨慎调用]",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "channel"
+                ],
+                "summary": "删除全部CDP临时频道[谨慎调用]",
                 "responses": {
                     "200": {
                         "description": "Successful response",
