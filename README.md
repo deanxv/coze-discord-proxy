@@ -49,7 +49,7 @@ _觉得有点意思的话 别忘了点个🌟_
 5. 创建新应用-Bot即`CDP-BOT`,并记录该bot专属的`token(BOT_TOKEN)`,此bot为监听discord消息的bot。
 6. 两个bot开通对应权限(`Administrator`)并邀请进创建好的discord服务器 (过程不在此赘述)。
 7. 打开 [discord官网](https://discord.com/app)进入服务器,按F12打开开发者工具,在任一频道内发送一次消息,在开发者工具-`Network`中找到请求 `https://discord.com/api/v9/channels/1206*******703/messages`从该接口header中获取`Authorization(USER_AUTHORIZATION)`并记录。
-8. 打开 [coze官网](https://www.coze.com) 创建bot并进行个性化配置(注意`Auto-Suggestion`为`default`(默认不用改))。
+8. 打开 [coze官网](https://www.coze.com) 创建bot并进行个性化配置(注意`Auto-Suggestion`为`on`(默认不用改))。
 9. 配置好后选择发布到discord,填写`COZE-BOT`的`token`,发布完成后在discord服务器中可看到`COZE-BOT`在线并可以@使用。
 10. 使用上述记录的参数开始配置[环境变量](#环境变量)并[部署](#部署)本项目。
 11. 访问接口文档地址,即可开始调试或集成其他项目。
