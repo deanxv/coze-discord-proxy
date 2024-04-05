@@ -98,7 +98,7 @@ func ChannelDel(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} string "Successful response"
-// @Router /api/channel/cdp/del [get]
+// @Router /api/del/all/cdp [get]
 func ChannelDelAllCdp(c *gin.Context) {
 	err := discord.ChannelDelAllForCdp()
 	if err != nil {
