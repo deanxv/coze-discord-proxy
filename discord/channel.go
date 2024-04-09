@@ -111,7 +111,7 @@ type channelCreateResult struct {
 
 func CreateChannelWithRetry(c *gin.Context, guildID, channelName string, channelType int) (string, error) {
 
-	for attempt := 0; attempt < 3; attempt++ {
+	for attempt := 1; attempt <= 3; attempt++ {
 		resultChan := make(chan channelCreateResult, 1)
 
 		go func() {
@@ -153,9 +153,8 @@ func CreateChannelWithRetry(c *gin.Context, guildID, channelName string, channel
 			// 成功创建频道，返回结果
 			return result.ID, nil
 		case <-time.After(60 * time.Second):
-			common.LogWarn(c, "Create channel timed out, retrying...")
+			common.LogWarn(c, fmt.Sprintf("Create channel timed out, retrying...%v", attempt))
 		}
-		time.Sleep(60 * time.Second)
 	}
 	// tg发送通知
 	if telegram.NotifyTelegramBotToken != "" && telegram.TgBot != nil {
