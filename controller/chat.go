@@ -325,7 +325,6 @@ loop:
 						common.LogWarn(c, fmt.Sprintf("USER_AUTHORIZATION:%s DAILY LIMIT", userAuth))
 						discord.UserAuthorizations = common.FilterSlice(discord.UserAuthorizations, userAuth)
 					}
-					//discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
 					c.SSEvent("", " [DONE]")
 					return false // 关闭流式连接
 				}
@@ -333,7 +332,6 @@ loop:
 				return true // 继续保持流式连接
 			case <-timer.C:
 				// 定时器到期时,关闭流
-				//discord.SetChannelDeleteTimer(sendChannelId, 5*time.Second)
 				c.SSEvent("", " [DONE]")
 				return false
 			case <-stopChan:
@@ -596,7 +594,7 @@ func getSendChannelIdAndCozeBotId(c *gin.Context, channelId *string, model strin
 				return botConfig.ChannelId, botConfig.CozeBotId, false, nil
 			} else {
 				var sendChannelId string
-				sendChannelId, err := discord.CreateChannelWithRetry(c, discord.GuildId, fmt.Sprintf("cdp-对话%s", c.Request.Context().Value(common.RequestIdKey)), 0)
+				sendChannelId, err := discord.CreateChannelWithRetry(c, discord.GuildId, fmt.Sprintf("cdp-chat-%s", c.Request.Context().Value(common.RequestIdKey)), 0)
 				if err != nil {
 					common.LogError(c, err.Error())
 					return "", "", false, err
@@ -616,7 +614,7 @@ func getSendChannelIdAndCozeBotId(c *gin.Context, channelId *string, model strin
 		if discord.DefaultChannelEnable == "1" {
 			return discord.ChannelId, discord.CozeBotId, false, nil
 		} else {
-			sendChannelId, err := discord.CreateChannelWithRetry(c, discord.GuildId, fmt.Sprintf("cdp-对话%s", c.Request.Context().Value(common.RequestIdKey)), 0)
+			sendChannelId, err := discord.CreateChannelWithRetry(c, discord.GuildId, fmt.Sprintf("cdp-chat-%s", c.Request.Context().Value(common.RequestIdKey)), 0)
 			if err != nil {
 				//common.LogError(c, err.Error())
 				return "", "", false, err

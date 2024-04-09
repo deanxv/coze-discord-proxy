@@ -1,9 +1,11 @@
 package controller
 
 import (
+	"coze-discord-proxy/common"
 	"coze-discord-proxy/discord"
 	"coze-discord-proxy/model"
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -39,6 +41,7 @@ func ChannelCreate(c *gin.Context) {
 	}
 
 	if err != nil {
+		common.LogError(c, fmt.Sprintf("创建频道时异常 %s", err.Error()))
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
 			"message": "discord创建频道异常",
@@ -100,7 +103,7 @@ func ChannelDel(c *gin.Context) {
 // @Success 200 {object} string "Successful response"
 // @Router /api/del/all/cdp [get]
 func ChannelDelAllCdp(c *gin.Context) {
-	err := discord.ChannelDelAllForCdp()
+	_, err := discord.ChannelDelAllForCdp(c)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,

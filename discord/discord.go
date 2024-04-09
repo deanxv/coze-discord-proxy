@@ -271,7 +271,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if !exists {
 		//channel, err := Session.Channel(m.ChannelID)
 		// 不存在则直接删除频道
-		//if err != nil || strings.HasPrefix(channel.Name, "cdp-对话") {
+		//if err != nil || strings.HasPrefix(channel.Name, "cdp-chat-") {
 		//SetChannelDeleteTimer(m.ChannelID, 5*time.Minute)
 		return
 		//}
@@ -318,18 +318,6 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			replyOpenAIChan <- reply
 		}
 
-		//if ChannelAutoDelTime != "" {
-		//	delTime, _ := strconv.Atoi(ChannelAutoDelTime)
-		//	if delTime == 0 {
-		//		CancelChannelDeleteTimer(m.ChannelID)
-		//	} else if delTime > 0 {
-		//		// 删除该频道
-		//		SetChannelDeleteTimer(m.ChannelID, time.Duration(delTime)*time.Second)
-		//	}
-		//} else {
-		//	// 删除该频道
-		//	SetChannelDeleteTimer(m.ChannelID, 5*time.Second)
-		//}
 		stopChan <- model.ChannelStopChan{
 			Id: m.ChannelID,
 		}
@@ -350,15 +338,13 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 	if !exists {
 		channel, err := Session.Channel(m.ChannelID)
 		// 不存在则直接删除频道
-		if err != nil || strings.HasPrefix(channel.Name, "cdp-对话") {
-			//SetChannelDeleteTimer(m.ChannelID, 5*time.Minute)
+		if err != nil || strings.HasPrefix(channel.Name, "cdp-chat-") {
 			return
 		}
 	}
 
 	// 如果作者为 nil 或消息来自 bot 本身,则发送停止信号
 	if m.Author == nil || m.Author.ID == s.State.User.ID {
-		//SetChannelDeleteTimer(m.ChannelID, 5*time.Minute)
 		stopChan <- model.ChannelStopChan{
 			Id: m.ChannelID,
 		}
@@ -397,18 +383,6 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 			replyOpenAIChan <- reply
 		}
 
-		//if ChannelAutoDelTime != "" {
-		//	delTime, _ := strconv.Atoi(ChannelAutoDelTime)
-		//	if delTime == 0 {
-		//		CancelChannelDeleteTimer(m.ChannelID)
-		//	} else if delTime > 0 {
-		//		// 删除该频道
-		//		SetChannelDeleteTimer(m.ChannelID, time.Duration(delTime)*time.Second)
-		//	}
-		//} else {
-		//	// 删除该频道
-		//	SetChannelDeleteTimer(m.ChannelID, 5*time.Second)
-		//}
 		stopChan <- model.ChannelStopChan{
 			Id: m.ChannelID,
 		}
@@ -574,7 +548,7 @@ func stayActiveMessageTask() {
 			var err error
 			if config.ChannelId == "" {
 				nextID, _ := common.NextID()
-				sendChannelId, err = CreateChannelWithRetry(nil, GuildId, fmt.Sprintf("cdp-对话%s", nextID), 0)
+				sendChannelId, err = CreateChannelWithRetry(nil, GuildId, fmt.Sprintf("cdp-chat-%s", nextID), 0)
 				if err != nil {
 					common.LogError(nil, err.Error())
 					break

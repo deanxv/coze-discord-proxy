@@ -14,6 +14,7 @@ var RequestOutTime = os.Getenv("REQUEST_OUT_TIME")
 var StreamRequestOutTime = os.Getenv("STREAM_REQUEST_OUT_TIME")
 var SwaggerEnable = os.Getenv("SWAGGER_ENABLE")
 var OnlyOpenaiApi = os.Getenv("ONLY_OPENAI_API")
+var MaxChannelDelType = os.Getenv("MAX_CHANNEL_DEL_TYPE")
 
 var DebugEnabled = os.Getenv("DEBUG") == "true"
 
