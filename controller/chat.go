@@ -3,10 +3,12 @@ package controller
 import (
 	"coze-discord-proxy/common"
 	"coze-discord-proxy/common/config"
+	"coze-discord-proxy/common/myerr"
 	"coze-discord-proxy/discord"
 	"coze-discord-proxy/model"
 	"coze-discord-proxy/telegram"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
@@ -30,9 +32,9 @@ import (
 //func Chat(c *gin.Context) {
 //
 //	var chatModel model.ChatReq
-//	err := json.NewDecoder(c.Request.Body).Decode(&chatModel)
-//	if err != nil {
-//		common.LogError(c.Request.Context(), err.Error())
+//	myerr := json.NewDecoder(c.Request.Body).Decode(&chatModel)
+//	if myerr != nil {
+//		common.LogError(c.Request.Context(), myerr.Error())
 //		c.JSON(http.StatusOK, gin.H{
 //			"message": "无效的参数",
 //			"success": false,
@@ -40,9 +42,9 @@ import (
 //		return
 //	}
 //
-//	sendChannelId, calledCozeBotId, err := getSendChannelIdAndCozeBotId(c, false, chatModel)
-//	if err != nil {
-//		common.LogError(c.Request.Context(), err.Error())
+//	sendChannelId, calledCozeBotId, myerr := getSendChannelIdAndCozeBotId(c, false, chatModel)
+//	if myerr != nil {
+//		common.LogError(c.Request.Context(), myerr.Error())
 //		c.JSON(http.StatusOK, model.OpenAIErrorResponse{
 //			OpenAIError: model.OpenAIError{
 //				Message: "配置异常",
@@ -53,11 +55,11 @@ import (
 //		return
 //	}
 //
-//	sentMsg, err := discord.SendMessage(c, sendChannelId, calledCozeBotId, chatModel.Content)
-//	if err != nil {
+//	sentMsg, myerr := discord.SendMessage(c, sendChannelId, calledCozeBotId, chatModel.Content)
+//	if myerr != nil {
 //		c.JSON(http.StatusOK, gin.H{
 //			"success": false,
-//			"message": err.Error(),
+//			"message": myerr.Error(),
 //		})
 //		return
 //	}
@@ -70,9 +72,9 @@ import (
 //	discord.ReplyStopChans[sentMsg.ID] = stopChan
 //	defer delete(discord.ReplyStopChans, sentMsg.ID)
 //
-//	timer, err := setTimerWithHeader(c, chatModel.Stream, config.RequestOutTimeDuration)
-//	if err != nil {
-//		common.LogError(c.Request.Context(), err.Error())
+//	timer, myerr := setTimerWithHeader(c, chatModel.Stream, config.RequestOutTimeDuration)
+//	if myerr != nil {
+//		common.LogError(c.Request.Context(), myerr.Error())
 //		c.JSON(http.StatusBadRequest, gin.H{
 //			"success": false,
 //			"message": "超时时间设置异常",
@@ -165,14 +167,19 @@ func ChatForOpenAI(c *gin.Context) {
 	sendChannelId, calledCozeBotId, isNewChannel, err := getSendChannelIdAndCozeBotId(c, request.ChannelId, request.Model, true)
 
 	if err != nil {
-		common.LogError(c.Request.Context(), err.Error())
-		c.JSON(http.StatusInternalServerError, model.OpenAIErrorResponse{
+		response := model.OpenAIErrorResponse{
 			OpenAIError: model.OpenAIError{
 				Message: "config error,check logs",
 				Type:    "request_error",
 				Code:    "500",
 			},
-		})
+		}
+		common.LogError(c.Request.Context(), err.Error())
+		var myErr *myerr.ModelNotFoundError
+		if errors.As(err, &myErr) {
+			response.OpenAIError.Message = "model_not_found"
+		}
+		c.JSON(http.StatusInternalServerError, response)
 		return
 	}
 
@@ -604,7 +611,10 @@ func getSendChannelIdAndCozeBotId(c *gin.Context, channelId *string, model strin
 
 		}
 		// 没有值抛出异常
-		return "", "", false, fmt.Errorf("[proxy-secret]+[model]未匹配到有效bot")
+		return "", "", false, &myerr.ModelNotFoundError{
+			ErrCode: 500,
+			Message: fmt.Sprintf("[proxy-secret:%s]+[model:%s]未匹配到有效bot", secret, model),
+		}
 	} else {
 
 		if channelId != nil && *channelId != "" {
@@ -616,7 +626,7 @@ func getSendChannelIdAndCozeBotId(c *gin.Context, channelId *string, model strin
 		} else {
 			sendChannelId, err := discord.CreateChannelWithRetry(c, discord.GuildId, fmt.Sprintf("cdp-chat-%s", c.Request.Context().Value(common.RequestIdKey)), 0)
 			if err != nil {
-				//common.LogError(c, err.Error())
+				//common.LogError(c, myerr.Error())
 				return "", "", false, err
 			}
 			return sendChannelId, discord.CozeBotId, true, nil

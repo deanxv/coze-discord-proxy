@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"coze-discord-proxy/common"
+	"coze-discord-proxy/common/myerr"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -96,14 +97,14 @@ func SendMsgByAuthorization(c *gin.Context, userAuth, content, channelId string)
 			if strings.Contains(errMessage, "401: Unauthorized") ||
 				strings.Contains(errMessage, "You need to verify your account in order to perform this action.") {
 				common.LogWarn(ctx, fmt.Sprintf("USER_AUTHORIZATION:%s EXPIRED", userAuth))
-				return "", &common.DiscordUnauthorizedError{
+				return "", &myerr.DiscordUnauthorizedError{
 					ErrCode: 401,
 					Message: "discord 鉴权未通过",
 				}
 			}
 		}
 		common.LogError(ctx, fmt.Sprintf("user_auth:%s result:%s", userAuth, bodyString))
-		return "", fmt.Errorf("/api/v9/channels/%s/messages response err", channelId)
+		return "", fmt.Errorf("/api/v9/channels/%s/messages response myerr", channelId)
 	} else {
 		return id, nil
 	}

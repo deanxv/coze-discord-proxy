@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"coze-discord-proxy/common"
+	"coze-discord-proxy/common/myerr"
 	"coze-discord-proxy/model"
 	"coze-discord-proxy/telegram"
 	"encoding/base64"
@@ -269,9 +270,9 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// 尝试获取 stopChan
 	stopChan, exists := ReplyStopChans[m.ReferencedMessage.ID]
 	if !exists {
-		//channel, err := Session.Channel(m.ChannelID)
+		//channel, myerr := Session.Channel(m.ChannelID)
 		// 不存在则直接删除频道
-		//if err != nil || strings.HasPrefix(channel.Name, "cdp-chat-") {
+		//if myerr != nil || strings.HasPrefix(channel.Name, "cdp-chat-") {
 		//SetChannelDeleteTimer(m.ChannelID, 5*time.Minute)
 		return
 		//}
@@ -437,13 +438,13 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 	}
 
 	for i, sendContent := range common.ReverseSegment(content, 1888) {
-		//sentMsg, err := Session.ChannelMessageSend(channelID, sendContent)
+		//sentMsg, myerr := Session.ChannelMessageSend(channelID, sendContent)
 		//sentMsgId := sentMsg.ID
 		// 4.0.0 版本下 用户端发送消息
 		sendContent = strings.ReplaceAll(sendContent, "\\n", "\n")
 		sentMsgId, err := SendMsgByAuthorization(c, userAuth, sendContent, channelID)
 		if err != nil {
-			var myErr *common.DiscordUnauthorizedError
+			var myErr *myerr.DiscordUnauthorizedError
 			if errors.As(err, &myErr) {
 				// 无效则将此 auth 移除
 				UserAuthorizations = common.FilterSlice(UserAuthorizations, userAuth)
