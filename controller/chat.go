@@ -7,6 +7,7 @@ import (
 	"coze-discord-proxy/discord"
 	"coze-discord-proxy/model"
 	"coze-discord-proxy/telegram"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -412,9 +413,7 @@ func buildOpenAIGPT4VForImageContent(sendChannelId string, objs []interface{}) (
 			return "", fmt.Errorf("消息格式错误")
 		}
 	}
-	//if runeCount := len([]rune(content)); runeCount > 2000 {
-	//	return "", fmt.Errorf("prompt最大为2000字符 [%v]", runeCount)
-	//}
+
 	return content, nil
 
 }
@@ -539,6 +538,22 @@ func ImagesForOpenAI(c *gin.Context) {
 					},
 				})
 				return
+			}
+			if request.ResponseFormat == "b64_json" && reply.Data != nil && len(reply.Data) > 0 {
+				for _, data := range reply.Data {
+					base64Str, err := getBase64ByUrl(data.URL)
+					if err != nil {
+						c.JSON(http.StatusInternalServerError, model.OpenAIErrorResponse{
+							OpenAIError: model.OpenAIError{
+								Message: err.Error(),
+								Type:    "request_error",
+								Code:    "500",
+							},
+						})
+						return
+					}
+					data.B64Json = "data:image/webp;base64," + base64Str
+				}
 			}
 			replyResp = reply
 		case <-timer.C:
@@ -690,4 +705,25 @@ func checkUserAuths(c *gin.Context) error {
 		return fmt.Errorf("no_available_user_auth")
 	}
 	return nil
+}
+
+func getBase64ByUrl(url string) (string, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", fmt.Errorf("failed to fetch image: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("received non-200 status code: %d", resp.StatusCode)
+	}
+
+	imgData, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("failed to read image data: %w", err)
+	}
+
+	// Encode the image data to Base64
+	base64Str := base64.StdEncoding.EncodeToString(imgData)
+	return base64Str, nil
 }

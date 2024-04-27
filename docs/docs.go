@@ -343,6 +343,17 @@ const docTemplate = `{
                 }
             }
         },
+        "model.OpenAIImagesGenerationDataResponse": {
+            "type": "object",
+            "properties": {
+                "b64_json": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
         "model.OpenAIImagesGenerationRequest": {
             "type": "object",
             "properties": {
@@ -353,6 +364,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "prompt": {
+                    "type": "string"
+                },
+                "response_format": {
                     "type": "string"
                 }
             }
@@ -369,12 +383,7 @@ const docTemplate = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "type": "object",
-                        "properties": {
-                            "url": {
-                                "type": "string"
-                            }
-                        }
+                        "$ref": "#/definitions/model.OpenAIImagesGenerationDataResponse"
                     }
                 }
             }

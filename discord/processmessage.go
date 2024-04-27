@@ -78,9 +78,9 @@ func processMessageUpdateForOpenAIImage(m *discordgo.MessageUpdate) model.OpenAI
 	submatches := re.FindAllStringSubmatch(m.Content, -1)
 
 	for _, match := range submatches {
-		response.Data = append(response.Data, struct {
-			URL string `json:"url"`
-		}{URL: match[1]})
+		response.Data = append(response.Data, &model.OpenAIImagesGenerationDataResponse{
+			URL: match[1],
+		})
 	}
 
 	if len(m.Embeds) != 0 {
@@ -89,9 +89,9 @@ func processMessageUpdateForOpenAIImage(m *discordgo.MessageUpdate) model.OpenAI
 				if m.Content != "" {
 					m.Content += "\n"
 				}
-				response.Data = append(response.Data, struct {
-					URL string `json:"url"`
-				}{URL: embed.Image.URL})
+				response.Data = append(response.Data, &model.OpenAIImagesGenerationDataResponse{
+					URL: embed.Image.URL,
+				})
 			}
 		}
 	}
@@ -170,9 +170,9 @@ func processMessageCreateForOpenAIImage(m *discordgo.MessageCreate) model.OpenAI
 	submatches := re.FindAllStringSubmatch(m.Content, -1)
 
 	for _, match := range submatches {
-		response.Data = append(response.Data, struct {
-			URL string `json:"url"`
-		}{URL: match[1]})
+		response.Data = append(response.Data, &model.OpenAIImagesGenerationDataResponse{
+			URL: match[1],
+		})
 	}
 
 	if len(m.Embeds) != 0 {
@@ -181,9 +181,9 @@ func processMessageCreateForOpenAIImage(m *discordgo.MessageCreate) model.OpenAI
 				if m.Content != "" {
 					m.Content += "\n"
 				}
-				response.Data = append(response.Data, struct {
-					URL string `json:"url"`
-				}{URL: embed.Image.URL})
+				response.Data = append(response.Data, &model.OpenAIImagesGenerationDataResponse{
+					URL: embed.Image.URL,
+				})
 			}
 		}
 	}

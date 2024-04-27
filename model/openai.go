@@ -62,16 +62,20 @@ type OpenAIDelta struct {
 
 type OpenAIImagesGenerationRequest struct {
 	OpenAIChatCompletionExtraRequest
-	Model  string `json:"model"`
-	Prompt string `json:"prompt"`
+	Model          string `json:"model"`
+	Prompt         string `json:"prompt"`
+	ResponseFormat string `json:"response_format"`
 }
 
 type OpenAIImagesGenerationResponse struct {
-	Created    int64 `json:"created"`
-	DailyLimit bool  `json:"dailyLimit"`
-	Data       []struct {
-		URL string `json:"url"`
-	} `json:"data"`
+	Created    int64                                 `json:"created"`
+	DailyLimit bool                                  `json:"dailyLimit"`
+	Data       []*OpenAIImagesGenerationDataResponse `json:"data"`
+}
+
+type OpenAIImagesGenerationDataResponse struct {
+	URL     string `json:"url"`
+	B64Json string `json:"b64_json"`
 }
 
 type OpenAIGPT4VImagesReq struct {
