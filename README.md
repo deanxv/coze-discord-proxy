@@ -10,7 +10,7 @@ _代理`Discord`对话`Coze-Bot`，实现以API形式请求GPT4模型，提供�
 
 _觉得有点意思的话 别忘了点个🌟_
 
-📄<a href="https://cdp-docs.pages.dev" style="font-size: 15px;">CDP项目文档站</a>(正在补全中...)
+📄<a href="https://cdp-docs.pages.dev" style="font-size: 15px;">CDP项目文档站</a>
 
 🐞<a href="https://t.me/+LGKwlC_xa-E5ZDk9" style="font-size: 15px;">CDP项目-交流群</a>(群内有详细教程)
 
