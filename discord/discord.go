@@ -39,8 +39,9 @@ var ChannelAutoDelTime = os.Getenv("CHANNEL_AUTO_DEL_TIME")
 var CozeBotStayActiveEnable = os.Getenv("COZE_BOT_STAY_ACTIVE_ENABLE")
 var UserAgent = os.Getenv("USER_AGENT")
 var UserAuthorization = os.Getenv("USER_AUTHORIZATION")
-var UserAuthorizations = strings.Split(UserAuthorization, ",")
+var ImagePromptWord = os.Getenv("IMAGE_PROMPT_WORD")
 
+var UserAuthorizations = strings.Split(UserAuthorization, ",")
 var NoAvailableUserAuthChan = make(chan string)
 var CreateChannelRiskChan = make(chan string)
 
@@ -219,7 +220,9 @@ func checkEnvVariable() {
 			}
 		}
 	}
-
+	if ImagePromptWord == "" {
+		ImagePromptWord = "请严格根据我的以下要求完成绘图任务，如果我没有发出指定的绘画指令，则绘制出我发出的文字对应的图片："
+	}
 	common.SysLog("Environment variable check passed.")
 }
 
@@ -637,4 +640,10 @@ func FilterConfigs(configs []model.BotConfig, secret, gptModel string, channelId
 		}
 	}
 	return filteredConfigs
+}
+
+// UpdatePrompt 用于添加自定义的绘画提示词，减少/v1/images/generations出图失败
+func UpdatePrompt(newPrompt string) string {
+	newPrompt = ImagePromptWord + newPrompt
+	return newPrompt
 }
