@@ -310,12 +310,29 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	// 如果消息包含组件或嵌入,则发送停止信号
 	if len(m.Message.Components) > 0 {
+
+		var suggestions []string
+
+		actionRow, _ := m.Message.Components[0].(*discordgo.ActionsRow)
+		for _, component := range actionRow.Components {
+			button := component.(*discordgo.Button)
+			suggestions = append(suggestions, button.Label)
+		}
+
 		replyOpenAIChan, exists := RepliesOpenAIChans[m.ReferencedMessage.ID]
 		if exists {
 			reply := processMessageCreateForOpenAI(m)
 			stopStr := "stop"
 			reply.Choices[0].FinishReason = &stopStr
+			reply.Suggestions = suggestions
 			replyOpenAIChan <- reply
+		}
+
+		replyOpenAIImageChan, exists := RepliesOpenAIImageChans[m.ReferencedMessage.ID]
+		if exists {
+			reply := processMessageCreateForOpenAIImage(m)
+			reply.Suggestions = suggestions
+			replyOpenAIImageChan <- reply
 		}
 
 		stopChan <- model.ChannelStopChan{
@@ -375,12 +392,29 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 
 	// 如果消息包含组件或嵌入,则发送停止信号
 	if len(m.Message.Components) > 0 {
+
+		var suggestions []string
+
+		actionRow, _ := m.Message.Components[0].(*discordgo.ActionsRow)
+		for _, component := range actionRow.Components {
+			button := component.(*discordgo.Button)
+			suggestions = append(suggestions, button.Label)
+		}
+
 		replyOpenAIChan, exists := RepliesOpenAIChans[m.ReferencedMessage.ID]
 		if exists {
 			reply := processMessageUpdateForOpenAI(m)
 			stopStr := "stop"
 			reply.Choices[0].FinishReason = &stopStr
+			reply.Suggestions = suggestions
 			replyOpenAIChan <- reply
+		}
+
+		replyOpenAIImageChan, exists := RepliesOpenAIImageChans[m.ReferencedMessage.ID]
+		if exists {
+			reply := processMessageUpdateForOpenAIImage(m)
+			reply.Suggestions = suggestions
+			replyOpenAIImageChan <- reply
 		}
 
 		stopChan <- model.ChannelStopChan{

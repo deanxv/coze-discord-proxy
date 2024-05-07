@@ -35,6 +35,7 @@ type OpenAIChatCompletionResponse struct {
 	Choices           []OpenAIChoice `json:"choices"`
 	Usage             OpenAIUsage    `json:"usage"`
 	SystemFingerprint *string        `json:"system_fingerprint"`
+	Suggestions       []string       `json:"suggestions"`
 }
 
 type OpenAIChoice struct {
@@ -68,9 +69,10 @@ type OpenAIImagesGenerationRequest struct {
 }
 
 type OpenAIImagesGenerationResponse struct {
-	Created    int64                                 `json:"created"`
-	DailyLimit bool                                  `json:"dailyLimit"`
-	Data       []*OpenAIImagesGenerationDataResponse `json:"data"`
+	Created     int64                                 `json:"created"`
+	DailyLimit  bool                                  `json:"dailyLimit"`
+	Data        []*OpenAIImagesGenerationDataResponse `json:"data"`
+	Suggestions []string                              `json:"suggestions"`
 }
 
 type OpenAIImagesGenerationDataResponse struct {

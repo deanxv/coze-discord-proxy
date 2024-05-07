@@ -42,6 +42,10 @@ definitions:
         type: string
       object:
         type: string
+      suggestions:
+        items:
+          type: string
+        type: array
       system_fingerprint:
         type: string
       usage:
@@ -98,6 +102,10 @@ definitions:
       data:
         items:
           $ref: '#/definitions/model.OpenAIImagesGenerationDataResponse'
+        type: array
+      suggestions:
+        items:
+          type: string
         type: array
     type: object
   model.OpenAIMessage:

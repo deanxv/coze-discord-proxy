@@ -298,6 +298,12 @@ const docTemplate = `{
                 "object": {
                     "type": "string"
                 },
+                "suggestions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "system_fingerprint": {
                     "type": "string"
                 },
@@ -384,6 +390,12 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/model.OpenAIImagesGenerationDataResponse"
+                    }
+                },
+                "suggestions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
                     }
                 }
             }
