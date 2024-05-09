@@ -75,9 +75,15 @@ func processMessageUpdateForOpenAIImage(m *discordgo.MessageUpdate) model.OpenAI
 	}
 
 	re := regexp.MustCompile(`]\((https?://\S+)\)`)
-	submatches := re.FindAllStringSubmatch(m.Content, -1)
+	subMatches := re.FindAllStringSubmatch(m.Content, -1)
 
-	for _, match := range submatches {
+	if len(subMatches) == 0 && len(m.Embeds) == 0 {
+		response.Data = append(response.Data, &model.OpenAIImagesGenerationDataResponse{
+			RevisedPrompt: m.Content,
+		})
+	}
+
+	for _, match := range subMatches {
 		response.Data = append(response.Data, &model.OpenAIImagesGenerationDataResponse{
 			URL: match[1],
 		})
@@ -167,11 +173,17 @@ func processMessageCreateForOpenAIImage(m *discordgo.MessageCreate) model.OpenAI
 	}
 
 	re := regexp.MustCompile(`]\((https?://\S+)\)`)
-	submatches := re.FindAllStringSubmatch(m.Content, -1)
+	subMatches := re.FindAllStringSubmatch(m.Content, -1)
 
-	for _, match := range submatches {
+	if len(subMatches) == 0 && len(m.Embeds) == 0 {
 		response.Data = append(response.Data, &model.OpenAIImagesGenerationDataResponse{
-			URL: match[1],
+			RevisedPrompt: m.Content,
+		})
+	}
+
+	for i, match := range subMatches {
+		response.Data = append(response.Data, &model.OpenAIImagesGenerationDataResponse{
+			URL: match[i],
 		})
 	}
 

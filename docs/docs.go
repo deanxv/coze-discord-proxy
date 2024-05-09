@@ -355,6 +355,9 @@ const docTemplate = `{
                 "b64_json": {
                     "type": "string"
                 },
+                "revised_prompt": {
+                    "type": "string"
+                },
                 "url": {
                     "type": "string"
                 }

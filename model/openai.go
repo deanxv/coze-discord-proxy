@@ -76,8 +76,9 @@ type OpenAIImagesGenerationResponse struct {
 }
 
 type OpenAIImagesGenerationDataResponse struct {
-	URL     string `json:"url"`
-	B64Json string `json:"b64_json"`
+	URL           string `json:"url"`
+	RevisedPrompt string `json:"revised_prompt"`
+	B64Json       string `json:"b64_json"`
 }
 
 type OpenAIGPT4VImagesReq struct {
