@@ -554,7 +554,8 @@ func stayActiveMessageTask() {
 
 		// 计算距离下一个时间间隔
 		now := time.Now()
-		next := time.Date(now.Year(), now.Month(), now.Day(), 9, 0, 0, 0, now.Location())
+		// 9点05分 为了保证loadUserAuthTask每日任务执行完毕
+		next := time.Date(now.Year(), now.Month(), now.Day(), 9, 5, 0, 0, now.Location())
 
 		// 如果当前时间已经超过9点，那么等待到第二天的9点
 		if now.After(next) {
