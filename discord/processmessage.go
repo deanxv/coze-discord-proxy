@@ -55,10 +55,7 @@ func processMessageUpdateForOpenAI(m *discordgo.MessageUpdate) model.OpenAIChatC
 				},
 			},
 		},
-		Usage: model.OpenAIUsage{
-			PromptTokens:     promptTokens,
-			CompletionTokens: completionTokens,
-			TotalTokens:      promptTokens + completionTokens,
+
 		},
 	}
 }
@@ -153,10 +150,6 @@ func processMessageCreateForOpenAI(m *discordgo.MessageCreate) model.OpenAIChatC
 				},
 			},
 		},
-		Usage: model.OpenAIUsage{
-			PromptTokens:     promptTokens,
-			CompletionTokens: completionTokens,
-			TotalTokens:      promptTokens + completionTokens,
 		},
 	}
 }
