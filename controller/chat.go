@@ -380,8 +380,9 @@ loop:
 
 func buildOpenAIGPT4VForImageContent(sendChannelId string, objs []interface{}) (string, error) {
 	var content string
+	var url string
 
-	for i, obj := range objs {
+	for _, obj := range objs {
 
 		jsonData, err := json.Marshal(obj)
 		if err != nil {
@@ -394,18 +395,17 @@ func buildOpenAIGPT4VForImageContent(sendChannelId string, objs []interface{}) (
 			return "", err
 		}
 
-		if i == 0 && req.Type == "text" {
-			content += req.Text
-			continue
-		} else if i != 0 && req.Type == "image_url" {
+		if req.Type == "text" {
+			content = req.Text
+		} else if req.Type == "image_url" {
 			if common.IsURL(req.ImageURL.URL) {
-				content += fmt.Sprintf("\n%s ", req.ImageURL.URL)
+				url = fmt.Sprintf("%s ", req.ImageURL.URL)
 			} else if common.IsImageBase64(req.ImageURL.URL) {
-				url, err := discord.UploadToDiscordAndGetURL(sendChannelId, req.ImageURL.URL)
+				imgUrl, err := discord.UploadToDiscordAndGetURL(sendChannelId, req.ImageURL.URL)
 				if err != nil {
 					return "", fmt.Errorf("文件上传异常")
 				}
-				content += fmt.Sprintf("\n%s ", url)
+				url = fmt.Sprintf("\n%s ", imgUrl)
 			} else {
 				return "", fmt.Errorf("文件格式有误")
 			}
@@ -414,7 +414,7 @@ func buildOpenAIGPT4VForImageContent(sendChannelId string, objs []interface{}) (
 		}
 	}
 
-	return content, nil
+	return fmt.Sprintf("%s\n%s", content, url), nil
 
 }
 
