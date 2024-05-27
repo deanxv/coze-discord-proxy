@@ -471,7 +471,7 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 		return nil, "", err
 	}
 
-	for i, sendContent := range common.ReverseSegment(content, 1888) {
+	for i, sendContent := range common.ReverseSegment(content, 1990) {
 		//sentMsg, myerr := Session.ChannelMessageSend(channelID, sendContent)
 		//sentMsgId := sentMsg.ID
 		// 4.0.0 版本下 用户端发送消息
@@ -488,9 +488,9 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 			return nil, "", fmt.Errorf("error sending message")
 		}
 
-		//time.Sleep(1 * time.Second)
+		time.Sleep(500 * time.Millisecond)
 
-		if i == len(common.ReverseSegment(content, 1888))-1 {
+		if i == len(common.ReverseSegment(content, 1990))-1 {
 			return &discordgo.Message{
 				ID: sentMsgId,
 			}, userAuth, nil
