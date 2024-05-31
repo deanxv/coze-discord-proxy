@@ -10,13 +10,11 @@ _Act as a proxy for the Discord conversation Coze-Bot, implementing the GPT-4 mo
 
 _If you find it interesting, don't forget to hit the 🌟_
 
-📄<a href="https://cdp-docs.pages.dev" style="font-size: 15px;">CDP Project Documentation Site</a>(Under Completion)
+📄<a href="https://cdp-docs.pages.dev" style="font-size: 15px;">CDP Project Documentation Site</a>(Must-See Tutorial)
 
-🐞<a href="https://t.me/+LGKwlC_xa-E5ZDk9" style="font-size: 15px;">CDP Project-Discussion Group</a>(Detailed tutorial in
-the group)
+🐞<a href="https://t.me/+LGKwlC_xa-E5ZDk9" style="font-size: 15px;">CDP Project-Discussion Group</a>(Communication)
 
-📢<a href="https://t.me/+0fYkYY_zUZYzNzRl" style="font-size: 15px;">CDP Project-Notification Channel</a>(Detailed
-tutorial in the channel)
+📢<a href="https://t.me/+0fYkYY_zUZYzNzRl" style="font-size: 15px;">CDP Project-Notification Channel</a>(Notification)
 
 
 </div>
