@@ -159,7 +159,7 @@ func CreateChannelWithRetry(c *gin.Context, guildID, channelName string, channel
 		}
 	}
 	// tg发送通知
-	if telegram.NotifyTelegramBotToken != "" && telegram.TgBot != nil {
+	if !common.IsSameDay(CreateChannelRiskPreNotifyTime, time.Now()) && telegram.NotifyTelegramBotToken != "" && telegram.TgBot != nil {
 		go func() {
 			CreateChannelRiskChan <- "stop"
 		}()

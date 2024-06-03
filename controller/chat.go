@@ -733,11 +733,12 @@ func checkUserAuths(c *gin.Context) error {
 	if len(discord.UserAuthorizations) == 0 {
 		common.LogError(c, fmt.Sprintf("无可用的 user_auth"))
 		// tg发送通知
-		if telegram.NotifyTelegramBotToken != "" && telegram.TgBot != nil {
+		if !common.IsSameDay(discord.NoAvailableUserAuthPreNotifyTime, time.Now()) && telegram.NotifyTelegramBotToken != "" && telegram.TgBot != nil {
 			go func() {
 				discord.NoAvailableUserAuthChan <- "stop"
 			}()
 		}
+
 		return fmt.Errorf("no_available_user_auth")
 	}
 	return nil

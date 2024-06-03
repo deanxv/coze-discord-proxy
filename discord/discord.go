@@ -44,6 +44,9 @@ var UserAuthorizations = strings.Split(UserAuthorization, ",")
 var NoAvailableUserAuthChan = make(chan string)
 var CreateChannelRiskChan = make(chan string)
 
+var NoAvailableUserAuthPreNotifyTime time.Time
+var CreateChannelRiskPreNotifyTime time.Time
+
 var BotConfigList []model.BotConfig
 
 var RepliesChans = make(map[string]chan model.ReplyResp)
@@ -114,6 +117,7 @@ func StartBot(ctx context.Context, token string) {
 }
 
 func telegramNotifyMsgTask() {
+
 	for NoAvailableUserAuthChan != nil || CreateChannelRiskChan != nil {
 		select {
 		case msg, ok := <-NoAvailableUserAuthChan:
@@ -123,7 +127,8 @@ func telegramNotifyMsgTask() {
 				if err != nil {
 					common.LogWarn(nil, fmt.Sprintf("Telegram 推送消息异常 error:%s", err.Error()))
 				} else {
-					NoAvailableUserAuthChan = nil // 停止监听ch1
+					//NoAvailableUserAuthChan = nil // 停止监听ch1
+					NoAvailableUserAuthPreNotifyTime = time.Now()
 				}
 			} else if !ok {
 				NoAvailableUserAuthChan = nil // 如果ch1已关闭，停止监听
@@ -135,7 +140,8 @@ func telegramNotifyMsgTask() {
 				if err != nil {
 					common.LogWarn(nil, fmt.Sprintf("Telegram 推送消息异常 error:%s", err.Error()))
 				} else {
-					CreateChannelRiskChan = nil
+					//CreateChannelRiskChan = nil
+					CreateChannelRiskPreNotifyTime = time.Now()
 				}
 			} else if !ok {
 				CreateChannelRiskChan = nil
@@ -457,7 +463,7 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 		common.LogError(ctx, fmt.Sprintf("无可用的 user_auth"))
 
 		// tg发送通知
-		if telegram.NotifyTelegramBotToken != "" && telegram.TgBot != nil {
+		if !common.IsSameDay(NoAvailableUserAuthPreNotifyTime, time.Now()) && telegram.NotifyTelegramBotToken != "" && telegram.TgBot != nil {
 			go func() {
 				NoAvailableUserAuthChan <- "stop"
 			}()
