@@ -126,6 +126,22 @@ definitions:
       total_tokens:
         type: integer
     type: object
+  model.OpenaiModelListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.OpenaiModelResponse'
+        type: array
+      object:
+        type: string
+    type: object
+  model.OpenaiModelResponse:
+    properties:
+      id:
+        type: string
+      object:
+        type: string
+    type: object
   model.ThreadReq:
     properties:
       archiveDuration:
@@ -286,6 +302,26 @@ paths:
           schema:
             $ref: '#/definitions/model.OpenAIImagesGenerationResponse'
       summary: 图片生成-openai
+      tags:
+      - openai
+  /v1/models:
+    get:
+      consumes:
+      - application/json
+      description: 模型列表-openai
+      parameters:
+      - description: Authorization
+        in: header
+        name: Authorization
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/model.OpenaiModelListResponse'
+      summary: 模型列表-openai
       tags:
       - openai
 swagger: "2.0"

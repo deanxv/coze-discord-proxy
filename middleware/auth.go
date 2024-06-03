@@ -41,6 +41,11 @@ func authHelperForOpenai(c *gin.Context) {
 		c.Abort()
 		return
 	}
+
+	if config.ProxySecret == "" {
+		c.Request.Header.Set("Authorization", "")
+	}
+
 	c.Next()
 	return
 }

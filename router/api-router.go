@@ -40,5 +40,5 @@ func SetApiRouter(router *gin.Engine) {
 	v1Router.Use(middleware.OpenAIAuth())
 	v1Router.POST("/chat/completions", controller.ChatForOpenAI)
 	v1Router.POST("/images/generations", controller.ImagesForOpenAI)
-
+	v1Router.GET("/models", controller.OpenaiModels)
 }

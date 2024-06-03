@@ -229,6 +229,37 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/v1/models": {
+            "get": {
+                "description": "模型列表-openai",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "openai"
+                ],
+                "summary": "模型列表-openai",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/model.OpenaiModelListResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -425,6 +456,31 @@ const docTemplate = `{
                 },
                 "total_tokens": {
                     "type": "integer"
+                }
+            }
+        },
+        "model.OpenaiModelListResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.OpenaiModelResponse"
+                    }
+                },
+                "object": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.OpenaiModelResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
                 }
             }
         },

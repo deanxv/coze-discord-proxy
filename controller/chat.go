@@ -12,6 +12,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/samber/lo"
 	"io"
 	"net/http"
 	"strconv"
@@ -376,6 +377,49 @@ loop:
 			}
 		}
 	}
+}
+
+// OpenaiModels 模型列表-openai
+// @Summary 模型列表-openai
+// @Description 模型列表-openai
+// @Tags openai
+// @Accept json
+// @Produce json
+// @Param Authorization header string false "Authorization"
+// @Success 200 {object} model.OpenaiModelListResponse "Successful response"
+// @Router /v1/models [get]
+func OpenaiModels(c *gin.Context) {
+	var modelsResp []string
+
+	secret := ""
+	if len(discord.BotConfigList) != 0 {
+		if secret = c.Request.Header.Get("Authorization"); secret != "" {
+			secret = strings.Replace(secret, "Bearer ", "", 1)
+		}
+
+		botConfigs := discord.FilterConfigs(discord.BotConfigList, secret, "", nil)
+		for _, botConfig := range botConfigs {
+			modelsResp = append(modelsResp, botConfig.Model...)
+		}
+
+		modelsResp = lo.Uniq(modelsResp)
+	} else {
+		modelsResp = common.DefaultOpenaiModelList
+	}
+
+	var openaiModelListResponse model.OpenaiModelListResponse
+	var openaiModelResponse []model.OpenaiModelResponse
+	openaiModelListResponse.Object = "list"
+
+	for _, modelResp := range modelsResp {
+		openaiModelResponse = append(openaiModelResponse, model.OpenaiModelResponse{
+			ID:     modelResp,
+			Object: "model",
+		})
+	}
+	openaiModelListResponse.Data = openaiModelResponse
+	c.JSON(http.StatusOK, openaiModelListResponse)
+	return
 }
 
 func buildOpenAIGPT4VForImageContent(sendChannelId string, objs []interface{}) (string, error) {

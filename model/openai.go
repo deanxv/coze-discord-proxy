@@ -89,6 +89,20 @@ type OpenAIGPT4VImagesReq struct {
 	} `json:"image_url"`
 }
 
+// Model represents a model with its properties.
+type OpenaiModelResponse struct {
+	ID     string `json:"id"`
+	Object string `json:"object"`
+	//Created time.Time `json:"created"`
+	//OwnedBy string    `json:"owned_by"`
+}
+
+// ModelList represents a list of models.
+type OpenaiModelListResponse struct {
+	Object string                `json:"object"`
+	Data   []OpenaiModelResponse `json:"data"`
+}
+
 //type ChannelIdentifier interface {
 //	GetChannelId() *string
 //}
