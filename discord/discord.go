@@ -190,6 +190,8 @@ func checkEnvVariable() {
 	}
 	if DefaultChannelEnable == "1" && ChannelId == "" {
 		common.FatalLog("环境变量 CHANNEL_ID 未设置")
+	} else if DefaultChannelEnable == "0" || DefaultChannelEnable == "" {
+		ChannelId = ""
 	}
 	if CozeBotId == "" {
 		common.FatalLog("环境变量 COZE_BOT_ID 未设置")
