@@ -1,6 +1,6 @@
 package common
 
-var Version = "v4.5.0" // this hard coding will be replaced automatically when building, no need to manually change
+var Version = "v4.5.1" // this hard coding will be replaced automatically when building, no need to manually change
 
 const (
 	RequestIdKey = "X-Request-Id"
@@ -21,10 +21,15 @@ var DefaultOpenaiModelList = []string{
 	"dall-e-3",
 }
 
-var CozeErrorMessages = []string{"You have exceeded the daily limit for sending messages to the bot. Please try again later.",
+var CozeErrorMessages = []string{
 	"Something wrong occurs, please retry. If the error persists, please contact the support team.",
+	"You have exceeded the daily limit for sending messages to the bot. Please try again later.",
+	"Some error occurred. Please try again or contact the support team in our communities.",
+	"We've detected unusual traffic from your network, so Coze is temporarily unavailable.",
 	"There are too many users now. Please try again a bit later.",
 	"I'm sorry, but I can't assist with that.",
-	"We've detected unusual traffic from your network, so Coze is temporarily unavailable."}
+}
 
-var CozeDailyLimitErrorMessages = []string{"You have exceeded the daily limit for sending messages to the bot. Please try again later."}
+var CozeDailyLimitErrorMessages = []string{
+	"You have exceeded the daily limit for sending messages to the bot. Please try again later.",
+}
