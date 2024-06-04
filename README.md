@@ -259,13 +259,17 @@ A: 首先为服务[配置多机器人](#配置多机器人)用来作响应bot的
 
 [![Star History Chart](https://api.star-history.com/svg?repos=deanxv/coze-discord-proxy&type=Date)](https://star-history.com/#deanxv/coze-discord-proxy&Date)
 
-## 其他版本
+## 相关
 
-**开源不易,若你参考此项目或基于此项目二开可否麻烦在你的项目文档中标识此项目呢？谢谢你！♥♥♥**
+[GPT-Content-Audit](https://github.com/deanxv/gpt-content-audit):聚合阿里云、百度智能云、七牛云等开放平台，提供与`openai`请求格式对齐的内容审核前置服务。
+
+## 其他
+
+**开源不易,若你参考此项目或基于此项目二开可否麻烦在你的项目文档中标识此项目呢？谢谢你！**
 
 Java: https://github.com/oddfar/coze-discord (目前不可用)
 
-## 其他引用
+## 引用
 
 Coze 官网 : https://www.coze.com
 
