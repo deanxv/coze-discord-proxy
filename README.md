@@ -261,7 +261,7 @@ A: 首先为服务[配置多机器人](#配置多机器人)用来作响应bot的
 
 ## 相关
 
-[GPT-Content-Audit](https://github.com/deanxv/gpt-content-audit):聚合阿里云、百度智能云、七牛云等开放平台，提供与`openai`请求格式对齐的内容审核前置服务。
+[GPT-Content-Audit](https://github.com/deanxv/gpt-content-audit):聚合Openai、阿里云、百度智能云、七牛云等开放平台，提供与`openai`请求格式对齐的内容审核前置服务。
 
 ## 其他
 
