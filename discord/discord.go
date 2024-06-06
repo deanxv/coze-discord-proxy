@@ -496,7 +496,7 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 			return nil, "", fmt.Errorf("error sending message")
 		}
 
-		time.Sleep(500 * time.Millisecond)
+		time.Sleep(1 * time.Second)
 
 		if i == len(common.ReverseSegment(content, 1990))-1 {
 			return &discordgo.Message{

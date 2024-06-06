@@ -45,7 +45,7 @@ func processMessageUpdateForOpenAI(m *discordgo.MessageUpdate) model.OpenAIChatC
 		ID:      m.ID,
 		Object:  "chat.completion",
 		Created: time.Now().Unix(),
-		Model:   "gpt-4-turbo",
+		Model:   "Coze-Model",
 		Choices: []model.OpenAIChoice{
 			{
 				Index: 0,
@@ -143,7 +143,7 @@ func processMessageCreateForOpenAI(m *discordgo.MessageCreate) model.OpenAIChatC
 		ID:      m.ID,
 		Object:  "chat.completion",
 		Created: time.Now().Unix(),
-		Model:   "gpt-4-turbo",
+		Model:   "Coze-Model",
 		Choices: []model.OpenAIChoice{
 			{
 				Index: 0,
