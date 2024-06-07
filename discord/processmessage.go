@@ -85,18 +85,20 @@ func processMessageUpdateForOpenAIImage(m *discordgo.MessageUpdate) model.OpenAI
 
 	for _, match := range subMatches {
 		response.Data = append(response.Data, &model.OpenAIImagesGenerationDataResponse{
-			URL: match[1],
+			URL:           match[1],
+			RevisedPrompt: m.Content,
 		})
 	}
 
 	if len(m.Embeds) != 0 {
 		for _, embed := range m.Embeds {
 			if embed.Image != nil && !strings.Contains(m.Content, embed.Image.URL) {
-				if m.Content != "" {
-					m.Content += "\n"
-				}
+				//	if m.Content != "" {
+				//		m.Content += "\n"
+				//	}
 				response.Data = append(response.Data, &model.OpenAIImagesGenerationDataResponse{
-					URL: embed.Image.URL,
+					URL:           embed.Image.URL,
+					RevisedPrompt: m.Content,
 				})
 			}
 		}
@@ -183,18 +185,20 @@ func processMessageCreateForOpenAIImage(m *discordgo.MessageCreate) model.OpenAI
 
 	for i, match := range subMatches {
 		response.Data = append(response.Data, &model.OpenAIImagesGenerationDataResponse{
-			URL: match[i],
+			URL:           match[i],
+			RevisedPrompt: m.Content,
 		})
 	}
 
 	if len(m.Embeds) != 0 {
 		for _, embed := range m.Embeds {
 			if embed.Image != nil && !strings.Contains(m.Content, embed.Image.URL) {
-				if m.Content != "" {
-					m.Content += "\n"
-				}
+				//if m.Content != "" {
+				//	m.Content += "\n"
+				//}
 				response.Data = append(response.Data, &model.OpenAIImagesGenerationDataResponse{
-					URL: embed.Image.URL,
+					URL:           embed.Image.URL,
+					RevisedPrompt: m.Content,
 				})
 			}
 		}
