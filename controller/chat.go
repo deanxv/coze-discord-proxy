@@ -577,18 +577,20 @@ func ImagesForOpenAI(c *gin.Context) {
 			}
 			if request.ResponseFormat == "b64_json" && reply.Data != nil && len(reply.Data) > 0 {
 				for _, data := range reply.Data {
-					base64Str, err := getBase64ByUrl(data.URL)
-					if err != nil {
-						c.JSON(http.StatusInternalServerError, model.OpenAIErrorResponse{
-							OpenAIError: model.OpenAIError{
-								Message: err.Error(),
-								Type:    "request_error",
-								Code:    "500",
-							},
-						})
-						return
+					if data.URL != "" {
+						base64Str, err := getBase64ByUrl(data.URL)
+						if err != nil {
+							c.JSON(http.StatusInternalServerError, model.OpenAIErrorResponse{
+								OpenAIError: model.OpenAIError{
+									Message: err.Error(),
+									Type:    "request_error",
+									Code:    "500",
+								},
+							})
+							return
+						}
+						data.B64Json = "data:image/webp;base64," + base64Str
 					}
-					data.B64Json = "data:image/webp;base64," + base64Str
 				}
 			}
 			replyResp = reply
