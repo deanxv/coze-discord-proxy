@@ -285,7 +285,10 @@ loop:
 	}
 
 	replyChan := make(chan model.OpenAIChatCompletionResponse)
-	discord.RepliesOpenAIChans[sentMsg.ID] = replyChan
+	discord.RepliesOpenAIChans[sentMsg.ID] = &model.OpenAIChatCompletionChan{
+		Model:    request.Model,
+		Response: replyChan,
+	}
 	defer delete(discord.RepliesOpenAIChans, sentMsg.ID)
 
 	stopChan := make(chan model.ChannelStopChan)

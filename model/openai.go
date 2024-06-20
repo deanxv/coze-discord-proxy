@@ -27,6 +27,11 @@ type OpenAIError struct {
 	Code    string `json:"code"`
 }
 
+type OpenAIChatCompletionChan struct {
+	Model    string `json:"model"`
+	Response chan OpenAIChatCompletionResponse
+}
+
 type OpenAIChatCompletionResponse struct {
 	ID                string         `json:"id"`
 	Object            string         `json:"object"`

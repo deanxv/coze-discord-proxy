@@ -50,7 +50,7 @@ var CreateChannelRiskPreNotifyTime time.Time
 var BotConfigList []model.BotConfig
 
 var RepliesChans = make(map[string]chan model.ReplyResp)
-var RepliesOpenAIChans = make(map[string]chan model.OpenAIChatCompletionResponse)
+var RepliesOpenAIChans = make(map[string]*model.OpenAIChatCompletionChan)
 var RepliesOpenAIImageChans = make(map[string]chan model.OpenAIImagesGenerationResponse)
 
 var ReplyStopChans = make(map[string]chan model.ChannelStopChan)
@@ -302,7 +302,8 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		replyOpenAIChan, exists := RepliesOpenAIChans[m.ReferencedMessage.ID]
 		if exists {
 			reply := processMessageCreateForOpenAI(m)
-			replyOpenAIChan <- reply
+			reply.Model = replyOpenAIChan.Model
+			replyOpenAIChan.Response <- reply
 		} else {
 			replyOpenAIImageChan, exists := RepliesOpenAIImageChans[m.ReferencedMessage.ID]
 			if exists {
@@ -333,7 +334,8 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			stopStr := "stop"
 			reply.Choices[0].FinishReason = &stopStr
 			reply.Suggestions = suggestions
-			replyOpenAIChan <- reply
+			reply.Model = replyOpenAIChan.Model
+			replyOpenAIChan.Response <- reply
 		}
 
 		replyOpenAIImageChan, exists := RepliesOpenAIImageChans[m.ReferencedMessage.ID]
@@ -384,7 +386,8 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 		replyOpenAIChan, exists := RepliesOpenAIChans[m.ReferencedMessage.ID]
 		if exists {
 			reply := processMessageUpdateForOpenAI(m)
-			replyOpenAIChan <- reply
+			reply.Model = replyOpenAIChan.Model
+			replyOpenAIChan.Response <- reply
 		} else {
 			replyOpenAIImageChan, exists := RepliesOpenAIImageChans[m.ReferencedMessage.ID]
 			if exists {
@@ -415,7 +418,8 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 			stopStr := "stop"
 			reply.Choices[0].FinishReason = &stopStr
 			reply.Suggestions = suggestions
-			replyOpenAIChan <- reply
+			reply.Model = replyOpenAIChan.Model
+			replyOpenAIChan.Response <- reply
 		}
 
 		replyOpenAIImageChan, exists := RepliesOpenAIImageChans[m.ReferencedMessage.ID]
