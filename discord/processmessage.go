@@ -104,6 +104,20 @@ func processMessageUpdateForOpenAIImage(m *discordgo.MessageUpdate) model.OpenAI
 		}
 	}
 
+	if len(m.Attachments) != 0 {
+		for _, attachment := range m.Attachments {
+			if attachment.URL != "" && !strings.Contains(m.Content, attachment.URL) {
+				//	if m.Content != "" {
+				//		m.Content += "\n"
+				//	}
+				response.Data = append(response.Data, &model.OpenAIImagesGenerationDataResponse{
+					URL:           attachment.URL,
+					RevisedPrompt: m.Content,
+				})
+			}
+		}
+	}
+
 	return model.OpenAIImagesGenerationResponse{
 		Created: time.Now().Unix(),
 		Data:    response.Data,
@@ -198,6 +212,20 @@ func processMessageCreateForOpenAIImage(m *discordgo.MessageCreate) model.OpenAI
 				//}
 				response.Data = append(response.Data, &model.OpenAIImagesGenerationDataResponse{
 					URL:           embed.Image.URL,
+					RevisedPrompt: m.Content,
+				})
+			}
+		}
+	}
+
+	if len(m.Attachments) != 0 {
+		for _, attachment := range m.Attachments {
+			if attachment.URL != "" && !strings.Contains(m.Content, attachment.URL) {
+				//	if m.Content != "" {
+				//		m.Content += "\n"
+				//	}
+				response.Data = append(response.Data, &model.OpenAIImagesGenerationDataResponse{
+					URL:           attachment.URL,
 					RevisedPrompt: m.Content,
 				})
 			}
