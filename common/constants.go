@@ -21,9 +21,10 @@ var DefaultOpenaiModelList = []string{
 	"dall-e-3",
 }
 
-var CozeErrorMessages = []string{
+var CozeErrorMessages = append(append(CozeOtherErrorMessages, CozeUserDailyLimitErrorMessages...), CozeCreatorDailyLimitErrorMessages...)
+
+var CozeOtherErrorMessages = []string{
 	"Something wrong occurs, please retry. If the error persists, please contact the support team.",
-	"You have exceeded the daily limit for sending messages to the bot. Please try again later.",
 	"Some error occurred. Please try again or contact the support team in our communities.",
 	"We've detected unusual traffic from your network, so Coze is temporarily unavailable.",
 	"There are too many users now. Please try again a bit later.",
