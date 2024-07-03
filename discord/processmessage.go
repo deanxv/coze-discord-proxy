@@ -114,9 +114,9 @@ func processMessageUpdateForOpenAIImage(m *discordgo.MessageUpdate) model.OpenAI
 		}
 	}
 
-	for i, match := range subMatches {
+	for _, match := range subMatches {
 		response.Data = append(response.Data, &model.OpenAIImagesGenerationDataResponse{
-			URL:           match[i],
+			URL:           match[1],
 			RevisedPrompt: m.Content,
 		})
 	}
@@ -231,9 +231,9 @@ func processMessageCreateForOpenAIImage(m *discordgo.MessageCreate) model.OpenAI
 		}
 	}
 
-	for i, match := range subMatches {
+	for _, match := range subMatches {
 		response.Data = append(response.Data, &model.OpenAIImagesGenerationDataResponse{
-			URL:           match[i],
+			URL:           match[1],
 			RevisedPrompt: m.Content,
 		})
 	}
