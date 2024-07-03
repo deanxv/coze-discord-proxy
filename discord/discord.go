@@ -48,6 +48,7 @@ var NoAvailableUserAuthPreNotifyTime time.Time
 var CreateChannelRiskPreNotifyTime time.Time
 
 var BotConfigList []model.BotConfig
+var BotConfigExist bool
 
 var RepliesChans = make(map[string]chan model.ReplyResp)
 var RepliesOpenAIChans = make(map[string]*model.OpenAIChatCompletionChan)
@@ -266,6 +267,7 @@ func loadBotConfig() {
 		if !os.IsNotExist(err) {
 			common.SysError("载入bot_config.json文件异常")
 		}
+		BotConfigExist = false
 		return
 	}
 
@@ -292,6 +294,7 @@ func loadBotConfig() {
 			}
 		}
 	}
+	BotConfigExist = true
 	common.SysLog(fmt.Sprintf("载入配置文件成功 BotConfigs: %+v", BotConfigList))
 }
 
@@ -712,6 +715,16 @@ func FilterConfigs(configs []model.BotConfig, secret, gptModel string, channelId
 		}
 	}
 	return filteredConfigs
+}
+
+func DelLimitBot(botId string) {
+	if BotConfigExist {
+		BotConfigList = FilterBotConfigByBotId(BotConfigList, botId)
+	} else {
+		if CozeBotId == botId {
+			CozeBotId = ""
+		}
+	}
 }
 
 func FilterBotConfigByBotId(slice []model.BotConfig, filter string) []model.BotConfig {

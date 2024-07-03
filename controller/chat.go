@@ -339,7 +339,8 @@ loop:
 					}
 					if common.SliceContains(common.CozeCreatorDailyLimitErrorMessages, reply.Choices[0].Message.Content) {
 						common.LogWarn(c, fmt.Sprintf("BOT_ID:%s DAILY LIMIT", calledCozeBotId))
-						discord.BotConfigList = discord.FilterBotConfigByBotId(discord.BotConfigList, calledCozeBotId)
+						//discord.BotConfigList = discord.FilterBotConfigByBotId(discord.BotConfigList, calledCozeBotId)
+						discord.DelLimitBot(calledCozeBotId)
 					}
 					c.SSEvent("", " [DONE]")
 					return false // 关闭流式连接
@@ -367,7 +368,9 @@ loop:
 					}
 					if common.SliceContains(common.CozeCreatorDailyLimitErrorMessages, reply.Choices[0].Message.Content) {
 						common.LogWarn(c, fmt.Sprintf("BOT_ID:%s DAILY LIMIT", calledCozeBotId))
-						discord.BotConfigList = discord.FilterBotConfigByBotId(discord.BotConfigList, calledCozeBotId)
+						//discord.BotConfigList = discord.FilterBotConfigByBotId(discord.BotConfigList, calledCozeBotId)
+						discord.DelLimitBot(calledCozeBotId)
+
 					}
 					c.JSON(http.StatusInternalServerError, model.OpenAIErrorResponse{
 						OpenAIError: model.OpenAIError{
@@ -581,7 +584,8 @@ func ImagesForOpenAI(c *gin.Context) {
 				}
 				if common.SliceContains(common.CozeCreatorDailyLimitErrorMessages, reply.Data[0].RevisedPrompt) {
 					common.LogWarn(c, fmt.Sprintf("BOT_ID:%s DAILY LIMIT", calledCozeBotId))
-					discord.BotConfigList = discord.FilterBotConfigByBotId(discord.BotConfigList, calledCozeBotId)
+					//discord.BotConfigList = discord.FilterBotConfigByBotId(discord.BotConfigList, calledCozeBotId)
+					discord.DelLimitBot(calledCozeBotId)
 				}
 				c.JSON(http.StatusInternalServerError, model.OpenAIErrorResponse{
 					OpenAIError: model.OpenAIError{
@@ -686,6 +690,10 @@ func getSendChannelIdAndCozeBotId(c *gin.Context, channelId *string, model strin
 			Message: fmt.Sprintf("[proxy-secret:%s]+[model:%s]未匹配到有效bot", secret, model),
 		}
 	} else {
+
+		if discord.BotConfigExist || discord.CozeBotId == "" {
+			return "", "", false, myerr.ErrNoBotId
+		}
 
 		if channelId != nil && *channelId != "" {
 			return *channelId, discord.CozeBotId, false, nil
