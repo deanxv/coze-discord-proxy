@@ -90,11 +90,13 @@ func StartBot(ctx context.Context, token string) {
 	checkEnvVariable()
 	common.SysLog("Bot is now running. Enjoy It.")
 
-	// 每日9点 重新加载userAuth
+	// 每日9点 重新加载BotConfig
+	go loadBotConfigTask()
+	// 每日9.5点 重新加载userAuth
 	go loadUserAuthTask()
 
 	if CozeBotStayActiveEnable == "1" || CozeBotStayActiveEnable == "" {
-		// 开启coze保活任务
+		// 开启coze保活任务 每日9.10
 		go stayActiveMessageTask()
 	}
 
@@ -114,6 +116,32 @@ func StartBot(ctx context.Context, token string) {
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
+}
+
+func loadBotConfigTask() {
+	for {
+		source := rand.NewSource(time.Now().UnixNano())
+		randomNumber := rand.New(source).Intn(60) // 生成0到60之间的随机整数
+
+		// 计算距离下一个时间间隔
+		now := time.Now()
+		next := time.Date(now.Year(), now.Month(), now.Day(), 9, 5, 0, 0, now.Location())
+
+		// 如果当前时间已经超过9点，那么等待到第二天的9点
+		if now.After(next) {
+			next = next.Add(24 * time.Hour)
+		}
+
+		delay := next.Sub(now)
+
+		// 等待直到下一个间隔
+		time.Sleep(delay + time.Duration(randomNumber)*time.Second)
+
+		common.SysLog("CDP Scheduled loadBotConfig Task Job Start!")
+		loadBotConfig()
+		common.SysLog("CDP Scheduled loadBotConfig Task Job  End!")
+
+	}
 }
 
 func telegramNotifyMsgTask() {
@@ -158,7 +186,7 @@ func loadUserAuthTask() {
 
 		// 计算距离下一个时间间隔
 		now := time.Now()
-		next := time.Date(now.Year(), now.Month(), now.Day(), 9, 0, 0, 0, now.Location())
+		next := time.Date(now.Year(), now.Month(), now.Day(), 9, 5, 0, 0, now.Location())
 
 		// 如果当前时间已经超过9点，那么等待到第二天的9点
 		if now.After(next) {
@@ -567,8 +595,8 @@ func stayActiveMessageTask() {
 
 		// 计算距离下一个时间间隔
 		now := time.Now()
-		// 9点05分 为了保证loadUserAuthTask每日任务执行完毕
-		next := time.Date(now.Year(), now.Month(), now.Day(), 9, 5, 0, 0, now.Location())
+		// 9点10分 为了保证loadUserAuthTask每日任务执行完毕
+		next := time.Date(now.Year(), now.Month(), now.Day(), 9, 10, 0, 0, now.Location())
 
 		// 如果当前时间已经超过9点，那么等待到第二天的9点
 		if now.After(next) {
@@ -684,4 +712,14 @@ func FilterConfigs(configs []model.BotConfig, secret, gptModel string, channelId
 		}
 	}
 	return filteredConfigs
+}
+
+func FilterBotConfigByBotId(slice []model.BotConfig, filter string) []model.BotConfig {
+	var result []model.BotConfig
+	for _, value := range slice {
+		if value.CozeBotId != filter {
+			result = append(result, value)
+		}
+	}
+	return result
 }

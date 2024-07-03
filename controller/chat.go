@@ -333,9 +333,13 @@ loop:
 				c.SSEvent("", " "+string(bytes))
 
 				if common.SliceContains(common.CozeErrorMessages, reply.Choices[0].Message.Content) {
-					if common.SliceContains(common.CozeDailyLimitErrorMessages, reply.Choices[0].Message.Content) {
+					if common.SliceContains(common.CozeUserDailyLimitErrorMessages, reply.Choices[0].Message.Content) {
 						common.LogWarn(c, fmt.Sprintf("USER_AUTHORIZATION:%s DAILY LIMIT", userAuth))
 						discord.UserAuthorizations = common.FilterSlice(discord.UserAuthorizations, userAuth)
+					}
+					if common.SliceContains(common.CozeCreatorDailyLimitErrorMessages, reply.Choices[0].Message.Content) {
+						common.LogWarn(c, fmt.Sprintf("BOT_ID:%s DAILY LIMIT", calledCozeBotId))
+						discord.BotConfigList = discord.FilterBotConfigByBotId(discord.BotConfigList, calledCozeBotId)
 					}
 					c.SSEvent("", " [DONE]")
 					return false // 关闭流式连接
@@ -357,9 +361,13 @@ loop:
 			select {
 			case reply := <-replyChan:
 				if common.SliceContains(common.CozeErrorMessages, reply.Choices[0].Message.Content) {
-					if common.SliceContains(common.CozeDailyLimitErrorMessages, reply.Choices[0].Message.Content) {
+					if common.SliceContains(common.CozeUserDailyLimitErrorMessages, reply.Choices[0].Message.Content) {
 						common.LogWarn(c, fmt.Sprintf("USER_AUTHORIZATION:%s DAILY LIMIT", userAuth))
 						discord.UserAuthorizations = common.FilterSlice(discord.UserAuthorizations, userAuth)
+					}
+					if common.SliceContains(common.CozeCreatorDailyLimitErrorMessages, reply.Choices[0].Message.Content) {
+						common.LogWarn(c, fmt.Sprintf("BOT_ID:%s DAILY LIMIT", calledCozeBotId))
+						discord.BotConfigList = discord.FilterBotConfigByBotId(discord.BotConfigList, calledCozeBotId)
 					}
 					c.JSON(http.StatusInternalServerError, model.OpenAIErrorResponse{
 						OpenAIError: model.OpenAIError{
@@ -566,12 +574,18 @@ func ImagesForOpenAI(c *gin.Context) {
 	for {
 		select {
 		case reply := <-replyChan:
-			if reply.DailyLimit {
-				common.LogWarn(c, fmt.Sprintf("USER_AUTHORIZATION:%s DAILY LIMIT", userAuth))
-				discord.UserAuthorizations = common.FilterSlice(discord.UserAuthorizations, userAuth)
+			if common.SliceContains(common.CozeErrorMessages, reply.Data[0].RevisedPrompt) {
+				if common.SliceContains(common.CozeUserDailyLimitErrorMessages, reply.Data[0].RevisedPrompt) {
+					common.LogWarn(c, fmt.Sprintf("USER_AUTHORIZATION:%s DAILY LIMIT", userAuth))
+					discord.UserAuthorizations = common.FilterSlice(discord.UserAuthorizations, userAuth)
+				}
+				if common.SliceContains(common.CozeCreatorDailyLimitErrorMessages, reply.Data[0].RevisedPrompt) {
+					common.LogWarn(c, fmt.Sprintf("BOT_ID:%s DAILY LIMIT", calledCozeBotId))
+					discord.BotConfigList = discord.FilterBotConfigByBotId(discord.BotConfigList, calledCozeBotId)
+				}
 				c.JSON(http.StatusInternalServerError, model.OpenAIErrorResponse{
 					OpenAIError: model.OpenAIError{
-						Message: "daily limit for sending messages",
+						Message: reply.Data[0].RevisedPrompt,
 						Type:    "request_error",
 						Code:    "500",
 					},

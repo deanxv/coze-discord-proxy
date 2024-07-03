@@ -67,11 +67,14 @@ func processMessageUpdateForOpenAIImage(m *discordgo.MessageUpdate) model.OpenAI
 	var response model.OpenAIImagesGenerationResponse
 
 	if common.SliceContains(common.CozeDailyLimitErrorMessages, m.Content) {
-		return model.OpenAIImagesGenerationResponse{
-			Created:    time.Now().Unix(),
-			Data:       response.Data,
-			DailyLimit: true,
+		response.Data = append(response.Data, &model.OpenAIImagesGenerationDataResponse{
+			RevisedPrompt: m.Content,
+		})
+		res := model.OpenAIImagesGenerationResponse{
+			Created: time.Now().Unix(),
+			Data:    response.Data,
 		}
+		return res
 	}
 
 	re := regexp.MustCompile(`\]\((https?://[^\s\)]+)\)`)
@@ -184,11 +187,14 @@ func processMessageCreateForOpenAIImage(m *discordgo.MessageCreate) model.OpenAI
 	var response model.OpenAIImagesGenerationResponse
 
 	if common.SliceContains(common.CozeDailyLimitErrorMessages, m.Content) {
-		return model.OpenAIImagesGenerationResponse{
-			Created:    time.Now().Unix(),
-			Data:       response.Data,
-			DailyLimit: true,
+		response.Data = append(response.Data, &model.OpenAIImagesGenerationDataResponse{
+			RevisedPrompt: m.Content,
+		})
+		res := model.OpenAIImagesGenerationResponse{
+			Created: time.Now().Unix(),
+			Data:    response.Data,
 		}
+		return res
 	}
 
 	re := regexp.MustCompile(`\]\((https?://[^\s\)]+)\)`)
