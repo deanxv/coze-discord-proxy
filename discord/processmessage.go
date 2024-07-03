@@ -74,7 +74,7 @@ func processMessageUpdateForOpenAIImage(m *discordgo.MessageUpdate) model.OpenAI
 		}
 	}
 
-	re := regexp.MustCompile(`]\((https?://\S+)\)`)
+	re := regexp.MustCompile(`\]\((https?://[^\s\)]+)\)`)
 	subMatches := re.FindAllStringSubmatch(m.Content, -1)
 
 	if len(subMatches) == 0 {
@@ -191,7 +191,7 @@ func processMessageCreateForOpenAIImage(m *discordgo.MessageCreate) model.OpenAI
 		}
 	}
 
-	re := regexp.MustCompile(`]\((https?://\S+)\)`)
+	re := regexp.MustCompile(`\]\((https?://[^\s\)]+)\)`)
 	subMatches := re.FindAllStringSubmatch(m.Content, -1)
 
 	if len(subMatches) == 0 {
