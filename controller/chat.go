@@ -181,6 +181,9 @@ func ChatForOpenAI(c *gin.Context) {
 		if errors.As(err, &myErr) {
 			response.OpenAIError.Message = "model_not_found"
 		}
+		if errors.As(err, &myerr.ErrNoBotId) {
+			response.OpenAIError.Message = "no_available_bot"
+		}
 		c.JSON(http.StatusInternalServerError, response)
 		return
 	}
