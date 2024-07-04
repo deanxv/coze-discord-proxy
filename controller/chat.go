@@ -580,40 +580,42 @@ func ImagesForOpenAI(c *gin.Context) {
 	for {
 		select {
 		case reply := <-replyChan:
-			if common.SliceContains(common.CozeErrorMessages, reply.Data[0].RevisedPrompt) {
-				if common.SliceContains(common.CozeUserDailyLimitErrorMessages, reply.Data[0].RevisedPrompt) {
-					common.LogWarn(c, fmt.Sprintf("USER_AUTHORIZATION:%s DAILY LIMIT", userAuth))
-					discord.UserAuthorizations = common.FilterSlice(discord.UserAuthorizations, userAuth)
+			if len(reply.Data) > 0 {
+				if common.SliceContains(common.CozeErrorMessages, reply.Data[0].RevisedPrompt) {
+					if common.SliceContains(common.CozeUserDailyLimitErrorMessages, reply.Data[0].RevisedPrompt) {
+						common.LogWarn(c, fmt.Sprintf("USER_AUTHORIZATION:%s DAILY LIMIT", userAuth))
+						discord.UserAuthorizations = common.FilterSlice(discord.UserAuthorizations, userAuth)
+					}
+					if common.SliceContains(common.CozeCreatorDailyLimitErrorMessages, reply.Data[0].RevisedPrompt) {
+						common.LogWarn(c, fmt.Sprintf("BOT_ID:%s DAILY LIMIT", calledCozeBotId))
+						//discord.BotConfigList = discord.FilterBotConfigByBotId(discord.BotConfigList, calledCozeBotId)
+						discord.DelLimitBot(calledCozeBotId)
+					}
+					c.JSON(http.StatusInternalServerError, model.OpenAIErrorResponse{
+						OpenAIError: model.OpenAIError{
+							Message: reply.Data[0].RevisedPrompt,
+							Type:    "request_error",
+							Code:    "500",
+						},
+					})
+					return
 				}
-				if common.SliceContains(common.CozeCreatorDailyLimitErrorMessages, reply.Data[0].RevisedPrompt) {
-					common.LogWarn(c, fmt.Sprintf("BOT_ID:%s DAILY LIMIT", calledCozeBotId))
-					//discord.BotConfigList = discord.FilterBotConfigByBotId(discord.BotConfigList, calledCozeBotId)
-					discord.DelLimitBot(calledCozeBotId)
-				}
-				c.JSON(http.StatusInternalServerError, model.OpenAIErrorResponse{
-					OpenAIError: model.OpenAIError{
-						Message: reply.Data[0].RevisedPrompt,
-						Type:    "request_error",
-						Code:    "500",
-					},
-				})
-				return
-			}
-			if request.ResponseFormat == "b64_json" && reply.Data != nil && len(reply.Data) > 0 {
-				for _, data := range reply.Data {
-					if data.URL != "" {
-						base64Str, err := getBase64ByUrl(data.URL)
-						if err != nil {
-							c.JSON(http.StatusInternalServerError, model.OpenAIErrorResponse{
-								OpenAIError: model.OpenAIError{
-									Message: err.Error(),
-									Type:    "request_error",
-									Code:    "500",
-								},
-							})
-							return
+				if request.ResponseFormat == "b64_json" && reply.Data != nil && len(reply.Data) > 0 {
+					for _, data := range reply.Data {
+						if data.URL != "" {
+							base64Str, err := getBase64ByUrl(data.URL)
+							if err != nil {
+								c.JSON(http.StatusInternalServerError, model.OpenAIErrorResponse{
+									OpenAIError: model.OpenAIError{
+										Message: err.Error(),
+										Type:    "request_error",
+										Code:    "500",
+									},
+								})
+								return
+							}
+							data.B64Json = "data:image/webp;base64," + base64Str
 						}
-						data.B64Json = "data:image/webp;base64," + base64Str
 					}
 				}
 			}
