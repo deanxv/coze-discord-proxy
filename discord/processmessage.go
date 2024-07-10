@@ -38,6 +38,17 @@ func processMessageUpdateForOpenAI(m *discordgo.MessageUpdate) model.OpenAIChatC
 		}
 	}
 
+	if len(m.Attachments) != 0 {
+		for _, attachment := range m.Attachments {
+			if attachment.ProxyURL != "" && !strings.Contains(m.Content, attachment.ProxyURL) {
+				if m.Content != "" {
+					m.Content += "\n"
+				}
+				m.Content += fmt.Sprintf("%s\n![Image](%s)", attachment.ProxyURL, attachment.ProxyURL)
+			}
+		}
+	}
+
 	promptTokens := common.CountTokens(m.ReferencedMessage.Content)
 	completionTokens := common.CountTokens(m.Content)
 
@@ -154,6 +165,17 @@ func processMessageCreateForOpenAI(m *discordgo.MessageCreate) model.OpenAIChatC
 					m.Content += "\n"
 				}
 				m.Content += fmt.Sprintf("%s\n![Image](%s)", embed.Image.URL, embed.Image.URL)
+			}
+		}
+	}
+
+	if len(m.Attachments) != 0 {
+		for _, attachment := range m.Attachments {
+			if attachment.ProxyURL != "" && !strings.Contains(m.Content, attachment.ProxyURL) {
+				if m.Content != "" {
+					m.Content += "\n"
+				}
+				m.Content += fmt.Sprintf("%s\n![Image](%s)", attachment.ProxyURL, attachment.ProxyURL)
 			}
 		}
 	}
