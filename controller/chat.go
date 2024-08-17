@@ -166,7 +166,7 @@ func ChatForOpenAI(c *gin.Context) {
 		return
 	}
 
-	sendChannelId, calledCozeBotId, isNewChannel, err := getSendChannelIdAndCozeBotId(c, request.ChannelId, request.Model, true)
+	sendChannelId, calledCozeBotId, maxToken, isNewChannel, err := getSendChannelIdAndCozeBotId(c, request.ChannelId, request.Model, true)
 
 	if err != nil {
 		response := model.OpenAIErrorResponse{
@@ -275,7 +275,7 @@ loop:
 		content = string(jsonData)
 	}
 
-	sentMsg, userAuth, err := discord.SendMessage(c, sendChannelId, calledCozeBotId, content)
+	sentMsg, userAuth, err := discord.SendMessage(c, sendChannelId, calledCozeBotId, content, maxToken)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.OpenAIErrorResponse{
 			OpenAIError: model.OpenAIError{
@@ -517,7 +517,7 @@ func ImagesForOpenAI(c *gin.Context) {
 		return
 	}
 
-	sendChannelId, calledCozeBotId, isNewChannel, err := getSendChannelIdAndCozeBotId(c, request.ChannelId, request.Model, true)
+	sendChannelId, calledCozeBotId, maxToken, isNewChannel, err := getSendChannelIdAndCozeBotId(c, request.ChannelId, request.Model, true)
 	if err != nil {
 		common.LogError(c.Request.Context(), err.Error())
 		c.JSON(http.StatusInternalServerError, model.OpenAIErrorResponse{
@@ -547,7 +547,7 @@ func ImagesForOpenAI(c *gin.Context) {
 		}()
 	}
 
-	sentMsg, userAuth, err := discord.SendMessage(c, sendChannelId, calledCozeBotId, common.ImgGeneratePrompt+request.Prompt)
+	sentMsg, userAuth, err := discord.SendMessage(c, sendChannelId, calledCozeBotId, common.ImgGeneratePrompt+request.Prompt, maxToken)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.OpenAIErrorResponse{
 			OpenAIError: model.OpenAIError{
@@ -651,7 +651,7 @@ func ImagesForOpenAI(c *gin.Context) {
 
 }
 
-func getSendChannelIdAndCozeBotId(c *gin.Context, channelId *string, model string, isOpenAIAPI bool) (sendChannelId string, calledCozeBotId string, isNewChannel bool, err error) {
+func getSendChannelIdAndCozeBotId(c *gin.Context, channelId *string, model string, isOpenAIAPI bool) (sendChannelId string, calledCozeBotId string, maxToken string, isNewChannel bool, err error) {
 	secret := ""
 	if isOpenAIAPI {
 		if secret = c.Request.Header.Get("Authorization"); secret != "" {
@@ -669,50 +669,50 @@ func getSendChannelIdAndCozeBotId(c *gin.Context, channelId *string, model strin
 			// 有值则随机一个
 			botConfig, err := common.RandomElement(botConfigs)
 			if err != nil {
-				return "", "", false, err
+				return "", "", "", false, err
 			}
 
 			if channelId != nil && *channelId != "" {
-				return *channelId, botConfig.CozeBotId, false, nil
+				return *channelId, botConfig.CozeBotId, discord.MessageMaxToken, false, nil
 			}
 
 			if discord.DefaultChannelEnable == "1" {
-				return botConfig.ChannelId, botConfig.CozeBotId, false, nil
+				return botConfig.ChannelId, botConfig.CozeBotId, botConfig.MessageMaxToken, false, nil
 			} else {
 				var sendChannelId string
 				sendChannelId, err := discord.CreateChannelWithRetry(c, discord.GuildId, fmt.Sprintf("cdp-chat-%s", c.Request.Context().Value(common.RequestIdKey)), 0)
 				if err != nil {
 					common.LogError(c, err.Error())
-					return "", "", false, err
+					return "", "", "", false, err
 				}
-				return sendChannelId, botConfig.CozeBotId, true, nil
+				return sendChannelId, botConfig.CozeBotId, botConfig.MessageMaxToken, true, nil
 			}
 
 		}
 		// 没有值抛出异常
-		return "", "", false, &myerr.ModelNotFoundError{
+		return "", "", "", false, &myerr.ModelNotFoundError{
 			ErrCode: 500,
 			Message: fmt.Sprintf("[proxy-secret:%s]+[model:%s]未匹配到有效bot", secret, model),
 		}
 	} else {
 
 		if discord.BotConfigExist || discord.CozeBotId == "" {
-			return "", "", false, myerr.ErrNoBotId
+			return "", "", "", false, myerr.ErrNoBotId
 		}
 
 		if channelId != nil && *channelId != "" {
-			return *channelId, discord.CozeBotId, false, nil
+			return *channelId, discord.CozeBotId, discord.MessageMaxToken, false, nil
 		}
 
 		if discord.DefaultChannelEnable == "1" {
-			return discord.ChannelId, discord.CozeBotId, false, nil
+			return discord.ChannelId, discord.CozeBotId, discord.MessageMaxToken, false, nil
 		} else {
 			sendChannelId, err := discord.CreateChannelWithRetry(c, discord.GuildId, fmt.Sprintf("cdp-chat-%s", c.Request.Context().Value(common.RequestIdKey)), 0)
 			if err != nil {
 				//common.LogError(c, myerr.Error())
-				return "", "", false, err
+				return "", "", "", false, err
 			}
-			return sendChannelId, discord.CozeBotId, true, nil
+			return sendChannelId, discord.CozeBotId, discord.MessageMaxToken, true, nil
 		}
 	}
 }

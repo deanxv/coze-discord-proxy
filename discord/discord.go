@@ -34,6 +34,7 @@ var CozeBotId = os.Getenv("COZE_BOT_ID")
 var GuildId = os.Getenv("GUILD_ID")
 var ChannelId = os.Getenv("CHANNEL_ID")
 var DefaultChannelEnable = os.Getenv("DEFAULT_CHANNEL_ENABLE")
+var MessageMaxToken = os.Getenv("MESSAGE_MAX_TOKEN")
 var ProxyUrl = os.Getenv("PROXY_URL")
 var ChannelAutoDelTime = os.Getenv("CHANNEL_AUTO_DEL_TIME")
 var CozeBotStayActiveEnable = os.Getenv("COZE_BOT_STAY_ACTIVE_ENABLE")
@@ -241,6 +242,15 @@ func checkEnvVariable() {
 		}
 	}
 
+	if MessageMaxToken == "" {
+		MessageMaxToken = strconv.Itoa(128 * 1000)
+	} else {
+		_, err := strconv.Atoi(MessageMaxToken)
+		if err != nil {
+			common.FatalLog("环境变量 MESSAGE_MAX_TOKEN 设置有误")
+		}
+	}
+
 	if telegram.NotifyTelegramBotToken != "" {
 		err := telegram.InitTelegramBot()
 		if err != nil {
@@ -286,14 +296,20 @@ func loadBotConfig() {
 		common.FatalLog("Error parsing JSON:", err)
 	}
 
-	// 校验默认频道
-	if DefaultChannelEnable == "1" {
-		for _, botConfig := range BotConfigList {
-			if botConfig.ChannelId == "" {
-				common.FatalLog("默认频道开关开启时,必须为每个Coze-Bot配置ChannelId")
+	for _, botConfig := range BotConfigList {
+		// 校验默认频道
+		if DefaultChannelEnable == "1" && botConfig.ChannelId == "" {
+			common.FatalLog("默认频道开关开启时,必须为每个Coze-Bot配置ChannelId")
+		}
+		// 校验MaxToken
+		if botConfig.MessageMaxToken != "" {
+			_, err := strconv.Atoi(botConfig.MessageMaxToken)
+			if err != nil {
+				common.FatalLog(fmt.Sprintf("messageMaxToken 必须为数字!"))
 			}
 		}
 	}
+
 	BotConfigExist = true
 	common.SysLog(fmt.Sprintf("载入配置文件成功 BotConfigs: %+v", BotConfigList))
 }
@@ -468,7 +484,7 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 	return
 }
 
-func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discordgo.Message, string, error) {
+func SendMessage(c *gin.Context, channelID, cozeBotId, message, maxToken string) (*discordgo.Message, string, error) {
 	var ctx context.Context
 	if c == nil {
 		ctx = context.Background()
@@ -490,7 +506,13 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 	content = strings.Replace(content, `\u003e`, ">", -1)
 
 	tokens := common.CountTokens(content)
-	if tokens > 128*1000 {
+	maxTokenInt, err := strconv.Atoi(maxToken)
+	if err != nil {
+		common.LogError(ctx, fmt.Sprintf("error sending message: %s", err))
+		return &discordgo.Message{}, "", fmt.Errorf("error sending message")
+	}
+
+	if tokens > maxTokenInt {
 		common.LogError(ctx, fmt.Sprintf("prompt已超过限制,请分段发送 [%v] %s", tokens, content))
 		return nil, "", fmt.Errorf("prompt已超过限制,请分段发送 [%v]", tokens)
 	}
@@ -525,7 +547,7 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 			if errors.As(err, &myErr) {
 				// 无效则将此 auth 移除
 				UserAuthorizations = common.FilterSlice(UserAuthorizations, userAuth)
-				return SendMessage(c, channelID, cozeBotId, message)
+				return SendMessage(c, channelID, cozeBotId, message, maxToken)
 			}
 			common.LogError(ctx, fmt.Sprintf("error sending message: %s", err))
 			return nil, "", fmt.Errorf("error sending message")
@@ -641,7 +663,7 @@ func stayActiveMessageTask() {
 				common.SysError(fmt.Sprintf("ChannelId{%s} BotId{%s} 活跃机器人任务消息发送异常!雪花Id生成失败!", sendChannelId, config.CozeBotId))
 				continue
 			}
-			_, _, err = SendMessage(nil, sendChannelId, config.CozeBotId, fmt.Sprintf("【%v】 %s", nextID, "CDP Scheduled Task Job Send Msg Success!"))
+			_, _, err = SendMessage(nil, sendChannelId, config.CozeBotId, fmt.Sprintf("【%v】 %s", nextID, "CDP Scheduled Task Job Send Msg Success!"), config.MessageMaxToken)
 			if err != nil {
 				common.SysError(fmt.Sprintf("ChannelId{%s} BotId{%s} 活跃机器人任务消息发送异常!", sendChannelId, config.CozeBotId))
 			} else {
