@@ -307,6 +307,8 @@ func loadBotConfig() {
 			if err != nil {
 				common.FatalLog(fmt.Sprintf("messageMaxToken 必须为数字!"))
 			}
+		} else {
+			botConfig.MessageMaxToken = strconv.Itoa(128 * 1000)
 		}
 	}
 
