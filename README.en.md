@@ -243,15 +243,9 @@ The service deployed on a third-party platform (such as: `zeabur`) needs to [con
 
 ## Limitations
 
-The current version of coze has implemented identification for each Discord user, and there is a usage limit for each user per different model on Discord, specifically as follows:
+Current details of free and paid subscriptions for coze: https://www.coze.com/docs/guides/subscription?_lang=zh
 
-```
-GPT-4 Turbo (128k) - 50 times/day
-GPT-4 (8k) - 100 times/day
-GPT-3.5 (16k) - 500 times/day
-```
-
-Multiple Discord user `Authorization` can be configured (refer to the [environment variable](#Environment-Variables) `USER_AUTHORIZATION`) to achieve cumulative request times and load balancing for requests.
+Multiple Discord user `Authorization` can be configured (refer to the [environment variable](#Environment-Variables) `USER_AUTHORIZATION`) ) or [configure multiple bots](#Configure-Multiple-Bots) to achieve cumulative request times and load balancing for requests.
 
 ## Q&A
 
