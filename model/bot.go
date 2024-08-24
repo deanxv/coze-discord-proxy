@@ -9,9 +9,9 @@ type BotConfig struct {
 }
 
 // FilterUniqueBotChannel 给定BotConfig切片,筛选出具有不同CozeBotId+ChannelId组合的元素
-func FilterUniqueBotChannel(configs []BotConfig) []BotConfig {
+func FilterUniqueBotChannel(configs []*BotConfig) []*BotConfig {
 	seen := make(map[string]struct{}) // 使用map来跟踪已见的CozeBotId+ChannelId组合
-	var uniqueConfigs []BotConfig
+	var uniqueConfigs []*BotConfig
 
 	for _, config := range configs {
 		combo := config.CozeBotId + "+" + config.ChannelId // 创建组合键

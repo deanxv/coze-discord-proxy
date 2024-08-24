@@ -48,7 +48,7 @@ var CreateChannelRiskChan = make(chan string)
 var NoAvailableUserAuthPreNotifyTime time.Time
 var CreateChannelRiskPreNotifyTime time.Time
 
-var BotConfigList []model.BotConfig
+var BotConfigList []*model.BotConfig
 var BotConfigExist bool
 
 var RepliesChans = make(map[string]chan model.ReplyResp)
@@ -313,7 +313,15 @@ func loadBotConfig() {
 	}
 
 	BotConfigExist = true
-	common.SysLog(fmt.Sprintf("载入配置文件成功 BotConfigs: %+v", BotConfigList))
+
+	// 将结构体切片转换为 JSON 字符串
+	jsonData, err := json.MarshalIndent(BotConfigList, "", "  ")
+	if err != nil {
+		common.FatalLog(fmt.Sprintf("Error marshalling BotConfigs: %v", err))
+	}
+
+	// 打印 JSON 字符串
+	common.SysLog(fmt.Sprintf("载入配置文件成功 BotConfigs:\n%s", string(jsonData)))
 }
 
 // messageCreate handles the create messages in Discord.
@@ -637,7 +645,7 @@ func stayActiveMessageTask() {
 
 		var taskBotConfigs = BotConfigList
 
-		taskBotConfigs = append(taskBotConfigs, model.BotConfig{
+		taskBotConfigs = append(taskBotConfigs, &model.BotConfig{
 			ChannelId: ChannelId,
 			CozeBotId: CozeBotId,
 		})
@@ -728,8 +736,8 @@ func UploadToDiscordAndGetURL(channelID string, base64Data string) (string, erro
 }
 
 // FilterConfigs 根据proxySecret和channelId过滤BotConfig
-func FilterConfigs(configs []model.BotConfig, secret, gptModel string, channelId *string) []model.BotConfig {
-	var filteredConfigs []model.BotConfig
+func FilterConfigs(configs []*model.BotConfig, secret, gptModel string, channelId *string) []*model.BotConfig {
+	var filteredConfigs []*model.BotConfig
 	for _, config := range configs {
 		matchSecret := secret == "" || config.ProxySecret == secret
 		matchGptModel := gptModel == "" || common.SliceContains(config.Model, gptModel)
@@ -751,8 +759,8 @@ func DelLimitBot(botId string) {
 	}
 }
 
-func FilterBotConfigByBotId(slice []model.BotConfig, filter string) []model.BotConfig {
-	var result []model.BotConfig
+func FilterBotConfigByBotId(slice []*model.BotConfig, filter string) []*model.BotConfig {
+	var result []*model.BotConfig
 	for _, value := range slice {
 		if value.CozeBotId != filter {
 			result = append(result, value)
