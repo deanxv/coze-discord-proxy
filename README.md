@@ -6,6 +6,8 @@
 
 # coze-discord-proxy
 
+<a href="https://trendshift.io/repositories/7350" target="_blank"><img src="https://trendshift.io/api/badge/repositories/7350" alt="deanxv%2Fcoze-discord-proxy | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+
 _代理`Discord`对话`Coze-Bot`，实现以API形式请求GPT4模型，提供对话、文生图、图生文、知识库检索等功能_
 
 _觉得有点意思的话 别忘了点个🌟_
