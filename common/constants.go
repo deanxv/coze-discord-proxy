@@ -1,6 +1,6 @@
 package common
 
-var Version = "v4.6.3" // this hard coding will be replaced automatically when building, no need to manually change
+var Version = "v4.6.4" // this hard coding will be replaced automatically when building, no need to manually change
 
 const (
 	RequestIdKey = "X-Request-Id"
@@ -11,10 +11,10 @@ var ImgGeneratePrompt = "Please adhere strictly to my instructions below for the
 
 var DefaultOpenaiModelList = []string{
 	"gpt-3.5-turbo",
+	"gpt-3.5-turbo-0613",
 	"gpt-3.5-turbo-1106",
 	"gpt-3.5-turbo-0125",
 	"gpt-3.5-turbo-16k",
-	"gpt-3.5-turbo-16k-0613",
 	"gpt-3.5-turbo-instruct",
 	"gpt-4",
 	"gpt-4-0613",
@@ -41,12 +41,11 @@ var DefaultOpenaiModelList = []string{
 	"tts-1-1106",
 	"tts-1-hd",
 	"tts-1-hd-1106",
+	"o1-mini-2024-09-12",
 	"gpt-4o-2024-08-06",
+	"o1-preview-2024-09-12",
 	"o1-mini",
 	"o1-preview",
-	"o1-preview-2024-09-12",
-	"chatgpt-4o-latest",
-	"o1-mini-2024-09-12",
 }
 
 var CozeErrorMessages = append(append(CozeOtherErrorMessages, CozeUserDailyLimitErrorMessages...), CozeCreatorDailyLimitErrorMessages...)
@@ -60,8 +59,9 @@ var CozeOtherErrorMessages = []string{
 }
 
 var CozeUserDailyLimitErrorMessages = []string{
-	"Hi there! You've used up your free chat credits. To continue enjoying our service, please consider upgrading to our premium plan [Upgrade to Coze Premium to chat](https://www.coze.com/premium?connectID=10000028&botID=7376964308913422354)",
+	"Hi there! You've used up your free chat credits. To continue enjoying our service, please consider upgrading to our premium plan [Upgrade to Coze Premium to chat]",
 	"You have exceeded the daily limit for sending messages to the bot. Please try again later.",
+	"Hi there! You've used up your credits for today. To continue enjoying our service, please try again tomorrow or consider upgrading to our premium plan.",
 }
 
 var CozeCreatorDailyLimitErrorMessages = []string{

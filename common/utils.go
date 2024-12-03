@@ -206,7 +206,7 @@ func IsURL(s string) bool {
 // Contains checks if a string is present in a slice of strings.
 func SliceContains(slice []string, str string) bool {
 	for _, item := range slice {
-		if item == str {
+		if strings.Contains(str, item) {
 			return true
 		}
 	}
