@@ -1,6 +1,6 @@
 package common
 
-var Version = "v4.6.3" // this hard coding will be replaced automatically when building, no need to manually change
+var Version = "v4.6.4" // this hard coding will be replaced automatically when building, no need to manually change
 
 const (
 	RequestIdKey = "X-Request-Id"
@@ -59,8 +59,9 @@ var CozeOtherErrorMessages = []string{
 }
 
 var CozeUserDailyLimitErrorMessages = []string{
-	"Hi there! You've used up your free chat credits. To continue enjoying our service, please consider upgrading to our premium plan [Upgrade to Coze Premium to chat](https://www.coze.com/premium?connectID=10000028&botID=7376964308913422354)",
+	"Hi there! You've used up your free chat credits. To continue enjoying our service, please consider upgrading to our premium plan [Upgrade to Coze Premium to chat]",
 	"You have exceeded the daily limit for sending messages to the bot. Please try again later.",
+	"Hi there! You've used up your credits for today. To continue enjoying our service, please try again tomorrow or consider upgrading to our premium plan.",
 }
 
 var CozeCreatorDailyLimitErrorMessages = []string{
