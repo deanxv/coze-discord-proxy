@@ -646,8 +646,9 @@ func stayActiveMessageTask() {
 		var taskBotConfigs = BotConfigList
 
 		taskBotConfigs = append(taskBotConfigs, &model.BotConfig{
-			ChannelId: ChannelId,
-			CozeBotId: CozeBotId,
+			ChannelId:       ChannelId,
+			CozeBotId:       CozeBotId,
+			MessageMaxToken: MessageMaxToken,
 		})
 
 		taskBotConfigs = model.FilterUniqueBotChannel(taskBotConfigs)
