@@ -34,6 +34,7 @@ var DefaultOpenaiModelList = []string{
 	"text-moderation-stable",
 	"davinci-002",
 	"babbage-002",
+
 	"dall-e-2",
 	"dall-e-3",
 	"whisper-1",
