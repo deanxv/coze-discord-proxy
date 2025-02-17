@@ -15,6 +15,7 @@ _觉得有点意思的话 别忘了点个🌟_
 📄<a href="https://cdp-docs.pages.dev" style="font-size: 15px;">CDP项目文档站</a>(必看教程)
 
 🐞<a href="https://t.me/+LGKwlC_xa-E5ZDk9" style="font-size: 15px;">CDP项目-交流群</a>(交流)
+<br><sup><i>(群内提供公益API、AI机器人)</i></sup>
 
 📢<a href="https://t.me/+0fYkYY_zUZYzNzRl" style="font-size: 15px;">CDP项目-通知频道</a>(通知)
 
