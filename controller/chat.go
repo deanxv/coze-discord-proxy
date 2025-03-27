@@ -614,6 +614,7 @@ func ImagesForOpenAI(c *gin.Context) {
 								})
 								return
 							}
+
 							data.B64Json = "data:image/webp;base64," + base64Str
 						}
 					}
