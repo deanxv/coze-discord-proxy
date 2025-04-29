@@ -272,3 +272,7 @@ Java: https://github.com/oddfar/coze-discord (目前不可用)
 Coze 官网 : https://www.coze.com
 
 Discord 开发地址 : https://discord.com/developers/applications
+
+## 感谢
+
+[vtexs](https://console.vtexs.com/)提供的VPS支持
