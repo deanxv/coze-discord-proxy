@@ -269,5 +269,3 @@ Coze Official Website: https://www.coze.com
 
 Discord Development Address: https://discord.com/developers/applications
 
-## Thanks  
-[vtexs](https://console.vtexs.com/) for providing VPS support  
